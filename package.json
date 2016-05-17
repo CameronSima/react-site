@@ -1,0 +1,53 @@
+{
+  "name": "shit-list",
+  "version": "0.0.0",
+  "description": "Anti-Social Media",
+  "scripts": {
+    "start": "node server.js",
+    "lint": "eslint src",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+
+  "author": "Cameron Sima",
+  "homepage": "",
+
+  "jest": {
+    "unMockedModulePathPatterns": [
+    "/Projects/Node/shit-list/node_modules/react/",
+    "/Projects/Node/shit-list/node_modules/react-dom/",
+    "/Projects/Node/shit-list/node_modules/react-addons-test-utils/"
+    ]
+  },
+  "devDependencies": {
+    "babel-core": "^6.0.20",
+    "babel-eslint": "^4.1.3",
+    "babel-jest": "^9.0.0",
+    "babel-loader": "^6.0.1",
+    "babel-preset-es2015": "^6.0.15",
+    "babel-preset-jest": "latest",
+    "babel-preset-react": "^6.0.15",
+    "babel-preset-stage-0": "^6.0.15",
+    "eslint": "^1.10.3",
+    "eslint-plugin-react": "^3.6.2",
+    "react-hot-loader": "^1.3.0",
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.12.1"
+  },
+  "dependencies": {
+    "bcrypt": "0.8.5",
+    "body-parser": "~1.13.2",
+    "cookie-parser": "~1.3.5",
+    "express": "~4.13.1",
+    "express-session": "latest",
+    "mongoose": "3.8",
+    "passport": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "react": "^0.14.6",
+    "react-dom": "^0.14.6",
+    "react-router": "2.4.0"
+  }
+}
