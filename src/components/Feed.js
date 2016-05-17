@@ -1,6 +1,9 @@
 import React from 'react';
 
+var config = require('../../config')
+
 var ThreadForm = React.createClass({
+
   getInitialState: function () {
     return {author: '', 
             text: '', 
@@ -72,14 +75,14 @@ var ThreadForm = React.createClass({
 var ThreadsBox = React.createClass({
   loadThreadsFromServer: function () {
     $.ajax({
-      url: this.props.url,
+      url: config.url,
       dataType: 'json',
       cache: false,
       success: function (data) {
         this.setState({data: data})
       }.bind(this),
       error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString())
+        console.error(this.url, status, err.toString())
       }.bind(this)
     })
   },
@@ -88,7 +91,7 @@ var ThreadsBox = React.createClass({
     var newThreads = threads.concat([thread])
     this.setState({data: newThreads})
     $.ajax({
-      url: this.props.url,
+      url: config.url,
       dataType: 'json',
       type: 'POST',
       data: thread,
@@ -97,7 +100,7 @@ var ThreadsBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         this.setState({data: threads})
-        console.error(this.props.url, status, err.toString())
+        console.error(this.url, status, err.toString())
       }.bind(this)
     })
   },
@@ -106,7 +109,7 @@ var ThreadsBox = React.createClass({
   },
   componentDidMount: function () {
     this.loadThreadsFromServer()
-    setInterval(this.loadThreadsFromServer, this.props.pollInterval)
+    setInterval(this.loadThreadsFromServer, config.pollInterval)
   },
   render: function () {
     return (

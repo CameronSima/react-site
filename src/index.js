@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route, hashHistory, browserHistory } from 'react-router';
+import { Router, Route, IndexRoute, hashHistory, browserHistory, NotFoundView } from 'react-router';
 import ReactDOM from 'react-dom';
 import App from './components/App';
 import NavBar from './components/NavBar';
@@ -8,9 +8,10 @@ import Signup from './components/signup';
 
 ReactDOM.render((
                 <Router history = { browserHistory }>
-                  <Route component={ NavBar }>
-                    <Route path='/' component={ Feed } url='/api/threads' pollInterval={ 2000 } />
+                  <Route path='/' component={ NavBar }>
+                    <IndexRoute component={ Feed } />
                     <Route path='signup' component={ Signup } />
+                    <Route path='*' component={ NotFoundView } />
                   </Route>
                 </Router>
   ), document.getElementById('root'));
