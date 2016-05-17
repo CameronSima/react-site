@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+var config = require('../../config')
+
 export default class Signup extends Component {
 
   constructor(props) {
@@ -25,16 +27,29 @@ export default class Signup extends Component {
     var password1 = this.state.password1.trim()
     var password2 = this.state.password2.trim()
 
-    if (!username || !password1 || !password2) 
+    if (!username || !password1 || !password2) {
       return
-    else if (password2 !== password1)
-      console.log("PASSWORD ERROR")
-      this.setState({
-        error: "Passwords didn't match",
-        username: "",
-        password1: "",
-        password2: ""
-        })
+    }
+    else if (password2 !== password1) {
+          console.log("PASSWORD ERROR")
+          this.setState({
+            error: "Passwords didn't match",
+            username: "",
+            password1: "",
+            password2: ""
+          })
+        }
+    $.ajax({
+      url: config.apiUrl + 'signup',
+      dataType: 'json',
+      type: 'POST',
+      data: { username: username,
+              password: password1
+            },
+      error: function (xhr, status, err) {
+        console.error(this.url, status, err.toString())
+      }.bind(this)}
+    )
   }
   render() {
     return (

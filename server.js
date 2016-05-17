@@ -1,4 +1,4 @@
-var config = require('../config')
+var settings = require('./config')
 
 // Express server, which handles requests on port 3001
 
@@ -10,10 +10,7 @@ var passport = require('passport')
 var session = require('express-session')
 var app = express()
 
-app.set('port', config.expressPort)
-
-// app.set('views', path.join(__dirname, '..', 'views'));
-// app.set('view engine', 'jade');
+app.set('port', settings.expressPort)
 
 app.use('/', express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.json())
@@ -44,7 +41,7 @@ app.use('/', routes)
 
 
 app.listen(app.get('port'), function () {
-  console.log('Express server startedt at http://localhost:' + app.get('port') + '/')
+  console.log('Express server started at http://localhost:' + settings.expressPort + '/')
 })
 
 var webpack = require('webpack');
@@ -58,12 +55,12 @@ new WebpackDevServer(webpack(config), {
   historyApiFallback: true,
   // Proxy backend requests to Express server
   proxy: {
-    "/api/*": "http://localhost:" + config.expressPort
+    "/api/*": "http://localhost:" + settings.expressPort
   }
-}).listen(config.webpackServerPort, 'localhost', function (err, result) {
+}).listen(settings.webpackServerPort, 'localhost', function (err, result) {
   if (err) {
     return console.log(err);
   }
 
-  console.log('Webpack dev react server listening at http://localhost: ' + config.webpackServerPort +  '/');
+  console.log('Webpack dev react server listening at http://localhost:' + settings.webpackServerPort +  '/');
 });

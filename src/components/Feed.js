@@ -8,7 +8,8 @@ var ThreadForm = React.createClass({
     return {author: '', 
             text: '', 
             included: '',
-            victim: ''
+            victim: '',
+            interval: config.pollInterval
             }
   },
   handleAuthorChange: function (e) {
@@ -75,7 +76,7 @@ var ThreadForm = React.createClass({
 var ThreadsBox = React.createClass({
   loadThreadsFromServer: function () {
     $.ajax({
-      url: config.url,
+      url: config.apiUrl + 'threads',
       dataType: 'json',
       cache: false,
       success: function (data) {
@@ -91,7 +92,7 @@ var ThreadsBox = React.createClass({
     var newThreads = threads.concat([thread])
     this.setState({data: newThreads})
     $.ajax({
-      url: config.url,
+      url: config.apiUrl + 'threads',
       dataType: 'json',
       type: 'POST',
       data: thread,
@@ -109,7 +110,10 @@ var ThreadsBox = React.createClass({
   },
   componentDidMount: function () {
     this.loadThreadsFromServer()
-    setInterval(this.loadThreadsFromServer, config.pollInterval)
+    setInterval(this.loadThreadsFromServer, this.state.pollInterval)
+  },
+  componentWillUnmount: function () {
+    this.state.pollInterval = false;
   },
   render: function () {
     return (

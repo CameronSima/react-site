@@ -42,8 +42,8 @@ module.exports = function (passport) {
   })
 
   router.post('/api/signup', passport.authenticate('signup', {
-    successRedirect: '/',
-    failureRedirect: '/signup'
+    successRedirect: '/'
+    // failureRedirect: 'http://localhost:3000/signup'
   }))
 
   router.get('/api/comments', function (req, res, next) {
@@ -82,5 +82,12 @@ module.exports = function (passport) {
       res.json(thread)
     })
   })
+
+  router.get('/api/users', function (req, res, next) {
+  User.find(function (err, users) {
+    if (err) { return next(err) }
+      res.json(users)
+  })
+})
   return router
 }
