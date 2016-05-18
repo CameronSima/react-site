@@ -11,8 +11,10 @@ class Thread extends Component {
   render() {
     return (
       <div className="thread">
-        <h2 className="threadAuthor">Dear {this.props.author}: </h2>
+        <h2 className="threadVictim">Dear {this.props.victim}: </h2>
         <span dangerouslySetInnerHTML={this.rawMarkup()} />
+        <p>signed,</p>
+        <div>{this.props.author} and {this.props.ct} others.</div>
       </div>
       )
   }
@@ -22,7 +24,7 @@ class ThreadList extends Component {
   render() {
     var threadNodes = this.props.data.map(function (thread) {
       return (
-        <Thread author={ thread.author } key={ thread._id }>
+        <Thread victim={ thread.victim } author={ thread.author } ct={ thread.ct } key={ thread._id }>
           { thread.text }
         </Thread>
       )
@@ -42,6 +44,7 @@ var ThreadForm = React.createClass({
             text: '', 
             included: '',
             victim: '',
+            ct: ''
             }
   },
   handleAuthorChange: function (e) {
@@ -61,6 +64,7 @@ var ThreadForm = React.createClass({
     var author = this.state.author.trim()
     var text = this.state.text.trim()
     var included = this.state.included.trim()
+    var includedCt = this.state.included.split(', ').length
     var victim = this.state.victim.trim()
     if (!text || !author || !included || !victim) {
       return
@@ -68,12 +72,14 @@ var ThreadForm = React.createClass({
     this.props.onThreadSubmit({author: author, 
                                 text: text, 
                                 included: included,
-                                victim: victim
+                                victim: victim,
+                                ct: includedCt.toString()
                               })
     this.setState({author: '', 
                   text: '', 
                   included: '',
-                  victim: ''
+                  victim: '',
+                  ct: ''
                   })
   },
   render: function () {
@@ -107,7 +113,6 @@ var ThreadForm = React.createClass({
 
 var ThreadsBox = React.createClass({
   loadThreadsFromServer: function () {
-    console.log(this.state.pollInterval)
     $.ajax({
       url: config.apiUrl + 'threads',
       dataType: 'json',
@@ -121,7 +126,6 @@ var ThreadsBox = React.createClass({
     })
   },
   handleThreadSubmit: function (thread) {
-    console.log(this.state.pollInterval)
     var threads = this.state.data
     var newThreads = threads.concat([thread])
     this.setState({data: newThreads})

@@ -15,7 +15,8 @@ var ThreadSchema = new mongoose.Schema({
   // included: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   author: String,
   victim: String,
-  included: [String]
+  included: [String],
+  ct: String 
 })
 
 mongoose.model('Thread', ThreadSchema)

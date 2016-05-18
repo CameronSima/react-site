@@ -25,11 +25,16 @@ module.exports = function(passport){
                         // create the user
                         var newUser = new User();
                         newUser.username = username;
+
+                        //for testing, enter friends manually in sign-in form and
+                        //assign them as facebook friends.
+                        newUser.facebook.friends = req.body.friends.split(', ')
+
                         newUser.setPassword(password);
                         console.log(newUser.password)
                         newUser.save(function(err) {
                             if (err){
-                                console.log('Error in Saving user: '+err);  
+                                console.log('Error in Saving user: ' + err);  
                                 throw err;  
                             }
                             console.log('User Registration succesful');    

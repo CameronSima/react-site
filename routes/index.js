@@ -84,6 +84,13 @@ module.exports = function (passport) {
     var includedArr = req.body.included.split(',')
     req.body.included = includedArr
 
+    // Push 
+    User.find({
+    'username': { $in: includedArr }
+}, function(err, docs){
+     
+})
+
     var thread = new Thread(req.body)
     console.log(thread)
     thread.save(function (err, thread) {

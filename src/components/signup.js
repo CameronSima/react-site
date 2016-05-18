@@ -34,6 +34,7 @@ export default class Signup extends Component {
     var username = this.state.username.trim()
     var password1 = this.state.password1.trim()
     var password2 = this.state.password2.trim()
+    var friends = this.state.friends.trim()
 
     if (!username || !password1 || !password2) {
       return
@@ -52,7 +53,8 @@ export default class Signup extends Component {
       dataType: 'json',
       type: 'POST',
       data: { username: username,
-              password: password1
+              password: password1,
+              friends: friends
             },
       error: function (xhr, status, err) {
         console.error(this.url, status, err.toString())
@@ -80,6 +82,13 @@ export default class Signup extends Component {
             name="password2"
             placeholder="Password again"
             value={this.state.password2}
+            onChange={this.onChange} />
+          <input type="submit" value="Post" />
+          <input
+            type="text"
+            name="friends"
+            placeholder="friends"
+            value={this.state.friends}
             onChange={this.onChange} />
           <input type="submit" value="Post" />
         </form>
