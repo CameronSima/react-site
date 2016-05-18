@@ -1,6 +1,39 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 var config = require('../../config')
+
+class Thread extends Component {
+  rawMarkup() {
+    var rawMarkup = marked(this.props.children.toString(), { sanitize: true })
+    return {__html: rawMarkup }
+  }
+
+  render() {
+    return (
+      <div className="thread">
+        <h2 className="threadAuthor">Dear {this.props.author}: </h2>
+        <span dangerouslySetInnerHTML={this.rawMarkup()} />
+      </div>
+      )
+  }
+}
+
+class ThreadList extends Component {
+  render() {
+    var threadNodes = this.props.data.map(function (thread) {
+      return (
+        <Thread author={ thread.author } key={ thread._id }>
+          { thread.text }
+        </Thread>
+      )
+    })
+    return (
+      <div className="threadList">
+        { threadNodes }
+      </div>
+      )
+  }
+}
 
 var ThreadForm = React.createClass({
 
@@ -9,7 +42,6 @@ var ThreadForm = React.createClass({
             text: '', 
             included: '',
             victim: '',
-            interval: config.pollInterval
             }
   },
   handleAuthorChange: function (e) {
@@ -75,6 +107,7 @@ var ThreadForm = React.createClass({
 
 var ThreadsBox = React.createClass({
   loadThreadsFromServer: function () {
+    console.log(this.state.pollInterval)
     $.ajax({
       url: config.apiUrl + 'threads',
       dataType: 'json',
@@ -88,6 +121,7 @@ var ThreadsBox = React.createClass({
     })
   },
   handleThreadSubmit: function (thread) {
+    console.log(this.state.pollInterval)
     var threads = this.state.data
     var newThreads = threads.concat([thread])
     this.setState({data: newThreads})
@@ -106,11 +140,12 @@ var ThreadsBox = React.createClass({
     })
   },
   getInitialState: function () {
-    return {data: []}
+    return {data: [],
+            pollInterval: config.pollInterval}
   },
   componentDidMount: function () {
     this.loadThreadsFromServer()
-    setInterval(this.loadThreadsFromServer, this.state.pollInterval)
+    setInterval(this.loadThreadsFromServer, config.pollInterval)
   },
   componentWillUnmount: function () {
     this.state.pollInterval = false;
@@ -119,9 +154,8 @@ var ThreadsBox = React.createClass({
     return (
     <div className="threadsBox">
       <h1>Feed</h1>
-      <div>
-        <ThreadForm onThreadSubmit={this.handleThreadSubmit} />
-      </div>
+      <ThreadList data={ this.state.data } />
+      <ThreadForm onThreadSubmit={ this.handleThreadSubmit } />
     </div>
     )
   }

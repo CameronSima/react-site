@@ -1,6 +1,9 @@
+var mongoose = require('mongoose')
+
 var login = require('./login')
 var signup = require('./signup')
-var User = require('../models/User')
+var facebook = require('./facebook')
+var User = mongoose.model('User')
 
 module.exports = function (passport) {
   passport.serializeUser(function (user, done) {
@@ -14,4 +17,5 @@ module.exports = function (passport) {
   })
   login(passport)
   signup(passport)
+  facebook(passport)
 }

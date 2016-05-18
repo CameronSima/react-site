@@ -6,10 +6,21 @@ var UserSchema = new mongoose.Schema({
   username: { type: String, lowercase: true, unique: true },
   password: String,
   friends: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
   // used for 'History' page
   threadsParticipatedIn: { type: mongoose.Schema.ObjectId, ref: 'Thread' },
+
   // An array of Thread Ids
-  feed: [ String ]
+  feed: [ String ],
+
+  // Facebook login info
+  facebook: {
+    id: String,
+    token: String,
+    email: String,
+    name: String,
+    friends: [ String ]
+  }
 })
 
 UserSchema.methods.setPassword = function (password) {

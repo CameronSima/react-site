@@ -1,3 +1,7 @@
+import React from 'react';
+
+var config = require('../../config');
+
 var Comment = React.createClass({
   rawMarkup: function () {
     var rawMarkup = marked(this.props.children.toString(), {sanitize: true})
@@ -14,10 +18,13 @@ var Comment = React.createClass({
   }
 })
 
+var count = 0
+
 var CommentBox = React.createClass({
   loadCommentsFromServer: function () {
+    console.log(this.props.pollInterval)
     $.ajax({
-      url: this.props.url,
+      url: config.apiUrl + 'comments',
       dataType: 'json',
       cache: false,
       success: function (data) {
@@ -37,7 +44,7 @@ var CommentBox = React.createClass({
     var newComments = comments.concat([comment])
     this.setState({data: newComments})
     $.ajax({
-      url: this.props.url,
+      url: config.apiUrl + 'comments',
       dataType: 'json',
       type: 'POST',
       data: comment,
@@ -51,11 +58,15 @@ var CommentBox = React.createClass({
     })
   },
   getInitialState: function () {
-    return {data: []}
+    return {data: [],
+            pollInterval: config.pollInterval}
+  },
+  componentWillUnmount: function () {
+    this.state.pollInterval = false;
   },
   componentDidMount: function () {
     this.loadCommentsFromServer()
-    setInterval(this.loadCommentsFromServer, this.props.pollInterval)
+    setInterval(this.loadCommentsFromServer, this.state.pollInterval)
   },
   render: function () {
     return (

@@ -24,7 +24,7 @@ var initPassport = require('./passport/init')
 initPassport(passport)
 
 // connect to MongoDB
-mongoose.connect('mongodb://localhost/shitlistanitsocialmedia', function (err, db) {
+mongoose.connect('mongodb://localhost/shitlistanitsocialmediatest', function (err, db) {
   if (!err) {
     console.log('Connected to Database. . .')
   } else {

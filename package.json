@@ -45,6 +45,7 @@
     "express-session": "latest",
     "mongoose": "3.8",
     "passport": "^0.3.0",
+    "passport-facebook": "latest",
     "passport-local": "^1.0.0",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",

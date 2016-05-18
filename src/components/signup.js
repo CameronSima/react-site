@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 
 var config = require('../../config')
 
+class FacebookLogin extends Component {
+  render() {
+    return (
+      <button type="submit" formAction="http://localhost:3001/api/auth/facebook">Facebook</button>
+      )
+  }
+}
+
 export default class Signup extends Component {
 
   constructor(props) {
@@ -76,6 +84,9 @@ export default class Signup extends Component {
           <input type="submit" value="Post" />
         </form>
         <label id="error">{this.state.error}</label>
+        <div>
+        <FacebookLogin />
+      </div>
       </div>
       )
   }

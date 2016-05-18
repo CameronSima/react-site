@@ -46,6 +46,15 @@ module.exports = function (passport) {
     // failureRedirect: 'http://localhost:3000/signup'
   }))
 
+  router.get('/api/auth/facebook', 
+    passport.authenticate('facebook', { authType: 'rerequest' }),
+    router.get('/api/auth/facebook/callback',
+      passport.authenticate('facebook', {
+        successRedirect: '/',
+        failureRedirect: '/'
+      }))
+    )
+
   router.get('/api/comments', function (req, res, next) {
     Comment.find(function (err, posts) {
       if (err) { return next(err); }
