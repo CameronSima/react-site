@@ -45,9 +45,18 @@ export default class Signup extends Component {
             error: "Passwords didn't match",
             username: "",
             password1: "",
-            password2: ""
+            password2: "",
+            friends: ""
           })
         }
+    this.setState({
+      error: "",
+      username: "",
+      password1: "",
+      password2: "",
+      friends: ""
+
+    }) 
     $.ajax({
       url: config.apiUrl + 'signup',
       dataType: 'json',
@@ -56,6 +65,10 @@ export default class Signup extends Component {
               password: password1,
               friends: friends
             },
+      success: function (user) {
+        this.setState({user: user})
+        console.log(user)
+      }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.url, status, err.toString())
       }.bind(this)}
@@ -83,7 +96,6 @@ export default class Signup extends Component {
             placeholder="Password again"
             value={this.state.password2}
             onChange={this.onChange} />
-          <input type="submit" value="Post" />
           <input
             type="text"
             name="friends"

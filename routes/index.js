@@ -41,10 +41,17 @@ module.exports = function (passport) {
     res.redirect('/')
   })
 
-  router.post('/api/signup', passport.authenticate('signup', {
-    successRedirect: '/'
-    // failureRedirect: 'http://localhost:3000/signup'
-  }))
+  router.post('/api/signup', function (req, res, next) {
+    passport.authenticate('signup', function (err, user, info) {
+      if (err) {
+        return res.json(err)
+      }
+      if (!user) {
+        return
+      }
+      res.json(user)
+    })(req, res, next)
+  })
 
   router.get('/api/auth/facebook', 
     passport.authenticate('facebook', { authType: 'rerequest' }),
@@ -55,6 +62,21 @@ module.exports = function (passport) {
       }))
     )
 
+  // add thread ids to user 
+  router.get('/addthread/:threadid/:userid', function (req, res, next) {
+    console.log(req.params.threadid)
+    console.log(req.params.userid)
+    User.findOne({ '_id': req.params.userid }, function (err, user) {
+      user.feed.push(req.params.threadid)
+      user.save(function (err) {
+        if (err) {
+          console.log(err)
+        }
+      })
+    })
+  })
+
+  // Get all comments, testing only
   router.get('/api/comments', function (req, res, next) {
     Comment.find(function (err, posts) {
       if (err) { return next(err); }
@@ -71,6 +93,22 @@ module.exports = function (passport) {
     })
   })
 
+  router.get('/api/feed/:id', function (req, res, next) {
+
+    // Find the user object using the id passed in from the url,
+    // get its feed array, and return threads 
+    var userId = req.params.id
+    User.findOne({'_id': userId}, function (err, user) {
+      Thread.find({
+        '_id': { $in: user.feed }
+      }).sort('-date').exec(function (err, threads) {
+          console.log(threads)
+          res.json(threads)
+      })
+    })
+  })
+ 
+  // Get all threads; testing only
   router.get('/api/threads', function (req, res, next) {
     Thread.find(function (err, threads) {
       if (err) { return next(err); }
@@ -81,15 +119,24 @@ module.exports = function (passport) {
   router.post('/api/threads', function (req, res, next) {
     
     // For now, turn CSV data into javascript array
-    var includedArr = req.body.included.split(',')
+    var includedArr = req.body.included.split(', ')
     req.body.included = includedArr
 
-    // Push 
-    User.find({
-    'username': { $in: includedArr }
-}, function(err, docs){
-     
-})
+    // Fan out thread id to tagged users 
+    process.NextTick(function () {
+      User.find({
+      'username': { $in: includedArr }
+      }, function(err, users) {
+           forEach(users, function (user) {
+            user.feed.push(req.body._id)
+            user.save(function (err) {
+              if (err)
+                throw err
+            })
+          })
+        })
+      })
+
 
     var thread = new Thread(req.body)
     console.log(thread)
@@ -99,6 +146,7 @@ module.exports = function (passport) {
     })
   })
 
+  // Return all users
   router.get('/api/users', function (req, res, next) {
   User.find(function (err, users) {
     if (err) { return next(err) }

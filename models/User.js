@@ -1,5 +1,5 @@
 var mongoose = require('mongoose')
-var bCrypt = require('bcrypt')
+var bCrypt = require('bcryptjs')
 // var jwt = require('jsonwebtoken')
 
 var UserSchema = new mongoose.Schema({
@@ -32,4 +32,4 @@ UserSchema.methods.validPassword = function (password) {
   return this.password === saltedHash
 }
 
-mongoose.model('User', UserSchema)
+module.exports = mongoose.model('User', UserSchema)

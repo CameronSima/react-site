@@ -16,11 +16,12 @@
   "homepage": "",
 
   "jest": {
-    "unMockedModulePathPatterns": [
+    "unmockedModulePathPatterns": [
     "/Projects/Node/shit-list/node_modules/react/",
     "/Projects/Node/shit-list/node_modules/react-dom/",
     "/Projects/Node/shit-list/node_modules/react-addons-test-utils/"
-    ]
+    ],
+    "testDirectoryName": "__test__"
   },
   "devDependencies": {
     "babel-core": "^6.0.20",
@@ -33,12 +34,13 @@
     "babel-preset-stage-0": "^6.0.15",
     "eslint": "^1.10.3",
     "eslint-plugin-react": "^3.6.2",
+    "jest": "latest",
     "react-hot-loader": "^1.3.0",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.12.1"
   },
-  "dependencies": {
-    "bcrypt": "0.8.5",
+  "dependejsncies": {
+    "bcrypt": "latest",
     "body-parser": "~1.13.2",
     "cookie-parser": "~1.3.5",
     "express": "~4.13.1",
