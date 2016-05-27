@@ -1,0 +1,13 @@
+.threadsBox {
+	display: inline-block;
+	width: 400px;
+	float: right;
+	overflow-y: scroll;
+    overflow-x:hidden;
+}
+
+.feedNav h1 {
+	display: inline;
+	padding: 5px;
+}
+

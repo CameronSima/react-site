@@ -97,6 +97,8 @@ function addThread(author, text, included, callback) {
 	newThread.text = text
 	newThread.author = author
 	newThread.included = included
+	console.log(included[included.length-1])
+	newThread.victim = included[included.length-1]
 	
 
 	async.each(included, (person) => {

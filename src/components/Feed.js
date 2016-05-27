@@ -11,10 +11,11 @@ class Thread extends Component {
   render() {
     return (
       <div className="thread">
-        <h2 className="threadVictim">Dear {this.props.victim}: </h2>
+        <h4 className="threadVictim">Dear {this.props.victim}: </h4>
         <span dangerouslySetInnerHTML={this.rawMarkup()} />
         <p>signed,</p>
         <div>{this.props.author} and {this.props.ct} others.</div>
+        <hr></hr>
       </div>
       )
   }
@@ -24,7 +25,7 @@ class ThreadList extends Component {
   render() {
     var threadNodes = this.props.data.map(function (thread) {
       return (
-        <Thread victim={ thread.victim } author={ thread.author } ct={ thread.ct } key={ thread._id }>
+        <Thread victim={ thread.victim } author={ thread.author } ct={ thread.included.length } key={ thread._id }>
           { thread.text }
         </Thread>
       )
@@ -64,7 +65,6 @@ var ThreadForm = React.createClass({
     var author = this.state.author.trim()
     var text = this.state.text.trim()
     var included = this.state.included.trim()
-    var includedCt = this.state.included.split(', ').length
     var victim = this.state.victim.trim()
     if (!text || !author || !included || !victim) {
       return
@@ -72,14 +72,12 @@ var ThreadForm = React.createClass({
     this.props.onThreadSubmit({author: author, 
                                 text: text, 
                                 included: included,
-                                victim: victim,
-                                ct: includedCt.toString()
+                                victim: victim
                               })
     this.setState({author: '', 
                   text: '', 
                   included: '',
                   victim: '',
-                  ct: ''
                   })
   },
   render: function () {
@@ -157,7 +155,10 @@ var ThreadsBox = React.createClass({
   render: function () {
     return (
     <div className="threadsBox">
-      <h1>Feed</h1>
+      <div className="feedNav">
+        <h1>Home</h1>
+        <h1>Heat</h1>
+      </div>
       <ThreadList data={ this.state.data } />
       <ThreadForm onThreadSubmit={ this.handleThreadSubmit } />
     </div>

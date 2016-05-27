@@ -13,7 +13,8 @@ module.exports = function (passport) {
   router.use(function (req, res, next) {
     // Set permissive CORS header - this allows this server to be used only as
     // an API server in conjunction with something like webpack-dev-server.
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Content-Type', 'json')
 
     // Disable caching so we'll always get the latest comments.
     res.setHeader('Cache-Control', 'no-cache')
@@ -26,7 +27,7 @@ module.exports = function (passport) {
     return next()
   } else {
     console.log("NOT LOGGED IN")
-    res.redirect('http://localhost:3001/api/auth/facebook')
+    res.redirect('/api/auth/facebook')
   }
 }
 
@@ -126,7 +127,7 @@ module.exports = function (passport) {
         '_id': { $in: user.feed }
       }).sort('-date').exec(function (err, threads) {
           console.log(threads)
-          res.json(threads)
+          res.jsonp(threads)
       })
     })
   })
