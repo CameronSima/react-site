@@ -3,7 +3,7 @@ module.exports = {
   pollInterval: 5000,
   expressPort: 3001,
   webpackServerPort: 3000,
-  testdb: 'testdb'
+  testdb: 'testdb',
 
   auth: {
     facebookAuth: {

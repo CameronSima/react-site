@@ -11,7 +11,7 @@ var UserSchema = new mongoose.Schema({
   threadsParticipatedIn: { type: mongoose.Schema.ObjectId, ref: 'Thread' },
 
   // An array of Thread Ids
-  feed: [ String ],
+  feed: [ {type: mongoose.Schema.Types.ObjectId, ref: 'Thread'} ],
 
   // Facebook login info
   facebook: {

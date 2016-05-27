@@ -19,4 +19,4 @@ var ThreadSchema = new mongoose.Schema({
   ct: String 
 })
 
-mongoose.model('Thread', ThreadSchema)
+module.exports = mongoose.model('Thread', ThreadSchema)

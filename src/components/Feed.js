@@ -114,8 +114,8 @@ var ThreadForm = React.createClass({
 var ThreadsBox = React.createClass({
   loadThreadsFromServer: function () {
     $.ajax({
-      url: config.apiUrl + 'threads',
-      dataType: 'json',
+      url: config.apiUrl + 'feed',
+      dataType: 'jsonp',
       cache: false,
       success: function (data) {
         this.setState({data: data})

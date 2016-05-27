@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.js",
     "lint": "eslint src",
-    "test": "jest"
+    "test": "jest",
+    "feed-test": "node scripts/feed-test.js"
   },
   "repository": {
     "type": "git",
@@ -35,20 +36,22 @@
     "eslint": "^1.10.3",
     "eslint-plugin-react": "^3.6.2",
     "jest": "latest",
+    "mocha": "latest",
     "react-hot-loader": "^1.3.0",
+    "sinon": "latest",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.12.1"
   },
-  "dependejsncies": {
+  "dependencies": {
     "bcrypt": "latest",
-    "body-parser": "~1.13.2",
-    "cookie-parser": "~1.3.5",
+    "body-parser": "latest",
+    "cookie-parser": "latest",
     "express": "~4.13.1",
     "express-session": "latest",
     "mongoose": "3.8",
-    "passport": "^0.3.0",
+    "passport": "latest",
     "passport-facebook": "latest",
-    "passport-local": "^1.0.0",
+    "passport-local": "latest",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
     "react-router": "2.4.0"

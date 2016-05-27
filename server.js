@@ -1,10 +1,10 @@
 var settings = require('./config')
 
 // Express server, which handles requests on port 3001
-
 var path = require('path')
 var express = require('express')
 var bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
 var mongoose = require('mongoose')
 var passport = require('passport')
 var session = require('express-session')
@@ -15,6 +15,8 @@ app.set('port', settings.expressPort)
 app.use('/', express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
+
+app.use(cookieParser())
 
 app.use(session({secret: 'fart', resave: true, saveUninitialized: true}))
 
@@ -64,3 +66,4 @@ new WebpackDevServer(webpack(config), {
 
   console.log('Webpack dev react server listening at http://localhost:' + settings.webpackServerPort +  '/');
 });
+
