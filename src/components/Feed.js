@@ -110,19 +110,19 @@ var ThreadForm = React.createClass({
 })
 
 var ThreadsBox = React.createClass({
-  loadThreadsFromServer: function () {
-    $.ajax({
-      url: config.apiUrl + 'feed',
-      dataType: 'jsonp',
-      cache: false,
-      success: function (data) {
-        this.setState({data: data})
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.url, status, err.toString())
-      }.bind(this)
-    })
-  },
+  // loadThreadsFromServer: function () {
+  //   $.ajax({
+  //     url: config.apiUrl + 'feed',
+  //     dataType: 'jsonp',
+  //     cache: false,
+  //     success: function (data) {
+  //       this.setState({data: data})
+  //     }.bind(this),
+  //     error: function (xhr, status, err) {
+  //       console.error(this.url, status, err.toString())
+  //     }.bind(this)
+  //   })
+  // },
   handleThreadSubmit: function (thread) {
     var threads = this.state.data
     var newThreads = threads.concat([thread])
@@ -141,17 +141,17 @@ var ThreadsBox = React.createClass({
       }.bind(this)
     })
   },
-  getInitialState: function () {
-    return {data: [],
-            pollInterval: config.pollInterval}
-  },
-  componentDidMount: function () {
-    this.loadThreadsFromServer()
-    setInterval(this.loadThreadsFromServer, config.pollInterval)
-  },
-  componentWillUnmount: function () {
-    this.state.pollInterval = false;
-  },
+  // getInitialState: function () {
+  //   return {data: [],
+  //           pollInterval: config.pollInterval}
+  // },
+  // componentDidMount: function () {
+  //   this.loadThreadsFromServer()
+  //   setInterval(this.loadThreadsFromServer, this.state.pollInterval)
+  // },
+  // componentWillUnmount: function () {
+  //   this.state.pollInterval = false;
+  // },
   render: function () {
     return (
     <div className="threadsBox">

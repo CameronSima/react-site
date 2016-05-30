@@ -118,11 +118,32 @@ module.exports = function (passport) {
     })
   })
 
+  // Get logged-in user's User object, populate feed and friends fields,
+  // and build json response
+  router.get('/api/frontpage', isAuthenticated, function (req, res, next) {
+    User
+    .findOne({ '_id': req.user._id })
+    .populate('feed')
+    .populate('friends')
+    .exec(function (err, userData) {
+      if (err) {
+        console.log(err)
+      } else {
+        // remove some of the data, such as passwords, etc.
+        // that the client shouldn't recieve about his friends,
+        // but for now just pass the whole fully-populated user object
+        res.json(userData)
+
+      }
+    })
+  })
+
   // get logged in users' feed array, and return threads 
   router.get('/api/feed', isAuthenticated, function (req, res, next) {
     User.findOne({'_id': req.user._id }, function (err, user) {
       // To do: use populate() to return the whole user
-      // object along with threads, instead of just the threads
+      // object along with threads and friends, instead of just 
+      // the threads
       Thread.find({
         '_id': { $in: user.feed }
       }).sort('-date').exec(function (err, threads) {

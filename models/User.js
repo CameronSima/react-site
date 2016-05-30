@@ -5,6 +5,8 @@ var bCrypt = require('bcryptjs')
 var UserSchema = new mongoose.Schema({
   username: { type: String, lowercase: true, unique: true },
   password: String,
+  // Friends the user manually selected to import from
+  // facebook
   friends: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 
   // used for 'History' page
@@ -12,6 +14,11 @@ var UserSchema = new mongoose.Schema({
 
   // An array of Thread Ids
   feed: [ {type: mongoose.Schema.Types.ObjectId, ref: 'Thread'} ],
+
+  // Keep track of when the user posts/was posted about so friends 
+  // list can ordered accordingly
+  lastPosted: { type: Date },
+  lastPostedAbout: { type: Date },
 
   // Facebook login info
   facebook: {

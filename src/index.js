@@ -3,7 +3,8 @@ import { Router, Route, IndexRoute, hashHistory, browserHistory, NotFoundView } 
 import ReactDOM from 'react-dom';
 // import App from './components/App';
 import NavBar from './components/NavBar';
-import Feed from './components/Feed';
+// import Feed from './components/Feed';
+import FrontPage from './components/FrontPage';
 import Signup from './components/signup';
 import Comments from './components/Comments';
 
@@ -12,7 +13,7 @@ const config = require('../config');
 ReactDOM.render((
                 <Router history = { browserHistory }>
                   <Route path='/' component={ NavBar }>
-                    <IndexRoute component={ Feed } />
+                    <IndexRoute component={ FrontPage } />
                     <Route path='signup' component={ Signup } />
                     <Route path='comments' component={ Comments } />
                     <Route path='*' component={ NotFoundView } />

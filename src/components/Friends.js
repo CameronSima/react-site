@@ -3,35 +3,28 @@ import { Link } from 'react-router'
 
 const config = require('../../config')
 
-export default class FriendsBox extends Component {
-	constructor(props) {
-		super(props)
-		this.state = data = {}
+class FriendContainer extends Component {
+	rawMarkup() {
+		let rawMarkup = marked(this.props.children.toString(), {sanitize: true })
+		return {__html: rawMarkup }
 	}
-	loadFriendsFromServer() {
-		$ajax({
-			url: config.apiUrl + 'friendslist',
-			dataType: 'jsonp',
-			cache: false,
-			success: (data) => {
-				this.setState({data:data})
-			}.bind(this),
-			error: (xhr, status, err) => {
-				console.error(this.url, status, err.toString())
-			}.bind(this)
+
+	render() {
+		return (
+			<div className="friend">
+				Friend goes here
+			</div>
+			)
+	}
+}
+
+export default class FriendsBox extends Component {
+	render() {
+		let threadNodes = this.props.data.friendsData.map((friend) => {
+			return (
+				<FriendContainer>
+				</FriendContainer>
+				)
 		})
 	}
-
-	componentDidMount() {
-		this.loadFriendsFromServer()
-		setInterval(this.loadFriendsFromServer, config.friendsListPollInterval)
-	}
-
-	componentWillUnmount() {
-		// stop polling once we navigate away from the main page,
-		// e.g. to the signup page
-		this.state.friendsListPollInterval = false
-	}
-
-
 }
