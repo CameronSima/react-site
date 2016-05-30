@@ -1,6 +1,7 @@
 module.exports = {
   apiUrl: 'http://localhost:3001/api/',
   pollInterval: 5000,
+  friendsListPollInterval: 5000,
   expressPort: 3001,
   webpackServerPort: 3000,
   testdb: 'testdb',
