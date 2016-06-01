@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 
-import NavButton from './NavButton'
+import NavButtonsList from './NavButtons'
 
 const config = require('../../config')
 
@@ -24,8 +24,8 @@ class FriendsList extends Component {
 	render() {
 		var friendNodes
 		 if (this.props.data) {
-		 console.log("PROPS FROM FRIENDS")
-		 console.log(this.props.data[0].name)
+		 // console.log("PROPS FROM FRIENDS")
+		 // console.log(this.props.data[0].name)
 		var friendNodes = this.props.data.map((friend) => {
 			return (
 					<FriendContainer friend={friend.name} key={friend.id}/>
@@ -47,16 +47,10 @@ class FriendsList extends Component {
 		this.state = {}
 		}
 		render() {
-			var buttons = ['hot', 'favorites'].map((button) => {
-				return (
-					<NavButton title={ button } />
-					)
-			})
-
 			return (
 				<div className="friendsBox">
 					<div className="friendsNav">
-						{ buttons }
+						<NavButtonsList buttons={ ['hot', 'favorites'] } />
 					</div>
 					<FriendsList data={this.props.data} />
 				</div>
