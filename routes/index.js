@@ -14,7 +14,7 @@ module.exports = function (passport) {
     // Set permissive CORS header - this allows this server to be used only as
     // an API server in conjunction with something like webpack-dev-server.
     res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Content-Type', 'json')
+    // res.setHeader('Content-Type', 'json')
 
     // Disable caching so we'll always get the latest comments.
     res.setHeader('Cache-Control', 'no-cache')
@@ -132,7 +132,8 @@ module.exports = function (passport) {
         // remove some of the data, such as passwords, etc.
         // that the client shouldn't recieve about his friends,
         // but for now just pass the whole fully-populated user object
-        res.json(userData)
+        console.log(userData)
+        res.jsonp(userData)
 
       }
     })

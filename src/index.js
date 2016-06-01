@@ -3,7 +3,7 @@ import { Router, Route, IndexRoute, hashHistory, browserHistory, NotFoundView } 
 import ReactDOM from 'react-dom';
 // import App from './components/App';
 import NavBar from './components/NavBar';
-// import Feed from './components/Feed';
+import Feed from './components/Feed';
 import FrontPage from './components/FrontPage';
 import Signup from './components/signup';
 import Comments from './components/Comments';

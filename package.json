@@ -48,7 +48,7 @@
     "cookie-parser": "latest",
     "express": "~4.13.1",
     "express-session": "latest",
-    "mongoose": "3.8",
+    "mongoose": "latest",
     "passport": "latest",
     "passport-facebook": "latest",
     "passport-local": "latest",

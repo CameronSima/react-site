@@ -62,19 +62,19 @@ var ThreadForm = React.createClass({
   },
   handleSubmit: function (e) {
     e.preventDefault()
-    var author = this.state.author.trim()
     var text = this.state.text.trim()
     var included = this.state.included.trim()
     var victim = this.state.victim.trim()
-    if (!text || !author || !included || !victim) {
+    if (!text || !included || !victim) {
       return
     }
-    this.props.onThreadSubmit({author: author, 
+    this.props.onThreadSubmit({ 
+                                // author: 
                                 text: text, 
                                 included: included,
                                 victim: victim
                               })
-    this.setState({author: '', 
+    this.setState({
                   text: '', 
                   included: '',
                   victim: '',
@@ -83,11 +83,6 @@ var ThreadForm = React.createClass({
   render: function () {
     return (
     <form className="threadForm" onSubmit={this.handleSubmit}>
-      <input
-        type="text"
-        placeholder="Your name"
-        value={this.state.author}
-        onChange={this.handleAuthorChange} />
       <input
         type="text"
         placeholder="Say something..."
@@ -110,25 +105,12 @@ var ThreadForm = React.createClass({
 })
 
 var ThreadsBox = React.createClass({
-  // loadThreadsFromServer: function () {
-  //   $.ajax({
-  //     url: config.apiUrl + 'feed',
-  //     dataType: 'jsonp',
-  //     cache: false,
-  //     success: function (data) {
-  //       this.setState({data: data})
-  //     }.bind(this),
-  //     error: function (xhr, status, err) {
-  //       console.error(this.url, status, err.toString())
-  //     }.bind(this)
-  //   })
-  // },
   handleThreadSubmit: function (thread) {
     var threads = this.state.data
     var newThreads = threads.concat([thread])
     this.setState({data: newThreads})
     $.ajax({
-      url: config.apiUrl + 'threads',
+      url: config.apiUrl + 'frontpage',
       dataType: 'json',
       type: 'POST',
       data: thread,
@@ -141,23 +123,17 @@ var ThreadsBox = React.createClass({
       }.bind(this)
     })
   },
-  // getInitialState: function () {
-  //   return {data: [],
-  //           pollInterval: config.pollInterval}
-  // },
-  // componentDidMount: function () {
-  //   this.loadThreadsFromServer()
-  //   setInterval(this.loadThreadsFromServer, this.state.pollInterval)
-  // },
-  // componentWillUnmount: function () {
-  //   this.state.pollInterval = false;
-  // },
+  getInitialState: function () {
+    return {data: []}
+  },
   render: function () {
+    // console.log("PROPS FROM FEED")
+    // console.log(this.props.data)
     return (
     <div className="threadsBox">
       <div className="feedNav">
-        <h1>Home</h1>
-        <h1>Heat</h1>
+        <h5>Home</h5>
+        <h5>Heat</h5>
       </div>
       <ThreadList data={ this.state.data } />
       <ThreadForm onThreadSubmit={ this.handleThreadSubmit } />

@@ -20,14 +20,21 @@ var UserSchema = new mongoose.Schema({
   lastPosted: { type: Date },
   lastPostedAbout: { type: Date },
 
+  facebookId: String,
+  facebookToken: String,
+  facebookEmail: String,
+  facebookName: String,
+  facebookFriends: Object
+
+
   // Facebook login info
-  facebook: {
-    id: String,
-    token: String,
-    email: String,
-    name: String,
-    friends: [ String ]
-  }
+  // facebook: [
+  //   id: String,
+  //   token: String,
+  //   email: String,
+  //   name: String,
+  //   friends: Object 
+  // ]
 })
 
 UserSchema.methods.setPassword = function (password) {

@@ -5,9 +5,14 @@
 	overflow-y: scroll;
     overflow-x:hidden;
     margin: 8px;
+    margin-top: 100px;
 }
 
-.feedNav h1 {
+.feedNav {
+	text-align: center;
+}
+
+.feedNav h5 {
 	display: inline;
 	padding: 5px;
 }

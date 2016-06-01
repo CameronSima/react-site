@@ -2,18 +2,35 @@
 // handles retrieving data for both
 
 import React, { Component } from 'react'
-import Feed from './Feed.js'
+import FeedBox from './Feed.js'
 import FriendsBox from './Friends'
 
-const config = require('../config')
+const config = require('../../config')
 
-export default class FrontPage extents Component {
+export default class FrontPage extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			data: [],
+			data: {},
 			pollInterval: config.pollInterval
 		}
+		this.loadDataFromServer = this.loadDataFromServer.bind(this)
+	}
+
+	loadDataFromServer() {
+		$.ajax({ 
+			url: config.apiUrl + 'frontpage',
+			dataType: 'jsonp',
+			cache: false,
+			success: (data) => {
+				// console.log("DATA FROM AJAX REQUEST")
+				// console.log(data)
+				this.setState({data: data})
+			},
+			error: (xhr, status, err) => {
+				console.error(this.url, status, error.toString())
+			}
+		})
 	}
 	componentDidMount() {
 		this.loadDataFromServer()
@@ -22,25 +39,15 @@ export default class FrontPage extents Component {
 	componentWillUnmount() {
 		this.state.pollInterval = false
 	}
-	loadDataFromServer() {
-		$ajax({ 
-			url: config.apiUrl + 'frontpage',
-			dataType: 'json',
-			cache: false,
-			success: (data) => {
-				this.setState({data: data})
-			}.bind(this),
-			error: (xhr, status, err) => {
-				console.error(this.url, status, error.toString())
-			}.bind(this)
-			}
-		})
 		render() {
+			// console.log("STATE FROM FRONTPAGE")
+			// console.log(this.state.data)
 			return (
 				<div className="FrontPage">
-					<FriendsBox data={ this.state.data.friendsData } />
-					<FeedBox data={ this.state.data.feedData } />
+					<FriendsBox data={ this.state.data.facebookFriends } />
+					<FeedBox data={ this.state.data.feed } />		
 				</div>
 				)
 		}
 	}
+
