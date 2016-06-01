@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 
+import NavButton from './NavButton'
+
 const config = require('../../config')
 
 class FriendContainer extends Component {
@@ -12,6 +14,7 @@ class FriendContainer extends Component {
 		return (
 			<div className="friend">
 				{ this.props.friend}
+				<hr></hr>
 			</div>
 			)
 	}
@@ -44,8 +47,17 @@ class FriendsList extends Component {
 		this.state = {}
 		}
 		render() {
+			var buttons = ['hot', 'favorites'].map((button) => {
+				return (
+					<NavButton title={ button } />
+					)
+			})
+
 			return (
 				<div className="friendsBox">
+					<div className="friendsNav">
+						{ buttons }
+					</div>
 					<FriendsList data={this.props.data} />
 				</div>
 				)
