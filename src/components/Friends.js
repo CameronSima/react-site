@@ -16,12 +16,8 @@ class FriendContainer extends Component {
 			)
 	}
 }
-export default class FriendsBox extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {}
 
-	}
+class FriendsList extends Component {
 	render() {
 		var friendNodes
 		 if (this.props.data) {
@@ -39,5 +35,19 @@ export default class FriendsBox extends Component {
 				{ friendNodes }
 			</div>
 			)
+		}
+	}
+
+	export default class FriendsBox extends Component {
+		constructor(props) {
+		super(props)
+		this.state = {}
+		}
+		render() {
+			return (
+				<div className="friendsBox">
+					<FriendsList data={this.props.data} />
+				</div>
+				)
 		}
 	}
