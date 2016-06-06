@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 class NavButton extends Component {
 	render() {
 		return (
-			<button type="button" className="btn btn-link">
+			<button type="button" className="btn btn-link btn-sm">
 				{ this.props.title }
 			</button>
 		)
@@ -17,13 +17,11 @@ export default class NavButtonsList extends Component {
 	render() {
 		var buttonNodes = this.props.buttons.map((button) => {
 			return (
-				<NavButton title={ button } />
+				<NavButton title={ button } key={ button }/>
 			)
 		})
-		console.log(typeof buttonNodes)
-		console.log(buttonNodes)
 		return (
-			<div className="navButtons">
+			<div className="navButtons" id={ this.props.divId }>
 				{ buttonNodes }
 			</div>
 			)

@@ -4,6 +4,7 @@
 import React, { Component } from 'react'
 import FeedBox from './Feed.js'
 import FriendsBox from './Friends'
+import Dashboard from './Dashboard'
 
 const config = require('../../config')
 
@@ -45,7 +46,7 @@ export default class FrontPage extends Component {
 			return (
 				<div className="FrontPage">
 					<FriendsBox data={ this.state.data.facebookFriends } />
-					<FeedBox data={ this.state.data.feed } />		
+					<FeedBox feed={ this.state.data.feed } friends={ this.state.data.facebookFriends } />		
 				</div>
 				)
 		}

@@ -13,7 +13,10 @@ class FriendContainer extends Component {
 	render() {
 		return (
 			<div className="friend">
-				{ this.props.friend}
+				<p>
+					{ this.props.friend}
+				</p>
+				<NavButtonsList buttons={['from', 'about']} />
 				<hr></hr>
 			</div>
 			)
@@ -32,7 +35,6 @@ class FriendsList extends Component {
 				)
 		})
 	 }
-	 console.log(friendNodes) 
 		return (
 			<div className="friendList">
 				{ friendNodes }
@@ -48,11 +50,10 @@ class FriendsList extends Component {
 		}
 		render() {
 			return (
-				<div className="friendsBox">
-					<div className="friendsNav">
-						<NavButtonsList buttons={ ['hot', 'favorites'] } />
-					</div>
+				<div id="friendsBox">
+					<NavButtonsList divId={'friendsNav'} buttons={['hot', 'favorites']} />
 					<FriendsList data={this.props.data} />
+					<NavButtonsList divId={'addRemoveFriends'} buttons={['add', 'remove']} />
 				</div>
 				)
 		}

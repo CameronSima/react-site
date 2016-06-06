@@ -23,10 +23,10 @@ module.exports = function (passport) {
 
   var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log("LOGGED IN")
+    // console.log("LOGGED IN")
     return next()
   } else {
-    console.log("NOT LOGGED IN")
+    // console.log("NOT LOGGED IN")
     res.redirect('/api/auth/facebook')
   }
 }
@@ -78,18 +78,6 @@ module.exports = function (passport) {
       })
     }
   );
-     
-
-  // add thread ids to user 
-  // router.post('/addthread/:threadid/:userid', function (req, res, next) {
-  //   User.update(
-  //     { _id: req.params.userid },
-  //     {$push: {'feed': req.params.threadid}},
-  //     {upsert: true}, function (err, data) {
-  //       res.json(data)
-  //     }
-  //     })
-  // })
 
   // Get all comments, testing only
   router.get('/api/comments', function (req, res, next) {
@@ -132,7 +120,6 @@ module.exports = function (passport) {
         // remove some of the data, such as passwords, etc.
         // that the client shouldn't recieve about his friends,
         // but for now just pass the whole fully-populated user object
-        console.log(userData)
         res.jsonp(userData)
 
       }
@@ -162,12 +149,12 @@ module.exports = function (passport) {
     })
   })
 
-  router.post('/api/threads', function (req, res, next) {
-    var includedArr = req.body.split(', ')
-    req.body.included = includedArr
+  router.post('/api/threads', isAuthenticated, function (req, res, next) {
+    console.log(req.body)
+    var includedArr = req.body.included.split(', ')
 
     // Fan out thread id to included users
-    process.NextTick(function () {
+    process.nextTick(function () {
       User.update({ _id: {$in: includedArr}},
         { active: false },
         { multi: true },
@@ -180,6 +167,7 @@ module.exports = function (passport) {
     })
 
     // Create the new thread document and return it
+    req.body.author = req.user.username
     var thread = new Thread(req.body)
     console.log(thread)
     thread.save(function (err, thread) {

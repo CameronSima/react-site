@@ -1,33 +1,80 @@
+.body {
+	background-color: #fafafa;
+}
+
 .threadsBox {
 	display: inline-block;
-	width: 400px;
+	width: 500px;
 	float: right;
 	overflow-y: scroll;
     overflow-x:hidden;
-    margin: 8px;
-    margin-top: 100px;
+    margin: 100px 8px 8px 8px;
 }
 
-.feedNav {
+hr {
+	margin: 0px !important;
+}
+
+.navButtons {
 	text-align: center;
 }
 
-.feedNav h5 {
-	display: inline;
-	padding: 5px;
+.navButtons button {
+	border: 1px solid #efefef;
+  border-radius: 0px;
 }
 
-.friendsNav {
-	text-align: center;
+#friendsNav button {
+	border-bottom: 0px;
+	width: 85px;
 }
 
-.friendsNav h5 {
-	display: inline;
-	padding: 5px;
+#suggestions {
+	width: 250px;
 }
 
-.friendsBox {
+.friend .navButtons button {
+	border: none;
+}
+
+.friend p {
+	margin: 10px;
 	display: inline-block;
-	margin-top: 100px;
 }
 
+#addRemoveFriends button {
+	border-top: 0px;
+	width: 68px;
+}
+
+.friendList {
+
+	border: 1px solid #efefef;
+}
+
+#friendsBox {
+	width: 400px;
+	display: inline-block;
+	margin: 100px 8px 8px 8px
+}
+
+a.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    text-decoration: none;
+    color: initial;
+}
+
+.threadForm  {
+	width: 230px;
+}
+
+#taggedButton {
+	float: right;
+	margin: 20px;
+}
+
+.friendSuggestion {
+	cursor: pointer;
+}

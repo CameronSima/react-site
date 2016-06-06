@@ -5,7 +5,7 @@ var config = require('../../config')
 class FacebookLogin extends Component {
   render() {
     return (
-      <button type="submit" formAction="http://localhost:3001/api/auth/facebook">Facebook</button>
+      <a href="http://localhost:3001/api/auth/facebook" class="button">Log in with Facebook</a>
       )
   }
 }

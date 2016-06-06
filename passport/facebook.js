@@ -26,13 +26,13 @@ module.exports = function (passport) {
   function (token, refreshToken, profile, done) {
     // async
     process.nextTick(function () {
-
       console.log(profile._json.friends.data)
-      User.findOne({ 'facebook.id': profile.id }, function (err, user) {
+      User.findOne({ 'facebookId': profile.id }, function (err, user) {
         console.log("USER")
         console.log(user)
-        if (err)
+        if (err) {
           return done(err);
+        }
         if (user) {
           return done(null, user)
         } else {
