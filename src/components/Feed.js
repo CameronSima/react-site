@@ -49,12 +49,13 @@ class SuggestionsBox extends Component {
     this.state = { tagged: [] }
     this.populate = this.populate.bind(this)
   }
-  populate(e) {
+  populate(friendId) {
     var tagged = this.state.tagged
 
     // Prevent duplicates in tagged array
-    if (tagged.indexOf(e.target.innerHTML) === -1) {
-      tagged.push(e.target.innerHTML)
+    if (tagged.indexOf(friendId) === -1) {
+      console.log(friendId)
+      tagged.push(friendId)
       this.setState({tagged: tagged})
       this.props.handleTagged(this.state.tagged)
     }
@@ -66,7 +67,8 @@ class SuggestionsBox extends Component {
     if (this.props.suggestions) {
       suggestions = this.props.suggestions.map((friend) => {
         return (
-          <div className="friendSuggestion" onClick={ this.populate } key={ friend.id }>
+          <div className="friendSuggestion" onClick={ this.populate.bind(this, friend.id) } 
+                                            key={ friend.id }>
             <a>{ friend.name }</a>
             <hr></hr>
           </div>

@@ -129,55 +129,49 @@ module.exports = function (passport) {
     })
   })
 
-  // get logged in users' feed array, and return threads 
-  router.get('/api/feed', function (req, res, next) {
-    User.findOne({'_id': req.user._id }, function (err, user) {
-      // To do: use populate() to return the whole user
-      // object along with threads and friends, instead of just 
-      // the threads
-      Thread.find({
-        '_id': { $in: user.feed }
-      }).sort('-date').exec(function (err, threads) {
-          // console.log(threads)
-          res.jsonp(threads)
-      })
-    })
-  })
  
   // Get all threads; testing only
   router.get('/api/threads', function (req, res, next) {
     Thread.find(function (err, threads) {
       if (err) { return next(err); }
-      res.json(threads)
+      console.log(threads)
     })
   })
 
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
-    console.log(req.body)
+    // console.log(req.body)
     process.nextTick(function () {
 
       // Create the new thread document and return it
       req.body.author = req.user.username
       var thread = new Thread(req.body)
-      console.log(thread)
+      // console.log(thread)
       thread.save(function (err, thread) {
         if (err) {
           console.log(err)
           return next(err)
         }
-        // res.json(thread)
-
       })
       // Fan out thread id to included users
-      User.update({ _id: {$in: includedArr}},
-        { active: false },
-        { multi: true },
-        {$push: {'feed': thread._id},
-        function (err, data) {
-          if (err) {
-            console.log(err)
-          }
-        }})
+      req.body.included.push(req.user.facebookId)
+      User.find({
+        'facebookId': {$in: req.body.included}
+      }, function(err, users) {
+        users.forEach((user) => {
+          user.feed.push(thread._id)
+          user.save()
+        })
+      })
+      
+      // User.update(
+      //   {facebookID: {$in: req.body.included}},
+      //   {$push: {feed: thread._id}},
+      //   [{multi: true}, {upsert: true}],
+      //   function (err, docs) {
+      //     if (err) {
+      //       console.log(err)
+      //     }
+      //   })
     })
 })
 
@@ -185,7 +179,8 @@ module.exports = function (passport) {
   router.get('/api/users', function (req, res, next) {
   User.find(function (err, users) {
     if (err) { return next(err) }
-      res.json(users)
+      // res.json(users)
+    console.log(users)
   })
 })
   return router

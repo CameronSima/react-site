@@ -43,9 +43,9 @@
     "webpack-dev-server": "^1.12.1"
   },
   "dependencies": {
+    "async": "latest",
     "bcrypt": "latest",
     "body-parser": "latest",
-    "connect-ensure-login": "latest",
     "cookie-parser": "latest",
     "express": "~4.13.1",
     "express-session": "latest",
