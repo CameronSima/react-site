@@ -13,8 +13,10 @@ module.exports = function (passport) {
   router.use(function (req, res, next) {
     // Set permissive CORS header - this allows this server to be used only as
     // an API server in conjunction with something like webpack-dev-server.
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    // res.setHeader('Content-Type', 'json')
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Content-Type', 'json')
+    res.header('Access-Control-Allow-Credentials', true)
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
     // Disable caching so we'll always get the latest comments.
     res.setHeader('Cache-Control', 'no-cache')
@@ -23,11 +25,12 @@ module.exports = function (passport) {
 
   var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    // console.log("LOGGED IN")
+    console.log("LOGGED IN")
     return next()
   } else {
-    // console.log("NOT LOGGED IN")
-    res.redirect('/api/auth/facebook')
+    console.log("NOT LOGGED IN")
+    // res.redirect('/api/auth/facebook')
+    res.redirect('http://localhost:3001/signup')
   }
 }
 
@@ -127,7 +130,7 @@ module.exports = function (passport) {
   })
 
   // get logged in users' feed array, and return threads 
-  router.get('/api/feed', isAuthenticated, function (req, res, next) {
+  router.get('/api/feed', function (req, res, next) {
     User.findOne({'_id': req.user._id }, function (err, user) {
       // To do: use populate() to return the whole user
       // object along with threads and friends, instead of just 
@@ -135,7 +138,7 @@ module.exports = function (passport) {
       Thread.find({
         '_id': { $in: user.feed }
       }).sort('-date').exec(function (err, threads) {
-          console.log(threads)
+          // console.log(threads)
           res.jsonp(threads)
       })
     })
@@ -151,32 +154,30 @@ module.exports = function (passport) {
 
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
     console.log(req.body)
-    var includedArr = req.body.included.split(', ')
-
-    // Fan out thread id to included users
     process.nextTick(function () {
+
+      // Create the new thread document and return it
+      req.body.author = req.user.username
+      var thread = new Thread(req.body)
+      console.log(thread)
+      thread.save(function (err, thread) {
+        if (err) {
+          console.log(err)
+          return next(err)
+        }
+        // res.json(thread)
+
+      })
+      // Fan out thread id to included users
       User.update({ _id: {$in: includedArr}},
         { active: false },
         { multi: true },
-        {$push: {'feed': req.body._id},
+        {$push: {'feed': thread._id},
         function (err, data) {
           if (err) {
             console.log(err)
           }
         }})
-    })
-
-    // Create the new thread document and return it
-    req.body.author = req.user.username
-    var thread = new Thread(req.body)
-    console.log(thread)
-    thread.save(function (err, thread) {
-      if (err) {
-        console.log(err)
-        return next(err)
-      }
-      res.json(thread)
-
     })
 })
 

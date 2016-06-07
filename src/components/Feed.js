@@ -130,14 +130,14 @@ var ThreadForm = React.createClass({
   handleSubmit: function (e) {
     e.preventDefault()
     var text = this.state.text.trim()
-    var included = this.state.included.trim()
+    var includedArr = this.state.includedArr
     var victim = this.state.victim.trim()
-    if (!text || !included || !victim) {
+    if (!text || includedArr.length < 1 || !victim) {
       return
     }
     this.props.onThreadSubmit({ 
                                 text: text, 
-                                included: included,
+                                included: includedArr,
                                 victim: victim
                               })
     this.setState({
@@ -177,6 +177,7 @@ var ThreadForm = React.createClass({
 
 var ThreadsBox = React.createClass({
   handleThreadSubmit: function (thread) {
+    console.log(typeof thread)
     var threads = this.props.feed
     var newThreads = threads.concat([thread])
     this.setState({feed: newThreads})
@@ -185,12 +186,13 @@ var ThreadsBox = React.createClass({
       dataType: 'json',
       type: 'POST',
       data: thread,
+      xhrFields: {withCredentials: true},
       success: function (data) {
         this.setState({feed: feed})
       }.bind(this),
       error: function (xhr, status, err) {
         this.setState({data: threads})
-        console.error(this.url, status, err.toString())
+        console.log(this.url, status, err.toString())
       }.bind(this)
     })
   },
@@ -206,7 +208,8 @@ var ThreadsBox = React.createClass({
         <NavButtonList buttons={ ['home', 'heat']} />
       </div>
       <ThreadList data={ this.props.feed } />
-      <ThreadForm onThreadSubmit={ this.handleThreadSubmit } friends={ this.props.friends } />
+      <ThreadForm onThreadSubmit={ this.handleThreadSubmit } 
+                  friends={ this.props.friends } />
     </div>
     )
   }

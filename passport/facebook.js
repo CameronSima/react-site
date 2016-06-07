@@ -26,10 +26,10 @@ module.exports = function (passport) {
   function (token, refreshToken, profile, done) {
     // async
     process.nextTick(function () {
-      console.log(profile._json.friends.data)
       User.findOne({ 'facebookId': profile.id }, function (err, user) {
-        console.log("USER")
-        console.log(user)
+        console.log(token)
+        // console.log("USER")
+        // console.log(user)
         if (err) {
           return done(err);
         }
@@ -45,23 +45,6 @@ module.exports = function (passport) {
             newUser.facebookEmail = profile.emails[0].value
           }
 
-          // Get facebook friends' usernames from the friends object,
-          // then save their Shit List user ids' to the user object
-          // var friendsArr = profile._json.friends.data.map((friend) => {
-          //   return friend.name
-          // })
-          // User.find({
-          //   'username': { $in: friendsArr }
-          // }).exec((err, users) => {
-          //   if (err) { 
-          //     console.log(err) 
-          //   } else {
-          //     console.log("FRIENDS USERS")
-          //     console.log(users)
-          //     newUser.friends = users
-          //   }    
-          // })
-          console.log(profile._json.friends.data)
           newUser.facebookFriends = profile._json.friends.data
           newUser.save(function (err) {
             if (err)

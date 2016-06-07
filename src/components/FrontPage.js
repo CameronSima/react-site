@@ -20,7 +20,8 @@ export default class FrontPage extends Component {
 
 	loadDataFromServer() {
 		$.ajax({ 
-			url: config.apiUrl + 'frontpage',
+			 url: config.apiUrl + 'frontpage',
+			//url: 'http://localhost:3001/frontpage',
 			dataType: 'jsonp',
 			cache: false,
 			success: (data) => {
@@ -29,7 +30,7 @@ export default class FrontPage extends Component {
 				this.setState({data: data})
 			},
 			error: (xhr, status, err) => {
-				console.error(this.url, status, error.toString())
+				console.log(this.url, status, err.toString())
 			}
 		})
 	}

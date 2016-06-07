@@ -57,7 +57,10 @@ new WebpackDevServer(webpack(config), {
   historyApiFallback: true,
   // Proxy backend requests to Express server
   proxy: {
-    "/api/*": "http://localhost:" + settings.expressPort
+    "/api/*": {
+      target: "http://localhost:" + settings.expressPort,
+      secure: false
+    }
   }
 }).listen(settings.webpackServerPort, 'localhost', function (err, result) {
   if (err) {
