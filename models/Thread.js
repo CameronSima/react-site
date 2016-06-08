@@ -16,7 +16,8 @@ var ThreadSchema = new mongoose.Schema({
   author: String,
   victim: String,
   included: [String],
-  ct: String 
+  likes: Number,
+  dislikes: Number 
 })
 
 module.exports = mongoose.model('Thread', ThreadSchema)

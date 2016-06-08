@@ -12,7 +12,7 @@ var app = express()
 
 app.set('port', settings.expressPort)
 
-app.use('/', express.static(path.join(__dirname, 'public')))
+app.use('/', express.static(path.join(__dirname, '/src')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 

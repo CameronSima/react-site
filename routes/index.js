@@ -13,7 +13,7 @@ module.exports = function (passport) {
   router.use(function (req, res, next) {
     // Set permissive CORS header - this allows this server to be used only as
     // an API server in conjunction with something like webpack-dev-server.
-    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
     res.header('Content-Type', 'json')
     res.header('Access-Control-Allow-Credentials', true)
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -139,9 +139,7 @@ module.exports = function (passport) {
   })
 
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
-    // console.log(req.body)
-    process.nextTick(function () {
-
+    console.log("POSTED TO THREADS")
       // Create the new thread document and return it
       req.body.author = req.user.username
       var thread = new Thread(req.body)
@@ -159,21 +157,15 @@ module.exports = function (passport) {
       }, function(err, users) {
         users.forEach((user) => {
           user.feed.push(thread._id)
-          user.save()
+          user.save((err, user) => {
+            if (err) {
+              console.log(err)
+            }
+          })
         })
       })
-      
-      // User.update(
-      //   {facebookID: {$in: req.body.included}},
-      //   {$push: {feed: thread._id}},
-      //   [{multi: true}, {upsert: true}],
-      //   function (err, docs) {
-      //     if (err) {
-      //       console.log(err)
-      //     }
-      //   })
-    })
-})
+      next()
+  })
 
   // Return all users
   router.get('/api/users', function (req, res, next) {

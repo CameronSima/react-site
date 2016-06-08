@@ -33,6 +33,7 @@ export default class NavBar extends Component {
       </div>
     </div>
     {this.props.children}
+    <div>Footer</div>
     </div>
 
       )

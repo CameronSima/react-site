@@ -5,7 +5,33 @@ var config = require('../../config')
 class FacebookLogin extends Component {
   render() {
     return (
-      <a href="http://localhost:3001/api/auth/facebook" class="button">Log in with Facebook</a>
+      <div id="loginPanel">
+      <h1 id="title">Shit List</h1>
+      <h3>Anti-Social Media</h3>
+        <a href="http://localhost:3001/api/auth/facebook" >
+          <input type="image" 
+                 id="loginWithFacebook"
+                 src="/src/assets/loginwithfacebook.png"
+                 href="http://localhost:3001/api/auth/facebook"  />
+        </a>
+        <div>
+          <a href="" >
+            <input type="image" 
+                   id=""
+                   className="mobile-download"
+                   src="/src/assets/downloadonappstore.png"
+                   href="http://localhost:3001/api/auth/facebook"  />
+          </a>
+
+          <a href="" >
+            <input type="image" 
+                   id=""
+                   className="mobile-download"
+                   src="/src/assets/downloadongoogleplay.png"
+                   href="http://localhost:3001/api/auth/facebook"  />
+          </a>
+        </div>
+      </div>
       )
   }
 }

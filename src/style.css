@@ -1,14 +1,10 @@
-.body {
-	background-color: #fafafa;
+html {
+	postion: relative;
+	min-height: 100%;
 }
 
-.threadsBox {
-	display: inline-block;
-	width: 500px;
-	float: right;
-	overflow-y: scroll;
-    overflow-x:hidden;
-    margin: 100px 8px 8px 8px;
+.body {
+	background-color: #fafafa;
 }
 
 hr {
@@ -48,14 +44,34 @@ hr {
 }
 
 .friendList {
+	width: 500px;
+	display: inline-block;
+	overflow-y: scroll;
+  overflow-x: hidden;
+  height: 500px;
+  position: relative;
+  border: 1px solid #efefef;
+}
 
-	border: 1px solid #efefef;
+.threadsBox {
+	display: inline-block;
+	width: 500px;
+	float: right;
+  margin: 100px 8px 8px 8px;
+  max-height: 500px;
 }
 
 #friendsBox {
 	width: 400px;
 	display: inline-block;
 	margin: 100px 8px 8px 8px
+}
+
+.threadList {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	height: 500px;
+	border: 1px solid #efefef;
 }
 
 a.button {
@@ -70,6 +86,10 @@ a.button {
 	width: 230px;
 }
 
+.thread {
+	padding: 8px;
+}
+
 #taggedButton {
 	float: right;
 	margin: 20px;
@@ -77,4 +97,26 @@ a.button {
 
 .friendSuggestion {
 	cursor: pointer;
+}
+
+#loginPanel {
+	position: absolute;
+	text-align: center;
+	border: 1px solid #edeeee;
+	width: 400px;
+	margin-top: 130px;
+	right: 30%;
+}
+
+#title {
+	font-weight: 900;
+}
+
+#loginWithFacebook {
+	margin-top: 50px;
+}
+
+.mobile-download {
+	width: 30%;
+	margin: 18px;
 }

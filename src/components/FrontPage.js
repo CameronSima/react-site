@@ -21,12 +21,9 @@ export default class FrontPage extends Component {
 	loadDataFromServer() {
 		$.ajax({ 
 			 url: config.apiUrl + 'frontpage',
-			//url: 'http://localhost:3001/frontpage',
 			dataType: 'jsonp',
 			cache: false,
 			success: (data) => {
-				// console.log("DATA FROM AJAX REQUEST")
-				// console.log(data)
 				this.setState({data: data})
 			},
 			error: (xhr, status, err) => {

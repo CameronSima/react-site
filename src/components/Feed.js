@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 
 import NavButtonList from './NavButtons'
+//import NavButton from './NavButtons'
 
 var config = require('../../config')
+var helpers = require('../../helpers')
 
 class Thread extends Component {
   rawMarkup() {
@@ -17,6 +19,7 @@ class Thread extends Component {
         <span dangerouslySetInnerHTML={this.rawMarkup()} />
         <p>signed,</p>
         <div>{this.props.author} and {this.props.ct} others.</div>
+        <input type="text" placeholder="Comment..." />
         <hr></hr>
       </div>
       )
@@ -26,7 +29,9 @@ class Thread extends Component {
 class ThreadList extends Component {
   render() {
     var threadNodes
+    console.log(this.props.sortFunc)
     if (this.props.data) {
+
       var threadNodes = this.props.data.map(function (thread) {
         return (
           <Thread victim={ thread.victim } author={ thread.author } ct={ thread.included.length } key={ thread._id }>
@@ -54,7 +59,6 @@ class SuggestionsBox extends Component {
 
     // Prevent duplicates in tagged array
     if (tagged.indexOf(friendId) === -1) {
-      console.log(friendId)
       tagged.push(friendId)
       this.setState({tagged: tagged})
       this.props.handleTagged(this.state.tagged)
@@ -99,7 +103,7 @@ class SuggestedFriends extends Component {
 
 var ThreadForm = React.createClass({
   getInitialState: function () {
-    return {author: '', 
+    return {
             text: '', 
             included: '',
             includedArr: [],
@@ -118,9 +122,8 @@ var ThreadForm = React.createClass({
     this.setState({included: e.target.value})
 
     // Predictive friend selection
-    var includedSuggestions = this.props.friends.filter((friend) => {
-      return friend.name.toLowerCase().indexOf(e.target.value.toLowerCase()) === 0 && e.target.value.length > 0
-    })
+    var includedSuggestions = helpers.suggestFriends(this.props.friends, e.target.value)
+
     this.setState({includedSuggestions: includedSuggestions})
   },
   handleVictimChange: function (e) {
@@ -146,6 +149,7 @@ var ThreadForm = React.createClass({
                   text: '', 
                   included: '',
                   victim: '',
+                  includedArr: []
                   })
   },
   render: function () {
@@ -167,6 +171,9 @@ var ThreadForm = React.createClass({
           placeholder="Who can see?"
           value={this.state.included}
           onChange={this.handleIncludedChange} />
+          <br></br>
+        <input type="radio" name="anonymity" value="anonymous" />Anonymous<br></br>
+        <input type="radio" name="anonymity" value="use real name" />Real name<br></br>
         <input type="submit" value="Post" />
       </form>
       <SuggestionsBox suggestions={this.state.includedSuggestions} 
@@ -179,7 +186,6 @@ var ThreadForm = React.createClass({
 
 var ThreadsBox = React.createClass({
   handleThreadSubmit: function (thread) {
-    console.log(typeof thread)
     var threads = this.props.feed
     var newThreads = threads.concat([thread])
     this.setState({feed: newThreads})
@@ -190,7 +196,7 @@ var ThreadsBox = React.createClass({
       data: thread,
       xhrFields: {withCredentials: true},
       success: function (data) {
-        this.setState({feed: feed})
+        // this.setState({feed: feed})
       }.bind(this),
       error: function (xhr, status, err) {
         this.setState({data: threads})
@@ -199,17 +205,39 @@ var ThreadsBox = React.createClass({
     })
   },
   getInitialState: function () {
-    return {feed: []}
+    return {feed: [], sortFunc: helpers.orderByDate}
   },
+
+  buttons: [
+    {
+      name: 'home',
+      event: helpers.orderByDate
+  },
+    {
+      name: 'heat',
+      event: helpers.orderByHot
+    }
+  ],
+
+  changeState: function (state, value) {
+    console.log("STATE CHAGE")
+    console.log(state)
+    console.log(value)
+    this.setState({[state]: value})
+  },
+
   render: function () {
-    // console.log("PROPS FROM FEED")
-    // console.log(this.props.data)
     return (
     <div className="threadsBox">
       <div className="feedNav">
-        <NavButtonList buttons={ ['home', 'heat']} />
+        <NavButtonList eventFunc={this.changeState} 
+                       state={"sortFunc"} 
+                       value={helpers.orderByDate} 
+                       buttons={this.buttons} />
       </div>
-      <ThreadList data={ this.props.feed } />
+      <ThreadList data={ this.props.feed }
+                  sortFunc={ this.state.sortFunc } />
+
       <ThreadForm onThreadSubmit={ this.handleThreadSubmit } 
                   friends={ this.props.friends } />
     </div>
