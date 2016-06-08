@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import NavButtonsList from './NavButtons'
 
 const config = require('../../config')
+const helpers = require('../../helpers')
 
 class FriendContainer extends Component {
 	rawMarkup() {
@@ -47,13 +48,34 @@ class FriendsList extends Component {
 		constructor(props) {
 		super(props)
 		this.state = {}
+		this.friendsNavButtons = [
+	    {
+	      name: 'hot',
+	      event: helpers.orderByDate
+	  },
+	    {
+	      name: 'favorites',
+	      event: helpers.orderByHot
+	    }
+	  ]
+	  this.addFriendsButtons = [
+	    {
+	      name: 'add',
+	      event: ''
+	  },
+	    {
+	      name: 'remove',
+	      event: ''
+	    }
+	  ]
 		}
+
 		render() {
 			return (
 				<div id="friendsBox">
-					<NavButtonsList divId={'friendsNav'} buttons={['hot', 'favorites']} />
+					<NavButtonsList divId={'friendsNav'} buttons={ this.friendsNavButtons } />
 					<FriendsList data={this.props.data} />
-					<NavButtonsList divId={'addRemoveFriends'} buttons={['add', 'remove']} />
+					<NavButtonsList divId={'addRemoveFriends'} buttons={ this.addFriendsButtons } />
 				</div>
 				)
 		}
