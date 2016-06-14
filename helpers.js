@@ -1,4 +1,7 @@
+var config = require('./config')
+
 module.exports = {
+
 	// Reorder threads by hotness
 	orderByHot: (threads) => {
 		var getScore = (likes, dislikes, date) => {
@@ -34,5 +37,7 @@ module.exports = {
 				&& clicked.length > 0
 				)
 		})
-	}  
+	},
+
+
 }

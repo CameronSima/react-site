@@ -1,15 +1,40 @@
 import React, { Component } from 'react'
 
-import NavButtonList from './NavButtons'
-//import NavButton from './NavButtons'
+import {NavButtonList} from './NavButtons'
+import {NavButton} from './NavButtons'
 
 var config = require('../../config')
 var helpers = require('../../helpers')
+var buttonObs = require('../../buttons')
 
 class Thread extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      likesCount: 0
+    }
+  }
   rawMarkup() {
     var rawMarkup = marked(this.props.children.toString(), { sanitize: true })
     return {__html: rawMarkup }
+  }
+  sendLikeToServer(thread_id, vote) {
+    console.log(thread_id)
+    console.log(vote)
+    $.ajax({
+      url: config.apiUrl + vote,
+      xhrFields: {withCredentials: true},
+      type: 'POST',
+      dataType: 'json',
+      cache: false,
+      data: {thread_id: thread_id},
+      success: (data) => {
+        this.setState({likesCount: data})
+      },
+      error: (xhr, status, err) => {
+        console.log(this.url, status, err.toString())
+      }
+    })
   }
 
   render() {
@@ -18,8 +43,27 @@ class Thread extends Component {
         <h4 className="threadVictim">Dear {this.props.victim}: </h4>
         <span dangerouslySetInnerHTML={this.rawMarkup()} />
         <p>signed,</p>
-        <div>{this.props.author} and {this.props.ct} others.</div>
-        <input type="text" placeholder="Comment..." />
+        <div>
+          {this.props.author} and {this.props.ct} others.
+        </div>
+        <NavButton divId="like-button" 
+                   title="like"
+                   eventFunc={ this.sendLikeToServer }
+                   state={ this.props.id }
+                   value={ "upvote" } />
+
+        <NavButton divId="dislike-button" 
+                   title="dislike"
+                   eventFunc={ this.sendLikeToServer }
+                   state={ this.props.id }
+                   value={ "downvote" } />          
+
+        <div className="likeTotal">
+          {this.props.likes - this.props.dislikes}
+        </div>
+        <div>
+          <input type="text" placeholder="Comment..." />
+        </div>
         <hr></hr>
       </div>
       )
@@ -29,12 +73,19 @@ class Thread extends Component {
 class ThreadList extends Component {
   render() {
     var threadNodes
-    console.log(this.props.sortFunc)
+    //console.log(this.props.sortFunc)
     if (this.props.data) {
+      console.log(this.props.sortFunc)
 
       var threadNodes = this.props.data.map(function (thread) {
         return (
-          <Thread victim={ thread.victim } author={ thread.author } ct={ thread.included.length } key={ thread._id }>
+          <Thread victim={ thread.victim } 
+                  author={ thread.author } 
+                  ct={ thread.included.length }
+                  likes={ thread.likes } 
+                  dislikes={ thread.dislikes }
+                  id={ thread._id}
+                  key={ thread._id }>
             { thread.text }
           </Thread>
         )
@@ -109,7 +160,8 @@ var ThreadForm = React.createClass({
             includedArr: [],
             includedSuggestions: '',
             victim: '',
-            ct: ''
+            ct: '',
+            anonymous: ''
             }
   },
   clearState: function (field) {
@@ -117,6 +169,9 @@ var ThreadForm = React.createClass({
   },
   handleTextChange: function (e) {
     this.setState({text: e.target.value})
+  },
+  handleAnonSubmit: function (e) {
+    this.setState({anonymous: e.target.value})
   },
   handleIncludedChange: function (e) {
     this.setState({included: e.target.value})
@@ -134,6 +189,7 @@ var ThreadForm = React.createClass({
   },
   handleSubmit: function (e) {
     e.preventDefault()
+    var anonymous = this.state.anonymous
     var text = this.state.text.trim()
     var includedArr = this.state.includedArr
     var victim = this.state.victim.trim()
@@ -143,13 +199,15 @@ var ThreadForm = React.createClass({
     this.props.onThreadSubmit({ 
                                 text: text, 
                                 included: includedArr,
-                                victim: victim
+                                victim: victim,
+                                anonymous: anonymous
                               })
     this.setState({
                   text: '', 
                   included: '',
                   victim: '',
-                  includedArr: []
+                  includedArr: [],
+                  anonymous: ''
                   })
   },
   render: function () {
@@ -157,28 +215,42 @@ var ThreadForm = React.createClass({
     <div id="threadInputs">
       <form className="threadForm" onSubmit={this.handleSubmit}>
         <input
+          className="textInput"
           type="text"
           placeholder="Say something..."
           value={this.state.text}
           onChange={this.handleTextChange} />
         <input
+          className="textInput"
           type="text"
           placeholder="Name your victim"
           value={this.state.victim}
           onChange={this.handleVictimChange} />
         <input
+          className="textInput"
           type="text"
           placeholder="Who can see?"
           value={this.state.included}
           onChange={this.handleIncludedChange} />
-          <br></br>
-        <input type="radio" name="anonymity" value="anonymous" />Anonymous<br></br>
-        <input type="radio" name="anonymity" value="use real name" />Real name<br></br>
+        <br></br>
+        <SuggestionsBox suggestions={this.state.includedSuggestions} 
+                handleTagged={this.handleTagged} 
+                clearState={this.clearState} />
+        
+        <input type="radio" 
+               name="anonymity" 
+               onChange={this.handleAnonSubmit} 
+               value="anonymous" />Anonymous
+        <br></br>
+
+        <input type="radio" 
+               name="anonymity" 
+               onChange={this.handleAnonSubmit} 
+               value="use real name" />Real name
+        <br></br>
+
         <input type="submit" value="Post" />
       </form>
-      <SuggestionsBox suggestions={this.state.includedSuggestions} 
-                      handleTagged={this.handleTagged} 
-                      clearState={this.clearState} />
     </div>
     )
   }
@@ -208,21 +280,7 @@ var ThreadsBox = React.createClass({
     return {feed: [], sortFunc: helpers.orderByDate}
   },
 
-  buttons: [
-    {
-      name: 'home',
-      event: helpers.orderByDate
-  },
-    {
-      name: 'heat',
-      event: helpers.orderByHot
-    }
-  ],
-
   changeState: function (state, value) {
-    console.log("STATE CHAGE")
-    console.log(state)
-    console.log(value)
     this.setState({[state]: value})
   },
 
@@ -232,8 +290,7 @@ var ThreadsBox = React.createClass({
       <div className="feedNav">
         <NavButtonList eventFunc={this.changeState} 
                        state={"sortFunc"} 
-                       value={helpers.orderByDate} 
-                       buttons={this.buttons} />
+                       buttons={buttonObs.mainNavButtons} />
       </div>
       <ThreadList data={ this.props.feed }
                   sortFunc={ this.state.sortFunc } />

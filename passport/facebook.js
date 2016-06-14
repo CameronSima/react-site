@@ -27,13 +27,27 @@ module.exports = function (passport) {
     // async
     process.nextTick(function () {
       User.findOne({ 'facebookId': profile.id }, function (err, user) {
-        console.log(token)
-        // console.log("USER")
-        // console.log(user)
         if (err) {
           return done(err);
         }
         if (user) {
+
+          // Update users' friends list
+          var newFriendsList = user.facebookFriends.concat(
+            profile._json.friends.data.filter(function(friend) {
+              return user.facebookFriends.indexOf(friend) === -1
+              console.log(friend)
+            })
+          )
+          console.log(newFriendsList)
+          user.facebookFriends = newFriendsList
+          user.save(function(err) {
+            if (err) {
+              console.log(err)
+            }
+          })
+          console.log(user.facebookFriends)
+
           return done(null, user)
         } else {
           var newUser = new User()

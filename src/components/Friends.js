@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 
-import NavButtonsList from './NavButtons'
+import { NavButtonList } from './NavButtons'
 
 const config = require('../../config')
 const helpers = require('../../helpers')
+const buttonObs = require('../../buttons')
 
 class FriendContainer extends Component {
 	rawMarkup() {
@@ -17,7 +18,7 @@ class FriendContainer extends Component {
 				<p>
 					{ this.props.friend}
 				</p>
-				<NavButtonsList buttons={['from', 'about']} />
+				<NavButtonList buttons={ buttonObs.friendComponentButtons } />
 				<hr></hr>
 			</div>
 			)
@@ -48,34 +49,14 @@ class FriendsList extends Component {
 		constructor(props) {
 		super(props)
 		this.state = {}
-		this.friendsNavButtons = [
-	    {
-	      name: 'hot',
-	      event: helpers.orderByDate
-	  },
-	    {
-	      name: 'favorites',
-	      event: helpers.orderByHot
-	    }
-	  ]
-	  this.addFriendsButtons = [
-	    {
-	      name: 'add',
-	      event: ''
-	  },
-	    {
-	      name: 'remove',
-	      event: ''
-	    }
-	  ]
 		}
 
 		render() {
 			return (
 				<div id="friendsBox">
-					<NavButtonsList divId={'friendsNav'} buttons={ this.friendsNavButtons } />
+					<NavButtonList divId={'friendsNav'} buttons={ buttonObs.friendsNavButtons } />
 					<FriendsList data={this.props.data} />
-					<NavButtonsList divId={'addRemoveFriends'} buttons={ this.addFriendsButtons } />
+					<NavButtonList divId={'addRemoveFriends'} buttons={ buttonObs.addFriendsButtons } />
 				</div>
 				)
 		}

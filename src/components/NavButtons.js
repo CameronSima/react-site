@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 var helpers = require('../../helpers')
 
-class NavButton extends Component {
+export class NavButton extends Component {
 		constructor(props) {
 		super(props)
 		this._clickHander = this._clickHandler.bind(this)
@@ -21,7 +21,7 @@ class NavButton extends Component {
 	}
 }
 
- export default class NavButtonsList extends Component {
+export class NavButtonList extends Component {
 	constructor(props) {
 		super(props)
 	}

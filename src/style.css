@@ -1,10 +1,13 @@
 html {
-	postion: relative;
+	position: relative;
 	min-height: 100%;
+	background-color: #fafafa;
 }
 
-.body {
-	background-color: #fafafa;
+#root {
+    margin: 0 0 100px; /* bottom = footer height */
+    	position: relative;
+	min-height: 100%;
 }
 
 hr {
@@ -18,6 +21,10 @@ hr {
 .navButtons button {
 	border: 1px solid #efefef;
   border-radius: 0px;
+}
+
+#like-buttons button {
+	margin: 5px;
 }
 
 #friendsNav button {
@@ -83,7 +90,15 @@ a.button {
 }
 
 .threadForm  {
-	width: 230px;
+	width: 370px;
+	background-color: white;
+	border: 1px solid #efefef;
+}
+
+.textInput {
+	width: 350px;
+	height: 40px;
+	margin: 8px;
 }
 
 .thread {
@@ -103,13 +118,31 @@ a.button {
 	position: absolute;
 	text-align: center;
 	border: 1px solid #edeeee;
-	width: 400px;
-	margin-top: 130px;
+	width: 360px;
+	margin-top: 100px;
 	right: 30%;
+	background-color: white;
 }
 
 #title {
 	font-weight: 900;
+	font-family: 'Cornerstone';
+	color: #00FF76;
+}
+
+#navTitle {
+	font-family: 'Cornerstone';
+	color: #00FF76;
+}
+
+@font-face {
+		font-family: 'Cornerstone';
+	src: url('assets/Cornerstone.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'LeagueGothic';
+	src: url('assets/LeagueGothic-Regular.ttf') format('truetype');
 }
 
 #loginWithFacebook {
@@ -119,4 +152,21 @@ a.button {
 .mobile-download {
 	width: 30%;
 	margin: 18px;
+}
+
+#footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 100px;
+    width: 100%;
+}
+
+#like-buttons {
+	display: inline-block;
+}
+
+.likeTotal {
+	display: inline-block;
+	margin: 5px;
 }

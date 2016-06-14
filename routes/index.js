@@ -3,6 +3,7 @@ var router = express.Router()
 var mongoose = require('mongoose')
 var fs = require('fs')
 var path = require('path')
+var moniker = require('moniker')
 
 var Comment = mongoose.model('Comment')
 var Thread = mongoose.model('Thread')
@@ -32,6 +33,23 @@ module.exports = function (passport) {
     // res.redirect('/api/auth/facebook')
     res.redirect('http://localhost:3001/signup')
   }
+}
+
+var hasntVoted = function (user, array) {
+  console.log(user._id)
+  console.log('************')
+  console.log(array)
+  if (array.indexOf(user._id.toString()) === -1) {
+    console.log('hast voted')
+    return true
+  } else {
+    return false
+  }
+  
+}
+
+var getRandomUsername = function () {
+  return moniker.choose().split('-').join(' ')
 }
 
   router.post('/api/login', function (req, res, next) {
@@ -140,6 +158,7 @@ module.exports = function (passport) {
 
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
     console.log("POSTED TO THREADS")
+
       // Create the new thread document and return it
       req.body.author = req.user.username
       var thread = new Thread(req.body)
@@ -164,7 +183,7 @@ module.exports = function (passport) {
           })
         })
       })
-      next()
+      return next()
   })
 
   // Return all users
@@ -175,5 +194,41 @@ module.exports = function (passport) {
     console.log(users)
   })
 })
+
+  router.post('/api/upvote', isAuthenticated, function (req, res, next) {
+      Thread.findOne({
+        _id: req.body.thread_id},
+        function(err, thread) {
+          if (hasntVoted(req.user, thread.proShitters)) {
+          thread.proShitters.push(req.body.thread_id)
+          thread.likes = thread.likes + 1
+          thread.save((err, thread) => {
+            if (err) {
+              console.log(err)
+            }
+          })
+        } else {
+          return next()
+        }
+      }) 
+  })
+
+  router.post('/api/downvote', isAuthenticated, function (req, res, next) {
+      Thread.findOne({
+        _id: req.body.thread_id},
+        function(err, thread) {
+          if (hasntVoted(req.user, thread.proShittees)) {
+          thread.proShittees.push(req.body.thread_id)
+          thread.dislikes = thread.dislikes + 1
+          thread.save((err, thread) => {
+            if (err) {
+              console.log(err)
+            }
+          })
+        } else {
+          return
+        }
+      })
+  })
   return router
 }

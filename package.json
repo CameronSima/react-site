@@ -50,6 +50,7 @@
     "express": "~4.13.1",
     "express-session": "latest",
     "mongoose": "latest",
+    "moniker": "latest",
     "passport": "latest",
     "passport-facebook": "latest",
     "passport-local": "latest",
