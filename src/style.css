@@ -170,3 +170,13 @@ a.button {
 	display: inline-block;
 	margin: 5px;
 }
+
+#suggestionsList {
+	position: absolute;
+	background: white;
+	z-index: 1;
+}
+
+.friendSuggestion {
+	margin: 8px;
+}

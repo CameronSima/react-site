@@ -32,21 +32,18 @@ module.exports = function (passport) {
         }
         if (user) {
 
-          // Update users' friends list
+          // Update users' friends list with new facebook friends
           var newFriendsList = user.facebookFriends.concat(
             profile._json.friends.data.filter(function(friend) {
               return user.facebookFriends.indexOf(friend) === -1
-              console.log(friend)
             })
           )
-          console.log(newFriendsList)
           user.facebookFriends = newFriendsList
           user.save(function(err) {
             if (err) {
               console.log(err)
             }
           })
-          console.log(user.facebookFriends)
 
           return done(null, user)
         } else {

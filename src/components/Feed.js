@@ -122,17 +122,19 @@ class SuggestionsBox extends Component {
     if (this.props.suggestions) {
       suggestions = this.props.suggestions.map((friend) => {
         return (
-          <div className="friendSuggestion" onClick={ this.populate.bind(this, friend.id) } 
-                                            key={ friend.id }>
-            <a>{ friend.name }</a>
-            <hr></hr>
+            <div className="friendSuggestion" onClick={ this.populate.bind(this, friend.id) } 
+                                              key={ friend.id }>
+              <a>{ friend.name }</a>
+              <hr></hr>
           </div>
           )
       })
     }
     return (
       <div id="suggestions">
-        { suggestions }
+        <div id="suggestionsList">
+          { suggestions }
+        </div>
         <SuggestedFriends taggedFriends={ this.state.tagged } />
       </div>
       )
