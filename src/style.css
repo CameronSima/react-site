@@ -68,6 +68,14 @@ hr {
   max-height: 500px;
 }
 
+.thread div:nth-child(2) {
+	display: inline-block;
+}
+
+.threadVictim {
+	display: inline-block;
+}
+
 #friendsBox {
 	width: 400px;
 	display: inline-block;
@@ -179,4 +187,8 @@ a.button {
 
 .friendSuggestion {
 	margin: 8px;
+}
+
+.date {
+	opacity: 0.8;
 }

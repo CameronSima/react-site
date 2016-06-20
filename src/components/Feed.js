@@ -19,8 +19,6 @@ class Thread extends Component {
     return {__html: rawMarkup }
   }
   sendLikeToServer(thread_id, vote) {
-    console.log(thread_id)
-    console.log(vote)
     $.ajax({
       url: config.apiUrl + vote,
       xhrFields: {withCredentials: true},
@@ -37,10 +35,35 @@ class Thread extends Component {
     })
   }
 
+  formatDate(dateTime) {
+    console.log(dateTime)
+    var date = dateTime.split('T')[0]
+    var time = dateTime.split('T')[1]
+    var ymd = date.split('-')
+    var hms = time.split(':')
+    var m = hms[1]
+
+    if (hms[0] < 12) {
+      var h = hms[0]
+      var amOrPm = 'am'
+    } else {
+      var h = ~~hms[0] - 12
+      var amOrPm = 'pm'
+    }
+    return (
+      ymd[1] + '/' + ymd[2] + '/' + ymd[0] + 
+      ' at ' + h + ':' + m + amOrPm
+      )
+  }
+
   render() {
     return (
       <div className="thread">
-        <h4 className="threadVictim">Dear {this.props.victim}: </h4>
+        <div className="date">
+          { this.formatDate(this.props.date) }
+        </div>
+        <div>Dear </div> &nbsp;
+        <h4 className="threadVictim"> {this.props.victim}, </h4>
         <span dangerouslySetInnerHTML={this.rawMarkup()} />
         <p>signed,</p>
         <div>
@@ -283,6 +306,7 @@ var ThreadsBox = React.createClass({
       }.bind(this)
     })
   },
+  // Feed nav buttons default to order by date
   getInitialState: function () {
     return {feed: [], sortFunc: helpers.orderByDate}
   },
