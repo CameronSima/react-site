@@ -33,18 +33,20 @@ module.exports = function (passport) {
         if (user) {
 
           // Update users' friends list with new facebook friends
-          var newFriendsList = user.facebookFriends.concat(
-            profile._json.friends.data.filter(function(friend) {
-              return user.facebookFriends.indexOf(friend) === -1
+          // var newFriendsList = user.facebookFriends.concat(
+          //   profile._json.friends.data.filter(function(friend) {
+          //     return user.facebookFriends.indexOf(friend) === -1
+          //   })
+          // )
+          if (user.facebookFriends.length < profile._json.friends.data) {
+            user.facebookFriends = profile._json.friends.data
+            user.save(function(err) {
+              if (err) {
+                console.log(err)
+              }
             })
-          )
-          user.facebookFriends = newFriendsList
-          user.save(function(err) {
-            if (err) {
-              console.log(err)
-            }
-          })
-
+            console.log(user.facebookFriends)
+          }
           return done(null, user)
         } else {
           var newUser = new User()

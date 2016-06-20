@@ -12,10 +12,13 @@ module.exports = {
 		}
 		
 		 return threads.sort((a, b) => {
-			if (getScore(a.likes, a.dislikes, a.date) < getScore(b.likes, b.dislikes, b.date)) {
+		 	console.log(a.props)
+			if (getScore(a.props.likes, a.props.dislikes, a.props.date) < 
+				  getScore(b.props.likes, b.props.dislikes, b.props.date)) {
 				return 1
 			}
-			if (getScore(a.likes, a.dislikes, a.date) > getScore(b.likes, b.dislikes, b.date)) {
+			if (getScore(a.props.likes, a.props.dislikes, a.props.date) > 
+				  getScore(b.props.likes, b.props.dislikes, b.props.date)) {
 				return -1
 			}
 			return 0
@@ -25,7 +28,8 @@ module.exports = {
 	// Order threads by recency
 	orderByDate: (threads) => {
 		return threads.sort((a, b) => {
-			return a.date < b.date
+			console.log(Date.parse(a.props.date))
+			return Date.parse(a.props.date) > Date.parse(b.props.date)
 		})
 	},
 

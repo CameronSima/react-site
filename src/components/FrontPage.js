@@ -4,7 +4,6 @@
 import React, { Component } from 'react'
 import FeedBox from './Feed.js'
 import FriendsBox from './Friends'
-import Dashboard from './Dashboard'
 
 const config = require('../../config')
 

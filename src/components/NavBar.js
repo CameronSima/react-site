@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router';
+import React, { Component } from 'react'
+import { Link } from 'react-router'
 
 export default class NavBar extends Component {
   render() {
@@ -17,17 +17,17 @@ export default class NavBar extends Component {
         </div>
         <div className="navbar-collapse collapse" id="navbar-main">
           <ul className="nav navbar-nav">
-            
+            <li><a href="http://builtwithbootstrap.com/" target="_blank">I SAID</a></li>
+            <li><a href="http://builtwithbootstrap.com/" target="_blank">THEY SAID</a></li>          
+            <li><a href="http://builtwithbootstrap.com/" target="_blank">I TAGGED</a></li>
+          </ul>
+          <ul className="nav navbar-nav navbar-right">
             <form className="navbar-form navbar-left" role="search">
               <div className="form-group">
                 <input type="text" class="form-control" placeholder="Search the Shit List"></input>
               </div>
               <button type="submit" class="btn btn-default">Submit</button>
             </form>
-          </ul>
-
-          <ul className="nav navbar-nav navbar-right">
-            <li><a href="http://builtwithbootstrap.com/" target="_blank">Login</a></li>
           </ul>
         </div>
       </div>

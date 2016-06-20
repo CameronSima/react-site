@@ -72,7 +72,7 @@ class Thread extends Component {
 
 class ThreadList extends Component {
   render() {
-    var threadNodes
+    var threadNodes, sortedThreadNodes
     //console.log(this.props.sortFunc)
     if (this.props.data) {
       console.log(this.props.sortFunc)
@@ -80,6 +80,7 @@ class ThreadList extends Component {
       var threadNodes = this.props.data.map(function (thread) {
         return (
           <Thread victim={ thread.victim } 
+                  date={ thread.date }
                   author={ thread.author } 
                   ct={ thread.included.length }
                   likes={ thread.likes } 
@@ -90,10 +91,13 @@ class ThreadList extends Component {
           </Thread>
         )
       })
+
+      sortedThreadNodes = this.props.sortFunc(threadNodes)
+
     }
     return (
       <div className="threadList">
-        { threadNodes }
+        { sortedThreadNodes }
       </div>
       )
   }
@@ -216,6 +220,7 @@ var ThreadForm = React.createClass({
     return (
     <div id="threadInputs">
       <form className="threadForm" onSubmit={this.handleSubmit}>
+        <p>Talk Shit:</p>
         <input
           className="textInput"
           type="text"
@@ -297,8 +302,6 @@ var ThreadsBox = React.createClass({
       <ThreadList data={ this.props.feed }
                   sortFunc={ this.state.sortFunc } />
 
-      <ThreadForm onThreadSubmit={ this.handleThreadSubmit } 
-                  friends={ this.props.friends } />
     </div>
     )
   }
