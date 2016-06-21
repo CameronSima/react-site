@@ -192,3 +192,7 @@ a.button {
 .date {
 	opacity: 0.8;
 }
+
+.btn-link:hover, .btn-link:active:hover {
+	background-color: #00FF76 !important;
+	}

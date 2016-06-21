@@ -141,6 +141,14 @@ var getRandomUsername = function () {
         // remove some of the data, such as passwords, etc.
         // that the client shouldn't recieve about his friends,
         // but for now just pass the whole fully-populated user object
+        userData.feed.forEach((thread) => {
+          console.log(thread)
+          if (thread.anonymous === true) {
+            thread.author[0] = thread.author[0].pseudonym
+          } else {
+            thread.author[0] = thread.author[0].real
+          }
+        })
         res.jsonp(userData)
 
       }
@@ -156,11 +164,23 @@ var getRandomUsername = function () {
     })
   })
 
+  // post new thread
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
     console.log("POSTED TO THREADS")
 
       // Create the new thread document and return it
-      req.body.author = req.user.username
+
+      req.body.author = {}
+      req.body.author.real = req.user.username
+      req.body.author.pseudonym = '_' + getRandomUsername()
+
+      // turn anonymous entry into boolean
+      if (req.body.anonymous === 'anonymous') {
+        req.body.anonymous = true
+      } else {
+        req.body.anonymous = false
+      }
+      console.log(req.body)
       var thread = new Thread(req.body)
       // console.log(thread)
       thread.save(function (err, thread) {

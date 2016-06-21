@@ -13,7 +13,12 @@ var ThreadSchema = new mongoose.Schema({
   // author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   // victim: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   // included: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  author: String,
+  // author: String,
+  author: [{
+    real: String,
+    pseudonym: String
+  }],
+  anonymous: Boolean,
   victim: String,
   included: [String],
   likes: { type: Number, default: 0 },

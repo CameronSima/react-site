@@ -2,10 +2,11 @@
 // handles retrieving data for both
 
 import React, { Component } from 'react'
-import FeedBox from './Feed.js'
+import FeedBox from './Feed'
 import FriendsBox from './Friends'
+import ThreadForm from './Feed'
 
-const config = require('../../config')
+var config = require('../../config')
 
 export default class FrontPage extends Component {
 	constructor(props) {
@@ -38,13 +39,12 @@ export default class FrontPage extends Component {
 		this.state.pollInterval = false
 	}
 		render() {
-			// console.log("STATE FROM FRONTPAGE")
-			// console.log(this.state.data)
 			return (
 				<div className="FrontPage">
 					<FriendsBox data={ this.state.data.facebookFriends } />
 					<FeedBox feed={ this.state.data.feed } 
 									 friends={ this.state.data.facebookFriends } />		
+
 				</div>
 				)
 		}

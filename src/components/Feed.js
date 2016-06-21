@@ -36,12 +36,23 @@ class Thread extends Component {
   }
 
   formatDate(dateTime) {
-    console.log(dateTime)
     var date = dateTime.split('T')[0]
     var time = dateTime.split('T')[1]
     var ymd = date.split('-')
     var hms = time.split(':')
     var m = hms[1]
+
+    if (ymd[1][0] === '0') {
+      var month = ymd[1][1]
+    } else {
+      var month = ymd[1]
+    }
+
+    if (ymd[2][0]=== '0') {
+      var day = ymd[2][1]
+    } else {
+      var day = ymd[2]
+    }
 
     if (hms[0] < 12) {
       var h = hms[0]
@@ -51,7 +62,7 @@ class Thread extends Component {
       var amOrPm = 'pm'
     }
     return (
-      ymd[1] + '/' + ymd[2] + '/' + ymd[0] + 
+      month + '/' + day + '/' + ymd[0] + 
       ' at ' + h + ':' + m + amOrPm
       )
   }
@@ -96,10 +107,8 @@ class Thread extends Component {
 class ThreadList extends Component {
   render() {
     var threadNodes, sortedThreadNodes
-    //console.log(this.props.sortFunc)
-    if (this.props.data) {
-      console.log(this.props.sortFunc)
 
+    if (this.props.data) {
       var threadNodes = this.props.data.map(function (thread) {
         return (
           <Thread victim={ thread.victim } 
@@ -207,7 +216,6 @@ var ThreadForm = React.createClass({
 
     // Predictive friend selection
     var includedSuggestions = helpers.suggestFriends(this.props.friends, e.target.value)
-
     this.setState({includedSuggestions: includedSuggestions})
   },
   handleVictimChange: function (e) {
@@ -318,6 +326,8 @@ var ThreadsBox = React.createClass({
   render: function () {
     return (
     <div className="threadsBox">
+      <ThreadForm friends={this.props.friends}
+                  onThreadSubmit={ this.handleThreadSubmit }/>
       <div className="feedNav">
         <NavButtonList eventFunc={this.changeState} 
                        state={"sortFunc"} 
@@ -332,3 +342,4 @@ var ThreadsBox = React.createClass({
 })
 
 module.exports = ThreadsBox
+

@@ -24,32 +24,3 @@ User.find((err, users) => {
 		user.remove()
 	})
 })
-
-// function clearDocs (collection) {
-// 	mongoose.model(collection, require('../models/' + collection)
-// 	).find((err, docs) => {
-// 		console.log(docs)
-// 		async.each(docs, (doc) => {
-// 			doc.remove()
-// 		})
-// 	})
-// 	callback()
-// }
-
-// function endDbConn(callback) {
-// 	mongoose.disconnect()
-// 	callback()
-// }
-
-// async.series([
-// 	function (callback) {
-// 		() => {
-// 			process.argv[2].split(', ').forEach((collection) => {
-// 				clearDocs(collection, callback)
-// 			})
-// 		}
-// 	},
-// 	function (callback) {
-// 		endDbConn(callback)
-// 	}
-// ])
