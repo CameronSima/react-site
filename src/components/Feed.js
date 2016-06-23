@@ -36,34 +36,13 @@ class Thread extends Component {
   }
 
   formatDate(dateTime) {
-    var date = dateTime.split('T')[0]
-    var time = dateTime.split('T')[1]
-    var ymd = date.split('-')
-    var hms = time.split(':')
-    var m = hms[1]
-
-    if (ymd[1][0] === '0') {
-      var month = ymd[1][1]
-    } else {
-      var month = ymd[1]
-    }
-
-    if (ymd[2][0]=== '0') {
-      var day = ymd[2][1]
-    } else {
-      var day = ymd[2]
-    }
-
-    if (hms[0] < 12) {
-      var h = hms[0]
-      var amOrPm = 'am'
-    } else {
-      var h = ~~hms[0] - 12
-      var amOrPm = 'pm'
-    }
+    // Date is saved to db in GMT, format for local timezone
+    var dateArr = new Date(dateTime).toLocaleString().split(' ')
+    var date = dateArr[0].slice(0, -1)
+    var time = dateArr[1].split(':').slice(0, 2).join(':')
+    var maridiem = dateArr[2].toLowerCase()
     return (
-      month + '/' + day + '/' + ymd[0] + 
-      ' at ' + h + ':' + m + amOrPm
+      date + ' at ' + time + maridiem
       )
   }
 
@@ -251,7 +230,6 @@ var ThreadForm = React.createClass({
     return (
     <div id="threadInputs">
       <form className="threadForm" onSubmit={this.handleSubmit}>
-        <p>Talk Shit:</p>
         <input
           className="textInput"
           type="text"
@@ -329,7 +307,8 @@ var ThreadsBox = React.createClass({
       <ThreadForm friends={this.props.friends}
                   onThreadSubmit={ this.handleThreadSubmit }/>
       <div className="feedNav">
-        <NavButtonList eventFunc={this.changeState} 
+        <NavButtonList divId={"feedNav"}
+                       eventFunc={this.changeState} 
                        state={"sortFunc"} 
                        buttons={buttonObs.mainNavButtons} />
       </div>

@@ -7,6 +7,7 @@ import Feed from './components/Feed';
 import FrontPage from './components/FrontPage';
 import Signup from './components/signup';
 import Comments from './components/Comments';
+import AddFriends from './components/AddFriends';
 
 const config = require('../config');
 
@@ -16,6 +17,7 @@ ReactDOM.render((
                     <IndexRoute component={ FrontPage } />
                     <Route path='signup' component={ Signup } />
                     <Route path='comments' component={ Comments } />
+                    <Route path='addFriends' component={ AddFriends } />
                     <Route path='*' component={ NotFoundView } />
                   </Route>
                 </Router>

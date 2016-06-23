@@ -24,7 +24,8 @@ var UserSchema = new mongoose.Schema({
   facebookToken: String,
   facebookEmail: String,
   facebookName: String,
-  facebookFriends: Object
+  facebookFriends: Object,
+  facebookProfilePic: String
 
 
   // Facebook login info

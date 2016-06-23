@@ -11,7 +11,7 @@ class FacebookLogin extends Component {
         <a href="http://localhost:3001/api/auth/facebook" >
           <input type="image" 
                  id="loginWithFacebook"
-                 src="/src/assets/loginwithfacebook.png"
+                 src="/src/assets/loginwithfacebookColored.png"
                  href="http://localhost:3001/api/auth/facebook"  />
         </a>
         <div>Get the app</div>

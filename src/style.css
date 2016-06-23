@@ -1,7 +1,18 @@
+@font-face {
+		font-family: 'Cornerstone';
+	src: url('assets/Cornerstone.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'LeagueGothic';
+	src: url('assets/LeagueGothic-Regular.ttf') format('truetype');
+}
+
+
 html {
 	position: relative;
 	min-height: 100%;
-	background-color: #fafafa;
+	/*background-color: #fafafa;*/
 }
 
 #root {
@@ -16,6 +27,10 @@ hr {
 
 .navButtons {
 	text-align: center;
+}
+
+#feedNav {
+	margin-top: 20px;
 }
 
 .navButtons button {
@@ -33,7 +48,7 @@ hr {
 }
 
 #suggestions {
-	width: 250px;
+	width: 480px;
 }
 
 .friend .navButtons button {
@@ -98,13 +113,18 @@ a.button {
 }
 
 .threadForm  {
-	width: 370px;
+	width: 500px;
 	background-color: white;
 	border: 1px solid #efefef;
 }
 
+
+.threadForm input:nth-child(1) {
+	height: 80px;
+}
+
 .textInput {
-	width: 350px;
+	width: 480px;
 	height: 40px;
 	margin: 8px;
 }
@@ -132,6 +152,13 @@ a.button {
 	background-color: white;
 }
 
+#loginPanel h3 {
+	font-family: 'Cornerstone';
+	color: #00FF76;
+	font-size: 20px;
+
+}
+
 #title {
 	font-weight: 900;
 	font-family: 'Cornerstone';
@@ -141,16 +168,6 @@ a.button {
 #navTitle {
 	font-family: 'Cornerstone';
 	color: #00FF76;
-}
-
-@font-face {
-		font-family: 'Cornerstone';
-	src: url('assets/Cornerstone.ttf') format('truetype');
-}
-
-@font-face {
-	font-family: 'LeagueGothic';
-	src: url('assets/LeagueGothic-Regular.ttf') format('truetype');
 }
 
 #loginWithFacebook {
@@ -183,6 +200,9 @@ a.button {
 	position: absolute;
 	background: white;
 	z-index: 1;
+	-webkit-box-shadow: 2px 3px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 2px 3px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 2px 3px 5px 0px rgba(0,0,0,0.75);
 }
 
 .friendSuggestion {

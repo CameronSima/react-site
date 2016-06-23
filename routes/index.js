@@ -26,12 +26,11 @@ module.exports = function (passport) {
 
   var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log("LOGGED IN")
+    console.log('authenticated')
     return next()
   } else {
-    console.log("NOT LOGGED IN")
-    // res.redirect('/api/auth/facebook')
-    res.redirect('http://localhost:3001/signup')
+    console.log('not authenticated')
+    //res.redirect('http://localhost:3001/signup')
   }
 }
 
@@ -139,10 +138,14 @@ var getRandomUsername = function () {
         console.log(err)
       } else {
         // remove some of the data, such as passwords, etc.
-        // that the client shouldn't recieve about his friends,
-        // but for now just pass the whole fully-populated user object
+        // that the client shouldn't recieve about his friends;
+        // here we replace the author user object containing _id,
+        // real username, and pseudonym, with simply either the username
+        // or pseudonym, depending on whether the author chose to remain
+        // anonymous or not. This is done to prevent users from seeing
+        // authors' real identity by using tools such as Firebug, etc.
+
         userData.feed.forEach((thread) => {
-          console.log(thread)
           if (thread.anonymous === true) {
             thread.author[0] = thread.author[0].pseudonym
           } else {
@@ -153,6 +156,42 @@ var getRandomUsername = function () {
 
       }
     })
+  })
+
+  // get list of all facebook friends so users can import them
+  // into their friends list
+  router.get('/api/importFriends', isAuthenticated, function (req, res, next) {
+    User
+    .findOne({'_id': req.user._id})
+    .exec(function (err, user) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log(user.facebookFriends)
+        console.log(typeof user.facebookFriends)
+        res.jsonp(user.facebookFriends)
+      }
+    })
+  })
+
+  // Add facebook friend to friends list, return updated friends list
+  router.post('/api/importFriends', isAuthenticated, function (req, res, next) {
+    User.findOne({'facebookId': req.body.facebookId})
+    .exec(function (err, facebookFriend) {
+      if (err) {
+        console.log(err)
+      } else {
+        var facebookFriendUserId = facebookFriend._id
+      }
+    })
+    User.findByIdAndUpdate(
+      req.user._id,
+      {$push: {'friends': facebookFriendUserId}},
+      {safe: true, upsert: true, new: true},
+      function (err, user) {
+        console.log(err)
+        res.json(user.friends)
+      })
   })
 
  
@@ -166,7 +205,6 @@ var getRandomUsername = function () {
 
   // post new thread
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
-    console.log("POSTED TO THREADS")
 
       // Create the new thread document and return it
 
@@ -180,9 +218,7 @@ var getRandomUsername = function () {
       } else {
         req.body.anonymous = false
       }
-      console.log(req.body)
       var thread = new Thread(req.body)
-      // console.log(thread)
       thread.save(function (err, thread) {
         if (err) {
           console.log(err)
