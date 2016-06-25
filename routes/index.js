@@ -167,8 +167,8 @@ var getRandomUsername = function () {
       if (err) {
         console.log(err)
       } else {
-        console.log(user.facebookFriends)
-        console.log(typeof user.facebookFriends)
+        // console.log(user.facebookFriends)
+        // console.log(typeof user.facebookFriends)
         res.jsonp(user.facebookFriends)
       }
     })

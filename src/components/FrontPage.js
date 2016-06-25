@@ -25,7 +25,6 @@ export default class FrontPage extends Component {
 			cache: false,
 			success: (data) => {
 				this.setState({data: data})
-				console.log(data.facebookFriends)
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())

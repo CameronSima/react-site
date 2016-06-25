@@ -7,18 +7,25 @@ module.exports = {
 		var getScore = (likes, dislikes, date) => {
 			var score = likes - dislikes
 			var order = Math.log(Math.max(Math.abs(score), 1)) / Math.LN10
-			var age = (Date.now() - date) / 1000
+			var age = (Date.now() - Date.parse(date)) / 1000
 			return order - age / 45000 
 		}
+
+		// 	return threads.sort((a, b) => {
+		// 		return (
+		// 			getScore(a.likes, a.dislikes, a.date) -
+		// 			getScore(b.likes, b.dislikes, b.date)
+		// 			)
+		// 	})
+		// },
 		
 		 return threads.sort((a, b) => {
-		 	console.log(a.props)
-			if (getScore(a.props.likes, a.props.dislikes, a.props.date) < 
-				  getScore(b.props.likes, b.props.dislikes, b.props.date)) {
+			if (getScore(a.likes, a.dislikes, a.date) < 
+				  getScore(b.likes, b.dislikes, b.date)) {
 				return 1
-			}
-			if (getScore(a.props.likes, a.props.dislikes, a.props.date) > 
-				  getScore(b.props.likes, b.props.dislikes, b.props.date)) {
+			} 
+			if (getScore(a.likes, a.dislikes, a.date) > 
+				  getScore(b.likes, b.dislikes, b.date)) {
 				return -1
 			}
 			return 0
@@ -28,8 +35,11 @@ module.exports = {
 	// Order threads by recency
 	orderByDate: (threads) => {
 		return threads.sort((a, b) => {
-			console.log(Date.parse(a.props.date))
-			return Date.parse(a.props.date) > Date.parse(b.props.date)
+			if(Date.parse(a.date) > Date.parse(b.date)) {
+				return -1
+			} else {
+				return 1
+			}
 		})
 	},
 

@@ -31,8 +31,8 @@ class FriendsList extends Component {
 	render() {
 		var friendNodes
 		 if (this.props.data) {
-		  console.log("PROPS FROM FRIENDS")
-		  console.log(this.props.data[0])
+		  // console.log("PROPS FROM FRIENDS")
+		  // console.log(this.props.data[0])
 		var friendNodes = this.props.data.map((friend) => {
 			return (
 					<FriendContainer friend={friend.name} key={friend.id}/>

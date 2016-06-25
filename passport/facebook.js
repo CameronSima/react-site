@@ -21,7 +21,7 @@ module.exports = function (passport) {
   var getFbPicUrls = function(user) {
     user.facebookFriends.forEach((friend) => {
       request('http://graph.facebook.com/' + friend.id + '/picture', (err, res, body) => {
-        console.log(res)
+        
       })
 
     })

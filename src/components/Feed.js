@@ -85,10 +85,10 @@ class Thread extends Component {
 
 class ThreadList extends Component {
   render() {
-    var threadNodes, sortedThreadNodes
-
+    var threadNodes, sortedFeed
     if (this.props.data) {
-      var threadNodes = this.props.data.map(function (thread) {
+      var sortedFeed = this.props.sortFunc(this.props.data)
+      var threadNodes = sortedFeed.map(function (thread) {
         return (
           <Thread victim={ thread.victim } 
                   date={ thread.date }
@@ -102,13 +102,10 @@ class ThreadList extends Component {
           </Thread>
         )
       })
-
-      sortedThreadNodes = this.props.sortFunc(threadNodes)
-
     }
     return (
       <div className="threadList">
-        { sortedThreadNodes }
+        { threadNodes }
       </div>
       )
   }
@@ -319,6 +316,7 @@ var ThreadsBox = React.createClass({
     )
   }
 })
+
 
 module.exports = ThreadsBox
 
