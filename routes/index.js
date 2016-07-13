@@ -4,6 +4,7 @@ var mongoose = require('mongoose')
 var fs = require('fs')
 var path = require('path')
 var moniker = require('moniker')
+var async = require('async')
 
 var Comment = mongoose.model('Comment')
 var Thread = mongoose.model('Thread')
@@ -160,38 +161,120 @@ var getRandomUsername = function () {
 
   // get list of all facebook friends so users can import them
   // into their friends list
+  // router.get('/api/importFriends', isAuthenticated, function (req, res, next) {
+  //   User
+  //   .findOne({'_id': req.user._id})
+  //   .exec(function (err, user) {
+  //     if (err) {
+  //       console.log(err)
+  //     } else {
+  //       // Return list of user profiles corresponding to
+  //       // facebook friend ids
+  //       var ids = user.facebookFriends.map(function(user) {
+  //         return user.id
+  //       })
+  //       User.find({
+  //         'facebookId': { $in: ids }
+  //       }, function(err, users) {
+  //         res.jsonp(users)
+  //       })
+  //       //res.jsonp(user.facebookFriends)
+  //     }
+  //   })
+  // })
+
+  // return object of facebook friends and already added friends.
+  // Both are needed to compare on client side to know if friend
+  // has already been added.
   router.get('/api/importFriends', isAuthenticated, function (req, res, next) {
-    User
-    .findOne({'_id': req.user._id})
-    .exec(function (err, user) {
-      if (err) {
-        console.log(err)
-      } else {
-        // console.log(user.facebookFriends)
-        // console.log(typeof user.facebookFriends)
-        res.jsonp(user.facebookFriends)
+    async.parallel([
+      // return array of user accounts based on facebook friends list
+      function(callback) {
+        User.findOne({'_id': req.user._id})
+        .exec(function (err, user) {
+          if (err) {
+            callback(err)
+          } else {
+            var ids = user.facebookFriends.map(function(user) {
+              return user.id
+            })
+            User.find({
+              'facebookId': { $in: ids }
+            }, function(err, users) {
+              if (err) {
+                callback(err)
+              } else {
+              callback(null, users)
+              }
+            })
+          }
+        })
+      },
+      // return already added to friends array
+      function(callback) {
+        User.findOne({'_id': req.user._id})
+        .populate('friends')
+        .exec(function (err, user) {
+          if (err) {
+            callback(err)
+          } else {
+            callback(null, user.friends)
+          }
+        })
       }
-    })
+      ],
+      function(err, results) {
+        if (err) {
+          console.log(err)
+        }
+        var data = {fbFriends: results[0], friends: results[1]}
+        //console.log(data)
+        return res.jsonp(data)
+      }
+      )
   })
 
-  // Add facebook friend to friends list, return updated friends list
-  router.post('/api/importFriends', isAuthenticated, function (req, res, next) {
-    User.findOne({'facebookId': req.body.facebookId})
-    .exec(function (err, facebookFriend) {
+  // Add facebook friend to friends list if not exists, return updated friends list
+  router.post('/api/addFriend', isAuthenticated, function (req, res, next) {
+    console.log(req.body.id)
+    var conditions = {
+      _id: req.user.id,
+      'friends': {$ne: req.body.id}
+    }
+    var update = {
+      $addToSet: { friends: req.body.id}
+    }
+    User.findOneAndUpdate(conditions, update, function (err, user) {
       if (err) {
         console.log(err)
       } else {
-        var facebookFriendUserId = facebookFriend._id
+        console.log(user)
       }
     })
+    // User.findByIdAndUpdate(
+    //   req.user._id,
+    //   {$push: {'friends': req.body.id}},
+    //   {safe: true, upsert: true, new: true},
+    //   function (err, user) {
+    //     if (err) {
+    //       console.log(err)
+    //     } 
+    //     console.log(user)
+    //     res.json(user.friends)
+    //   })
+  })
+
+  router.post('/api/removeFriend', isAuthenticated, function (req, res, next) {
+    console.log(req.body.id)
     User.findByIdAndUpdate(
       req.user._id,
-      {$push: {'friends': facebookFriendUserId}},
-      {safe: true, upsert: true, new: true},
+      {$pull: {'friends': req.body.id}},
       function (err, user) {
-        console.log(err)
-        res.json(user.friends)
-      })
+        if (err) {
+          console.log(err)
+        }
+      }
+      )
   })
 
  
@@ -207,7 +290,6 @@ var getRandomUsername = function () {
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
 
       // Create the new thread document and return it
-
       req.body.author = {}
       req.body.author.real = req.user.username
       req.body.author.pseudonym = '_' + getRandomUsername()
@@ -248,6 +330,7 @@ var getRandomUsername = function () {
     if (err) { return next(err) }
       // res.json(users)
     console.log(users)
+    console.log(users.length)
   })
 })
 

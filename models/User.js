@@ -7,13 +7,13 @@ var UserSchema = new mongoose.Schema({
   password: String,
   // Friends the user manually selected to import from
   // facebook
-  friends: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
   // used for 'History' page
   threadsParticipatedIn: { type: mongoose.Schema.ObjectId, ref: 'Thread' },
 
   // An array of Thread Ids
-  feed: [ {type: mongoose.Schema.Types.ObjectId, ref: 'Thread'} ],
+  feed: [{type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
 
   // Keep track of when the user posts/was posted about so friends 
   // list can ordered accordingly

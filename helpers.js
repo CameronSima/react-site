@@ -1,6 +1,11 @@
 var config = require('./config')
 
 module.exports = {
+	isInArray: (item, array) => {
+		console.log(item)
+		console.log(array)
+		return array.indexOf(item) > -1
+	},
 
 	// Reorder threads by hotness
 	orderByHot: (threads) => {
@@ -11,22 +16,14 @@ module.exports = {
 			return order - age / 45000 
 		}
 
-		// 	return threads.sort((a, b) => {
-		// 		return (
-		// 			getScore(a.likes, a.dislikes, a.date) -
-		// 			getScore(b.likes, b.dislikes, b.date)
-		// 			)
-		// 	})
-		// },
-		
 		 return threads.sort((a, b) => {
 			if (getScore(a.likes, a.dislikes, a.date) < 
 				  getScore(b.likes, b.dislikes, b.date)) {
-				return 1
+				return -1
 			} 
 			if (getScore(a.likes, a.dislikes, a.date) > 
 				  getScore(b.likes, b.dislikes, b.date)) {
-				return -1
+				return 1
 			}
 			return 0
 		})

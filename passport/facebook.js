@@ -16,17 +16,6 @@ module.exports = function (passport) {
     })
   })
 
-  // Use facebook graph api to add friend's facebook
-  // profile picture urls to db
-  var getFbPicUrls = function(user) {
-    user.facebookFriends.forEach((friend) => {
-      request('http://graph.facebook.com/' + friend.id + '/picture', (err, res, body) => {
-        
-      })
-
-    })
-  }
-
   passport.use(new FaceBookStrategy({
     clientID:          config.auth.facebookAuth.clientID,
     clientSecret:      config.auth.facebookAuth.clientSecret,
@@ -44,8 +33,6 @@ module.exports = function (passport) {
           return done(err);
         }
         if (user) {
-          getFbPicUrls(user)
-
           // Update users' friends list with new facebook friends
 
           if (user.facebookFriends.length < profile._json.friends.data) {

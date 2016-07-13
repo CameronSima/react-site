@@ -31,6 +31,7 @@ export default class FrontPage extends Component {
 			}
 		})
 	}
+
 	componentDidMount() {
 		this.loadDataFromServer()
 		setInterval(this.loadDataFromServer, this.state.pollInterval)

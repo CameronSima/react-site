@@ -11,14 +11,20 @@ class Thread extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      likesCount: 0
+      initialVoteCount: this.props.likes - this.props.dislikes,
+      vote: ''
     }
+    this.sendLikeToServer = this.sendLikeToServer.bind(this)
   }
   rawMarkup() {
     var rawMarkup = marked(this.props.children.toString(), { sanitize: true })
     return {__html: rawMarkup }
   }
+
   sendLikeToServer(thread_id, vote) {
+    if (this.state.vote === vote) {
+      return
+    }
     $.ajax({
       url: config.apiUrl + vote,
       xhrFields: {withCredentials: true},
@@ -33,6 +39,13 @@ class Thread extends Component {
         console.log(this.url, status, err.toString())
       }
     })
+    if (vote === 'upvote') {
+      this.setState({initialVoteCount: this.state.initialVoteCount += 1,
+                     vote: vote})
+    } else {
+      this.setState({initialVoteCount: this.state.initialVoteCount -= 1,
+                     vote: vote})
+    }
   }
 
   formatDate(dateTime) {
@@ -47,6 +60,7 @@ class Thread extends Component {
   }
 
   render() {
+    console.log(this.state.InitialVoteCount)
     return (
       <div className="thread">
         <div className="date">
@@ -72,7 +86,7 @@ class Thread extends Component {
                    value={ "downvote" } />          
 
         <div className="likeTotal">
-          {this.props.likes - this.props.dislikes}
+          {this.state.initialVoteCount}
         </div>
         <div>
           <input type="text" placeholder="Comment..." />
@@ -87,7 +101,9 @@ class ThreadList extends Component {
   render() {
     var threadNodes, sortedFeed
     if (this.props.data) {
+      // sort feed list before rendering components
       var sortedFeed = this.props.sortFunc(this.props.data)
+      
       var threadNodes = sortedFeed.map(function (thread) {
         return (
           <Thread victim={ thread.victim } 
