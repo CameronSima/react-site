@@ -17,6 +17,7 @@ class FriendContainer extends Component {
 			<div className="friend">
 				<div className="profilePic">
 				</div>
+					<img src={this.props.pic} />
 				<p>
 					{ this.props.friend}
 				</p>
@@ -35,7 +36,9 @@ class FriendsList extends Component {
 		  // console.log(this.props.data[0])
 		var friendNodes = this.props.data.map((friend) => {
 			return (
-					<FriendContainer friend={friend.name} key={friend.id}/>
+					<FriendContainer friend={ friend.username } 
+													 pic={ friend.facebookProfilePic }
+													 key={ friend._id }/>
 				)
 		})
 	 }

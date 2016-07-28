@@ -41,10 +41,10 @@ module.exports = {
 	},
 
 	// Predictive friend selection
-	suggestFriends: (friends, clicked) => {
-		return friends.filter((friend) => {
+	suggestItems: (items, clicked) => {
+		return items.filter((item) => {
 			return (
-				friend.name.toLowerCase().indexOf(clicked.toLowerCase()) === 0 
+				item.name.toLowerCase().indexOf(clicked.toLowerCase()) === 0 
 				&& clicked.length > 0
 				)
 		})

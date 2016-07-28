@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 
-import {NavButtonList} from './NavButtons'
-import {NavButton} from './NavButtons'
+import { NavButtonList } from './NavButtons'
+import { NavButton } from './NavButtons'
+import DropdownBox from './Dropdown'
 
 var config = require('../../config')
 var helpers = require('../../helpers')
@@ -60,7 +61,7 @@ class Thread extends Component {
   }
 
   render() {
-    console.log(this.state.InitialVoteCount)
+    console.log(this.props.included)
     return (
       <div className="thread">
         <div className="date">
@@ -71,7 +72,9 @@ class Thread extends Component {
         <span dangerouslySetInnerHTML={this.rawMarkup()} />
         <p>signed,</p>
         <div>
-          {this.props.author} and {this.props.ct} others.
+          {this.props.author} and 
+          <a onclick=""> { this.props.included.length } others. </a>
+            <DropdownBox data={ this.props.included } />
         </div>
         <NavButton divId="like-button" 
                    title="like"
@@ -101,6 +104,7 @@ class ThreadList extends Component {
   render() {
     var threadNodes, sortedFeed
     if (this.props.data) {
+
       // sort feed list before rendering components
       var sortedFeed = this.props.sortFunc(this.props.data)
       
@@ -109,7 +113,7 @@ class ThreadList extends Component {
           <Thread victim={ thread.victim } 
                   date={ thread.date }
                   author={ thread.author } 
-                  ct={ thread.included.length }
+                  included={ thread.included }
                   likes={ thread.likes } 
                   dislikes={ thread.dislikes }
                   id={ thread._id}
@@ -127,60 +131,7 @@ class ThreadList extends Component {
   }
 }
 
-class SuggestionsBox extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { tagged: [] }
-    this.populate = this.populate.bind(this)
-  }
-  populate(friendId) {
-    var tagged = this.state.tagged
 
-    // Prevent duplicates in tagged array
-    if (tagged.indexOf(friendId) === -1) {
-      tagged.push(friendId)
-      this.setState({tagged: tagged})
-      this.props.handleTagged(this.state.tagged)
-    }
-    this.props.clearState('included')
-    this.props.clearState('includedSuggestions')
-  }
-  render() {
-    var suggestions
-    if (this.props.suggestions) {
-      suggestions = this.props.suggestions.map((friend) => {
-        return (
-            <div className="friendSuggestion" onClick={ this.populate.bind(this, friend.id) } 
-                                              key={ friend.id }>
-              <a>{ friend.name }</a>
-              <hr></hr>
-          </div>
-          )
-      })
-    }
-    return (
-      <div id="suggestions">
-        <div id="suggestionsList">
-          { suggestions }
-        </div>
-        <SuggestedFriends taggedFriends={ this.state.tagged } />
-      </div>
-      )
-  }
-}
-
-class SuggestedFriends extends Component {
-  constructor(props) {
-    super(props) 
-  }
-  render() {
-    return (
-      <button className="btn btn-primary" id="taggedButton" type="button">
-        Tagged <span className="badge"> { this.props.taggedFriends.length } </span>
-      </button>
-      )
-  }
-}
 
 var ThreadForm = React.createClass({
   getInitialState: function () {
@@ -207,7 +158,7 @@ var ThreadForm = React.createClass({
     this.setState({included: e.target.value})
 
     // Predictive friend selection
-    var includedSuggestions = helpers.suggestFriends(this.props.friends, e.target.value)
+    var includedSuggestions = helpers.suggestItems(this.props.friends, e.target.value)
     this.setState({includedSuggestions: includedSuggestions})
   },
   handleVictimChange: function (e) {
@@ -262,9 +213,10 @@ var ThreadForm = React.createClass({
           value={this.state.included}
           onChange={this.handleIncludedChange} />
         <br></br>
-        <SuggestionsBox suggestions={this.state.includedSuggestions} 
-                handleTagged={this.handleTagged} 
-                clearState={this.clearState} />
+        <DropdownBox data={this.state.includedSuggestions} 
+                     handleTagged={this.handleTagged} 
+                     title={ 'TAGGED' }
+                     clearState={this.clearState} />
         
         <input type="radio" 
                name="anonymity" 

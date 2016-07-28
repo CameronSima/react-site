@@ -161,30 +161,6 @@ var getRandomUsername = function () {
     })
   })
 
-  // get list of all facebook friends so users can import them
-  // into their friends list
-  // router.get('/api/importFriends', isAuthenticated, function (req, res, next) {
-  //   User
-  //   .findOne({'_id': req.user._id})
-  //   .exec(function (err, user) {
-  //     if (err) {
-  //       console.log(err)
-  //     } else {
-  //       // Return list of user profiles corresponding to
-  //       // facebook friend ids
-  //       var ids = user.facebookFriends.map(function(user) {
-  //         return user.id
-  //       })
-  //       User.find({
-  //         'facebookId': { $in: ids }
-  //       }, function(err, users) {
-  //         res.jsonp(users)
-  //       })
-  //       //res.jsonp(user.facebookFriends)
-  //     }
-  //   })
-  // })
-
   // return object of facebook friends and already added friends.
   // Both are needed to compare on client side to know if friend
   // has already been added.
@@ -309,10 +285,15 @@ var getRandomUsername = function () {
           return next(err)
         }
       })
+
+      // Isolate ids
+      var includedIds = req.body.included.map(function (included) {
+        return included.id
+      })
       // Fan out thread id to included users
-      req.body.included.push(req.user.facebookId)
+      includedIds.push(req.user.facebookId)
       User.find({
-        'facebookId': {$in: req.body.included}
+        'facebookId': {$in: includedIds}
       }, function(err, users) {
         users.forEach((user) => {
           user.feed.push(thread._id)

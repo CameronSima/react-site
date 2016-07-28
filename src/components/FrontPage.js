@@ -42,9 +42,9 @@ export default class FrontPage extends Component {
 		render() {
 			return (
 				<div className="FrontPage">
-					<FriendsBox data={ this.state.data.facebookFriends } />
+					<FriendsBox data={ this.state.data.friends } />
 					<FeedBox feed={ this.state.data.feed } 
-									 friends={ this.state.data.facebookFriends } />		
+							 friends={ this.state.data.facebookFriends } />		
 
 				</div>
 				)
