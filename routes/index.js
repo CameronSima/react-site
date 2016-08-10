@@ -25,6 +25,8 @@ module.exports = function (passport) {
     next()
   })
 
+  // helper functions
+
   var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
     console.log('authenticated')
@@ -53,6 +55,8 @@ var hasntVoted = function (user, array) {
 var getRandomUsername = function () {
   return moniker.choose().split('-').join(' ')
 }
+
+// routes
 
   router.post('/api/login', function (req, res, next) {
     passport.authenticate('login', function (err, user, info) {
@@ -229,17 +233,6 @@ var getRandomUsername = function () {
         console.log(user)
       }
     })
-    // User.findByIdAndUpdate(
-    //   req.user._id,
-    //   {$push: {'friends': req.body.id}},
-    //   {safe: true, upsert: true, new: true},
-    //   function (err, user) {
-    //     if (err) {
-    //       console.log(err)
-    //     } 
-    //     console.log(user)
-    //     res.json(user.friends)
-    //   })
   })
 
   router.post('/api/removeFriend', isAuthenticated, function (req, res, next) {

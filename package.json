@@ -47,6 +47,7 @@
     "bcrypt": "latest",
     "body-parser": "latest",
     "cookie-parser": "latest",
+    "connect-mongo": "latest",
     "express": "~4.13.1",
     "express-session": "latest",
     "mongoose": "latest",

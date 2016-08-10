@@ -11,10 +11,19 @@ import AddFriends from './components/AddFriends';
 
 const config = require('../config');
 
+// Redirect to signup if user is logged in
+var authCheck = function (nextState, replace, callback) {
+  const user = localStorage.getItem("user")
+  if (user === undefined) {
+    replace('/signup')
+  }
+  callback()
+}
+
 ReactDOM.render((
                 <Router history = { browserHistory }>
                   <Route path='/' component={ NavBar }>
-                    <IndexRoute component={ FrontPage } />
+                    <IndexRoute component={ FrontPage } onEnter= { authCheck }/>
                     <Route path='signup' component={ Signup } />
                     <Route path='comments' component={ Comments } />
                     <Route path='addFriends' component={ AddFriends } />

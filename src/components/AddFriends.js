@@ -22,10 +22,11 @@ class FacebookFriend extends Component {
 			}.bind(this)
 		})
 	}
-
 	render() {
 
 		// check if the current facebook friend is already friended
+		console.log(this.props.id + this.props.friends)
+
 		if (helpers.isInArray(this.props.id, this.props.friends)) {
 			this.state.buttonTitle = 'remove'
 			this.state.url = 'removeFriend'
@@ -33,15 +34,17 @@ class FacebookFriend extends Component {
 			this.state.buttonTitle = 'add'
 			this.state.url = 'addFriend'
 		}
+
 		return (
+
 			<div className="facebookFriend">
 				<div>
 					<img src={this.props.picUrl} />
 					{this.props.name}
 					<NavButton eventFunc={this.handleFriendSubmit}
-										 state={this.props.id}
-										 value={this.state.url}
-										 title={this.state.buttonTitle} />
+							   state={this.props.id}
+							   value={this.state.url}
+							   title={this.state.buttonTitle} />
 				</div>
 			</div>
 			)
@@ -63,10 +66,10 @@ class FacebookFriendsList extends Component {
 			var fbFriendNodes = this.props.data.fbFriends.map((friend) => {
 			return (
 					<FacebookFriend name={friend.username}
-													picUrl={friend.facebookProfilePic}
-													id={friend._id}
-													friends={friendIds}
-													key={friend._id}/>
+									picUrl={friend.facebookProfilePic}
+									id={friend._id}
+									friends={friendIds}
+									key={friend._id}/>
 				)
 		})
 	 }
@@ -93,6 +96,7 @@ export default class AddFriendsBox extends Component {
 			xhrFields: {withCredentials: true},
 			success: (data) => {
 				this.setState({data: data})
+				console.log(data)
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
