@@ -135,7 +135,7 @@ var threadQuery = function (field, value) {
 
   router.post('/api/comments', function (req, res, next) {
     var comment = new Comment(req.body)
-    console.log(comment)
+    //console.log(comment)
     comment.save(function (err, post) {
       if (err) { return next(err); }
       res.json(comment)
@@ -159,7 +159,7 @@ var threadQuery = function (field, value) {
       if (err) {
          console.log(err)
       } else {
-        console.log(feed)
+        //console.log(feed)
       }
     })
   })
@@ -171,7 +171,7 @@ var threadQuery = function (field, value) {
       if (err) {
         console.log(err)
       } else {
-        console.log(feed)
+        //console.log(feed)
       }
     })
   })
@@ -183,7 +183,7 @@ var threadQuery = function (field, value) {
       if (err) {
         console.log(err)
       } else {
-        console.log(feed)
+        //console.log(feed)
       }
     })
   })
@@ -244,7 +244,15 @@ var threadQuery = function (field, value) {
   //   })
   // })
 
+  // Get logged-in user Object, populate feed and friends arrays, and build
+  // json response. This route is designed to flexibly accomodate a url
+  // parameter for feed type (authored, subject, all). Each of these parameters
+  // will also have their own endpoint for maximum flexibility.
+
   router.get('/api/frontpage/:feedType*?', isAuthenticated, function (req, res, next) {
+
+    var theySaidThreads, iSaidThreads
+
     async.parallel([
       function(callback) {
         User.findOne({ '_id': req.user._id })
@@ -260,8 +268,8 @@ var threadQuery = function (field, value) {
           })
       },
       function(callback) {
-        if (req.params.feedType === 'theySaid') {
-          threadQuery('victim', req.username)
+        if (req.params.feedType === 'theysaid') {
+          threadQuery('victim', req.user.username)
           .exec(function (err, theySaidThreads) {
             if (err) {
               callback(err)
@@ -272,26 +280,28 @@ var threadQuery = function (field, value) {
         } else {
           callback(null, null)
         }
-      }
+      },
     ],
       function(err, results) {
         if (err) {
           console.log(err)
         }
-        console.log("results " + results)
         var userData = results[0]
-        var theySaidThreads = results[1]
-        if (req.params.feedType === 'isaid') {
 
+        // will return either an array or undefined
+        var theySaidThreads = results[1]
+
+        if (req.params.feedType === 'isaid') {
           // filter out threads not authored by the user
-          var iSaidThreads = userData.feed.filter(function (thread) {
+          iSaidThreads = userData.feed.filter(function (thread) {
             return thread.author.real = req.user.username
           })
-          data.iSaidThreads = iSaidThreads
         }
         // if 'isaid' or 'theysaid' were supplied, set those threads
         // as the user's feed; else, use the users' default feed
-        // (all threads he authored or was tagged in).
+        // (all threads he authored or was tagged in). iSaidThreads
+        // and theySaidThreads will return either an array of
+        // threads or an empty array.
          userData.feed = iSaidThreads || theySaidThreads || userData.feed
 
          // Finally, remove some of the data such as friends' passwords
@@ -365,7 +375,7 @@ var threadQuery = function (field, value) {
 
   // Add facebook friend to friends list if not exists, return updated friends list
   router.post('/api/addFriend', isAuthenticated, function (req, res, next) {
-    console.log(req.body.id)
+    //console.log(req.body.id)
     var conditions = {
       _id: req.user.id,
       'friends': {$ne: req.body.id}
@@ -377,13 +387,13 @@ var threadQuery = function (field, value) {
       if (err) {
         console.log(err)
       } else {
-        console.log(user.friends)
+        //console.log(user.friends)
       }
     })
   })
 
   router.post('/api/removeFriend', isAuthenticated, function (req, res, next) {
-    console.log(req.body.id)
+    //console.log(req.body.id)
     User.findByIdAndUpdate(
       req.user._id,
       {$pull: {'friends': req.body.id}},
@@ -391,7 +401,7 @@ var threadQuery = function (field, value) {
         if (err) {
           console.log(err)
         } else {
-          console.log(user.friends)
+          //console.log(user.friends)
         }
       }
     )
@@ -402,7 +412,7 @@ var threadQuery = function (field, value) {
   router.get('/api/threads', function (req, res, next) {
     Thread.find(function (err, threads) {
       if (err) { return next(err); }
-      console.log(threads)
+      //console.log(threads)
     })
   })
 
@@ -454,8 +464,8 @@ var threadQuery = function (field, value) {
   User.find(function (err, users) {
     if (err) { return next(err) }
       // res.json(users)
-    console.log(users)
-    console.log(users.length)
+    //console.log(users)
+    //console.log(users.length)
   })
 })
 
