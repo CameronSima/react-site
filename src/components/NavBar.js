@@ -1,7 +1,24 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 
+var config = require('../../config')
+
 export default class NavBar extends Component {
+  logout() {
+    $.ajax({
+      url: config.apiUrl + 'logout',
+      dataType: 'jsonp',
+      cache: false,
+      type: 'POST',
+      success: (data) => {
+        console.log(data)
+      },
+      error: (xhr, status, err) => {
+        console.log(this.url, status, err.toString())
+      }
+    })
+  }
+
   render() {
     return (
       <div>
@@ -27,6 +44,8 @@ export default class NavBar extends Component {
                 <input type="text" class="form-control" placeholder="Search the Shit List"></input>
               </div>
               <button type="submit" class="btn btn-default">Submit</button>
+              <br></br>
+              <li onClick={this.logout} style={{float: 'right'}} target="_blank">Log out</li>
             </form>
           </ul>
         </div>

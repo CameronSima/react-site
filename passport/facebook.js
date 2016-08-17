@@ -33,9 +33,9 @@ module.exports = function (passport) {
           return done(err);
         }
         if (user) {
-          // Update users' friends list with new facebook friends
 
-          if (user.facebookFriends.length < profile._json.friends.data) {
+          // Update users' friends list with new facebook friends
+          if (user.facebookFriends.length < profile._json.friends.data.length) {
             user.facebookFriends = profile._json.friends.data
             user.save(function(err) {
               if (err) {

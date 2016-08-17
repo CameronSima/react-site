@@ -8,6 +8,7 @@ var cookieParser = require('cookie-parser')
 var mongoose = require('mongoose')
 var passport = require('passport')
 var session = require('express-session')
+var mongoStore = require('connect-mongo')(session)
 var app = express()
 
 app.set('port', settings.expressPort)
@@ -18,7 +19,17 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(cookieParser())
 
-app.use(session({secret: 'fart', resave: true, saveUninitialized: true}))
+//app.use(session({secret: 'fart', resave: true, saveUninitialized: true}))
+
+//peresistent login sessions in mongodb
+app.use(session({
+  secret: 'fart',
+  resave: true,
+  saveUninitialized: true,
+  maxAge: new Date(Date.now() + 36000000),
+  store: new mongoStore(
+    { mongooseConnection:mongoose.connection })
+}))
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -26,6 +37,7 @@ var initPassport = require('./passport/init')
 initPassport(passport)
 
 // connect to MongoDB
+
 mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/shitlistanitsocialmediatest', function (err, db) {
   if (!err) {

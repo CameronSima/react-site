@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { NavButtonList } from './NavButtons'
 import { NavButton } from './NavButtons'
 import DropdownBox from './Dropdown'
+import { Modal } from 'elemental'
 
 var config = require('../../config')
 var helpers = require('../../helpers')
@@ -60,8 +61,18 @@ class Thread extends Component {
       )
   }
 
+  toggleModal() {
+    <Modal isOpen={this.state.modalIsOpen} onCancel={this.toggleModal} backdropClosesModal>
+  <ModalHeader text="Lots of text to show scroll behavior" showCloseButton onClose={this.toggleModal} />
+  <ModalBody>[...]</ModalBody>
+  <ModalFooter>
+    <Button type="primary" onClick={this.toggleModal}>Close modal</Button>
+    <Button type="link-cancel" onClick={this.toggleModal}>Also closes modal</Button>
+  </ModalFooter>
+</Modal>
+  }
+
   render() {
-    console.log(this.props.included)
     return (
       <div className="thread">
         <div className="date">
@@ -73,8 +84,8 @@ class Thread extends Component {
         <p>signed,</p>
         <div>
           {this.props.author} and 
-          <a onclick=""> { this.props.included.length } others. </a>
-            <DropdownBox data={ this.props.included } />
+          <a onClick={this.toggleModal}> { this.props.included.length } others. </a>
+
         </div>
         <NavButton divId="like-button" 
                    title="like"

@@ -15,7 +15,18 @@ module.exports = function (passport) {
   router.use(function (req, res, next) {
     // Set permissive CORS header - this allows this server to be used only as
     // an API server in conjunction with something like webpack-dev-server.
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
+
+    //res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3001')
+
+    // var allowedOrigins = ['http://localhost:3000', 'http://localhost:3001']
+    // var origin = req.headers.origin
+    // console.log(origin)
+    // if (allowedOrigins.indexOf(origin) > 1) {
+    //   res.header('Access-Control-Allow-Origin', origin)
+    // }
+
+
     res.header('Content-Type', 'json')
     res.header('Access-Control-Allow-Credentials', true)
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -24,6 +35,8 @@ module.exports = function (passport) {
     res.setHeader('Cache-Control', 'no-cache')
     next()
   })
+
+  // helper functions
 
   var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
@@ -53,6 +66,8 @@ var hasntVoted = function (user, array) {
 var getRandomUsername = function () {
   return moniker.choose().split('-').join(' ')
 }
+
+// routes
 
   router.post('/api/login', function (req, res, next) {
     passport.authenticate('login', function (err, user, info) {
@@ -98,6 +113,7 @@ var getRandomUsername = function () {
         if (err) {
           console.log(err)
         }
+        res.send(session)
       })
     }
   );
@@ -137,6 +153,7 @@ var getRandomUsername = function () {
     .populate('feed')
     .populate('friends')
     .exec(function (err, userData) {
+      console.log(userData.username)
       if (err) {
         console.log(err)
       } else {
@@ -226,20 +243,9 @@ var getRandomUsername = function () {
       if (err) {
         console.log(err)
       } else {
-        console.log(user)
+        console.log(user.friends)
       }
     })
-    // User.findByIdAndUpdate(
-    //   req.user._id,
-    //   {$push: {'friends': req.body.id}},
-    //   {safe: true, upsert: true, new: true},
-    //   function (err, user) {
-    //     if (err) {
-    //       console.log(err)
-    //     } 
-    //     console.log(user)
-    //     res.json(user.friends)
-    //   })
   })
 
   router.post('/api/removeFriend', isAuthenticated, function (req, res, next) {
@@ -250,9 +256,11 @@ var getRandomUsername = function () {
       function (err, user) {
         if (err) {
           console.log(err)
+        } else {
+          console.log(user.friends)
         }
       }
-      )
+    )
   })
 
  

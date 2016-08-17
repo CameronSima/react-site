@@ -11,6 +11,21 @@ import AddFriends from './components/AddFriends';
 
 const config = require('../config');
 
+// Redirect to signup if user is not logged in
+// var authCheck = function (nextState, replace, callback) {
+//   $(document).ready(function() {
+//     var user = localStorage.getItem('uid')
+//     console.log(user)
+//     if (user === '') {
+//       replace('signup')
+//     } 
+    
+//     callback()
+//   })
+// }
+
+
+
 ReactDOM.render((
                 <Router history = { browserHistory }>
                   <Route path='/' component={ NavBar }>

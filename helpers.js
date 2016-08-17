@@ -2,9 +2,19 @@ var config = require('./config')
 
 module.exports = {
 	isInArray: (item, array) => {
-		console.log(item)
-		console.log(array)
+		//console.log(item)
+		//console.log(array)
 		return array.indexOf(item) > -1
+	},
+
+	changeState: (obj) => {
+		for (var key in obj) {
+			this.setState({key: obj[key]})
+		}
+		console.log("STATE HELPER")
+		console.log(key)
+		console.log(obj)
+		console.log(this.state)
 	},
 
 	// Reorder threads by hotness
