@@ -2,8 +2,6 @@ var config = require('./config')
 
 module.exports = {
 	isInArray: (item, array) => {
-		//console.log(item)
-		//console.log(array)
 		return array.indexOf(item) > -1
 	},
 
@@ -11,10 +9,6 @@ module.exports = {
 		for (var key in obj) {
 			this.setState({key: obj[key]})
 		}
-		console.log("STATE HELPER")
-		console.log(key)
-		console.log(obj)
-		console.log(this.state)
 	},
 
 	// Reorder threads by hotness
@@ -29,11 +23,11 @@ module.exports = {
 		 return threads.sort((a, b) => {
 			if (getScore(a.likes, a.dislikes, a.date) < 
 				  getScore(b.likes, b.dislikes, b.date)) {
-				return -1
+				return 1
 			} 
 			if (getScore(a.likes, a.dislikes, a.date) > 
 				  getScore(b.likes, b.dislikes, b.date)) {
-				return 1
+				return -1
 			}
 			return 0
 		})

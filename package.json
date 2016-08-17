@@ -56,6 +56,7 @@
     "passport-facebook": "latest",
     "passport-local": "latest",
     "react": "^0.14.6",
+    "react-bootstrap": "latest",
     "react-dom": "^0.14.6",
     "react-router": "2.4.0",
     "request": "latest"

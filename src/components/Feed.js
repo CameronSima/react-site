@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { NavButtonList } from './NavButtons'
 import { NavButton } from './NavButtons'
 import DropdownBox from './Dropdown'
+import Menu from './Menu'
 import { Modal } from 'elemental'
 
 var config = require('../../config')
@@ -248,6 +249,8 @@ var ThreadForm = React.createClass({
   }
 })
 
+
+
 var ThreadsBox = React.createClass({
   handleThreadSubmit: function (thread) {
     var threads = this.props.feed
@@ -277,7 +280,12 @@ var ThreadsBox = React.createClass({
     this.setState({[state]: value})
   },
 
-  render: function () {
+  setDataType: function() {
+
+  },
+
+  // TODO: replace custom navbuttons with react-bootstrap buttons
+  render: function() {
     return (
     <div className="threadsBox">
       <ThreadForm friends={this.props.friends}
@@ -287,6 +295,8 @@ var ThreadsBox = React.createClass({
                        eventFunc={this.changeState} 
                        state={"sortFunc"} 
                        buttons={buttonObs.mainNavButtons} />
+        <Menu items={ ['ALL', 'I SAID', 'THEY SAID', 'I TAGGED'] }
+               />
       </div>
       <ThreadList data={ this.props.feed }
                   sortFunc={ this.state.sortFunc } />

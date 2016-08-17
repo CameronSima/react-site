@@ -20,8 +20,9 @@ export default class FrontPage extends Component {
 
 	loadDataFromServer() {
 		$.ajax({ 
-			 url: config.apiUrl + 'frontpage',
-			dataType: 'jsonp',
+			 url: config.apiUrl + 'frontpage/',
+			dataType: 'json',
+			xhrFields: { withCredentials: true },
 			cache: false,
 			success: (data) => {
 				this.setState({data: data})

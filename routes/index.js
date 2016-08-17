@@ -17,17 +17,18 @@ module.exports = function (passport) {
     // an API server in conjunction with something like webpack-dev-server.
 
     //res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3001')
+    //res.header('Access-Control-Allow-Origin', 'http://localhost:3001')
 
-    // var allowedOrigins = ['http://localhost:3000', 'http://localhost:3001']
-    // var origin = req.headers.origin
-    // console.log(origin)
-    // if (allowedOrigins.indexOf(origin) > 1) {
-    //   res.header('Access-Control-Allow-Origin', origin)
-    // }
+    // allow request from both the dev server and through the express
+    // server port.
+    var allowedOrigins = ['http://localhost:3000', 'http://localhost:3001']
+    var origin = req.headers.origin
+    if (allowedOrigins.indexOf(origin) > -1) {
+      res.header('Access-Control-Allow-Origin', origin)
+    }
 
 
-    res.header('Content-Type', 'json')
+    res.header('Content-Type', 'application/json')
     res.header('Access-Control-Allow-Credentials', true)
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
@@ -67,6 +68,12 @@ var getRandomUsername = function () {
   return moniker.choose().split('-').join(' ')
 }
 
+var threadQuery = function (field, value) {
+  var query = Thread.find({
+    field: value 
+  })
+  return query
+}
 // routes
 
   router.post('/api/login', function (req, res, next) {
@@ -145,37 +152,164 @@ var getRandomUsername = function () {
     })
   })
 
-  // Get logged-in user's User object, populate feed and friends fields,
-  // and build json response
-  router.get('/api/frontpage', isAuthenticated, function (req, res, next) {
-    User
-    .findOne({ '_id': req.user._id })
-    .populate('feed')
-    .populate('friends')
-    .exec(function (err, userData) {
-      console.log(userData.username)
+  // return all threads the user is tagged in; (already supplied by frontpage route) 
+  router.get('/api/tagged', isAuthenticated, function (req, res, next) {
+    threadQuery('included', req.user.Id)
+    .exec(function (err, feed) {
+      if (err) {
+         console.log(err)
+      } else {
+        console.log(feed)
+      }
+    })
+  })
+
+  // return all threads the user has written
+  router.get('/api/isaid', isAuthenticated, function (req, res, next) {
+    threadQuery('author.real', req.username)
+    .exec(function (err, feed) {
       if (err) {
         console.log(err)
       } else {
-        // remove some of the data, such as passwords, etc.
-        // that the client shouldn't recieve about his friends;
-        // here we replace the author user object containing _id,
-        // real username, and pseudonym, with simply either the username
-        // or pseudonym, depending on whether the author chose to remain
-        // anonymous or not. This is done to prevent users from seeing
-        // authors' real identity by using tools such as Firebug, etc.
+        console.log(feed)
+      }
+    })
+  })
 
-        userData.feed.forEach((thread) => {
+  // return all threads written about the user
+  router.get('/api/theysaid', isAuthenticated, function (req, res, next) {
+    threadQuery('victim', req.username)
+    .exec(function (err, feed) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log(feed)
+      }
+    })
+  })
+
+  // Get logged-in user's User object, populate feed and friends fields,
+  // and build json response
+  // router.get('/api/frontpage:feedType*?', isAuthenticated, function (req, res, next) {
+  //   console.log(req.params.feedType)
+  //   User
+  //   .findOne({ '_id': req.user._id })
+  //   .populate('feed')
+  //   .populate('friends')
+  //   .exec(function (err, userData) {
+  //     console.log(userData.username)
+  //     if (err) {
+  //       console.log(err)
+  //     } else {
+
+  //       // change content of feed depending on user selection (written by, written about)
+  //       if (req.params.feedType === 'isaid') {
+
+  //         //filter out threads not authored by the user; a db call is not required
+  //         var _isaid = userData.feed.filter(function(thread) {
+  //           return thread.author.real = req.user.username
+  //         })
+  //         userData.feed = _isaid
+  //       } else if (req.params.feedType === 'theysaid') {
+
+  //         // get threads where the user is the victim from db; they're not 
+  //         // included in a user document
+  //         threadQuery('victim', req.username)
+  //         .exec(function (err, theySaid) {
+  //           if (err) {
+  //             console.log(err)
+  //           } else {
+  //             userData.feed = theySaid
+  //           }
+  //         })
+  //       }
+
+  //       // remove some of the data, such as passwords, etc.
+  //       // that the client shouldn't recieve about his friends;
+  //       // here we replace the author user object containing _id,
+  //       // real username, and pseudonym, with simply either the username
+  //       // or pseudonym, depending on whether the author chose to remain
+  //       // anonymous or not. This is done to prevent users from seeing
+  //       // authors' real identity by using tools such as Firebug, etc.
+
+  //       userData.feed.forEach((thread) => {
+  //         if (thread.anonymous === true) {
+  //           thread.author[0] = thread.author[0].pseudonym
+  //         } else {
+  //           thread.author[0] = thread.author[0].real
+  //         }
+  //       })
+  //       res.jsonp(userData)
+  //     }
+  //   })
+  // })
+
+  router.get('/api/frontpage/:feedType*?', isAuthenticated, function (req, res, next) {
+    async.parallel([
+      function(callback) {
+        User.findOne({ '_id': req.user._id })
+          .populate('feed')
+          .populate('friends')
+          .exec(function (err, userData) {
+            if (err) {
+              callback(err)
+            } else {
+            console.log("user found" + userData.username)
+            callback(null, userData)
+            }
+          })
+      },
+      function(callback) {
+        if (req.params.feedType === 'theySaid') {
+          threadQuery('victim', req.username)
+          .exec(function (err, theySaidThreads) {
+            if (err) {
+              callback(err)
+            } else {
+              callback(null, theySaidThreads)
+            }
+          })
+        } else {
+          callback(null, null)
+        }
+      }
+    ],
+      function(err, results) {
+        if (err) {
+          console.log(err)
+        }
+        console.log("results " + results)
+        var userData = results[0]
+        var theySaidThreads = results[1]
+        if (req.params.feedType === 'isaid') {
+
+          // filter out threads not authored by the user
+          var iSaidThreads = userData.feed.filter(function (thread) {
+            return thread.author.real = req.user.username
+          })
+          data.iSaidThreads = iSaidThreads
+        }
+        // if 'isaid' or 'theysaid' were supplied, set those threads
+        // as the user's feed; else, use the users' default feed
+        // (all threads he authored or was tagged in).
+         userData.feed = iSaidThreads || theySaidThreads || userData.feed
+
+         // Finally, remove some of the data such as friends' passwords
+         // that we don't want the client receive. Here, we replace
+         // the author user object containing _id, username, and 
+         // pseudonym with simply either the username or pseudonym
+         // depending on whether the auther chose to remain anonymous
+         // or not.
+         userData.feed.forEach(function(thread) {
           if (thread.anonymous === true) {
             thread.author[0] = thread.author[0].pseudonym
           } else {
             thread.author[0] = thread.author[0].real
           }
         })
-        res.jsonp(userData)
-
+        res.json(userData)
       }
-    })
+    )
   })
 
   // return object of facebook friends and already added friends.
@@ -217,12 +351,12 @@ var getRandomUsername = function () {
           }
         })
       }
-      ],
+    ],
       function(err, results) {
         if (err) {
           console.log(err)
         }
-        var data = {fbFriends: results[0], friends: results[1]}
+        var data = { fbFriends: results[0], friends: results[1] }
         //console.log(data)
         return res.jsonp(data)
       }

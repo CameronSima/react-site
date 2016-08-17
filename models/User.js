@@ -12,7 +12,7 @@ var UserSchema = new mongoose.Schema({
   // used for 'History' page
   threadsParticipatedIn: { type: mongoose.Schema.ObjectId, ref: 'Thread' },
 
-  // An array of Thread Ids
+  // An array of Thread Ids of threads the user has authored or been tagged in
   feed: [{type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
 
   // Keep track of when the user posts/was posted about so friends 
