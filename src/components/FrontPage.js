@@ -13,14 +13,17 @@ export default class FrontPage extends Component {
 		super(props)
 		this.state = {
 			data: {},
-			pollInterval: config.pollInterval
+			pollInterval: config.pollInterval,
+			feedType: 'ALL'
 		}
 		this.loadDataFromServer = this.loadDataFromServer.bind(this)
+		this.setFeedType = this.setFeedType.bind(this)
 	}
 
 	loadDataFromServer() {
+		var feedType = this.state.feedType.split(' ').join('').toLowerCase()
 		$.ajax({ 
-			 url: config.apiUrl + 'frontpage/',
+			 url: config.apiUrl + 'frontpage/' + feedType,
 			dataType: 'json',
 			xhrFields: { withCredentials: true },
 			cache: false,
@@ -35,6 +38,13 @@ export default class FrontPage extends Component {
 		})
 	}
 
+	setFeedType(feedType) {
+		console.log(feedType)
+		this.setState({ feedType: feedType }, function() {
+			this.loadDataFromServer()
+		}.bind(this))
+	}
+
 	componentDidMount() {
 		this.loadDataFromServer()
 		setInterval(this.loadDataFromServer, this.state.pollInterval)
@@ -47,7 +57,8 @@ export default class FrontPage extends Component {
 				<div className="FrontPage">
 					<FriendsBox data={ this.state.data.friends } />
 					<FeedBox feed={ this.state.data.feed } 
-							 friends={ this.state.data.facebookFriends } />		
+							 friends={ this.state.data.facebookFriends }
+							 setFeedType={this.setFeedType } />		
 
 				</div>
 				)

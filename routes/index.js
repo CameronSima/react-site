@@ -253,6 +253,8 @@ var threadQuery = function (field, value) {
 
     var theySaidThreads, iSaidThreads
 
+    console.log(req.params.feedType)
+
     async.parallel([
       function(callback) {
         User.findOne({ '_id': req.user._id })

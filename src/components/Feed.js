@@ -271,16 +271,17 @@ var ThreadsBox = React.createClass({
       }.bind(this)
     })
   },
-  // Feed nav buttons default to order by date
+  // Feed nav buttons default to order by date;
+  // Feed type defaults to all
   getInitialState: function () {
-    return {feed: [], sortFunc: helpers.orderByDate}
+    return {feed: [], sortFunc: helpers.orderByDate }
   },
 
-  changeState: function (state, value) {
-    this.setState({[state]: value})
+  setFeedType: function(feedType) {
+    //console.log(feedType)
+    this.props.setFeedType(feedType)
   },
-
-  setDataType: function() {
+  componentDidMount: function() {
 
   },
 
@@ -296,6 +297,7 @@ var ThreadsBox = React.createClass({
                        state={"sortFunc"} 
                        buttons={buttonObs.mainNavButtons} />
         <Menu items={ ['ALL', 'I SAID', 'THEY SAID', 'I TAGGED'] }
+                      menuEventFunc={ this.setFeedType }
                />
       </div>
       <ThreadList data={ this.props.feed }

@@ -15,7 +15,11 @@ export default class Menu extends Component {
 			)
 	}
 	handleClick(eventKey) {
-		this.setState({title: eventKey})
+		// set eventKey to state to update the title of the button,
+		// and pass to setState in parent component to update the
+		// feed 
+		this.setState({ title: eventKey })
+		this.props.menuEventFunc(eventKey)
 	}
 	render() {
 		var menuItems = this.props.items.map(function (item, i) {
