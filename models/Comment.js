@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+var mongooseTreeAncestors = require('mongoose-tree-ancestors')
 
 var CommentSchema = new mongoose.Schema({
   thread: { type: mongoose.Schema.Types.ObjectId, ref: 'Thread' },
@@ -6,9 +7,16 @@ var CommentSchema = new mongoose.Schema({
   text: String,
   likes: Number,
   dislikes: Number,
-  // For now, just use a simple string for username
-  author: String
-// author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  parent: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  children: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+})
+
+mongooseTreeAncestors(CommentSchema, {
+	parentFieldName: 'parent',
+	parentFieldRefModel: 'CommentSchema',
+	ancestorsFieldName: 'children',
+	ancestorsFieldModel: 'CommentSchema'
 })
 
 mongoose.model('Comment', CommentSchema)

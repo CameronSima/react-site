@@ -5,6 +5,7 @@ var fs = require('fs')
 var path = require('path')
 var moniker = require('moniker')
 var async = require('async')
+var asyncEach = require('async-each')
 
 var Comment = mongoose.model('Comment')
 var Thread = mongoose.model('Thread')
@@ -61,7 +62,6 @@ var hasntVoted = function (user, array) {
   } else {
     return false
   }
-  
 }
 
 var getRandomUsername = function () {
@@ -125,30 +125,56 @@ var threadQuery = function (field, value) {
     }
   );
 
-  // Get all comments, testing only
+  // Get thread comments
   router.get('/api/comments', function (req, res, next) {
-    Comment.find(function (err, posts) {
-      if (err) { return next(err); }
-        res.json(posts)
+    Comment.find({
+      thread: req.params.threadId
+    })
+    .exec(function (err, comments) {
+      res.json(comments)
     })
   })
 
-  router.post('/api/comments', function (req, res, next) {
+  router.post('/api/comments/', function (req, res, next) {
+
+    // save new comment
     var comment = new Comment(req.body)
-    //console.log(comment)
-    comment.save(function (err, post) {
+    comment.author = req.user._id
+    console.log(comment)
+    comment.save(function (err, comment) {
       if (err) { return next(err); }
-      res.json(comment)
+
+      // add comment id to thread object
+      var conditions = { _id: req.body.thread }
+
+      var update = {
+        $addToSet: { comments: comment._id }
+      }
+      Thread.findOneAndUpdate(
+        conditions, update, function (err, thread) {
+        if (err) {
+          console.log(err)
+        } else {
+        }
+      })
     })
+    return next()
+  })
+
+  router.post('/api/thread/:id/:parent', isAuthenticated, function (req, res, next) {
+
   })
 
   // Get a single thread
-  router.get('/api/thread', function (req, res, next) {
-    req.body.populate('comments', function (err, post) {
+  router.get('/api/thread/:id', isAuthenticated, function (req, res, next) {
+    threadQuery('_id', req.params.id)
+    .exec(function (err, feed) {
       if (err) {
-        return next(err);
+        console.log(err)
+      } else {
+        console.log(feed)
+        res.json(feed)
       }
-      res.json(post)
     })
   })
 
@@ -188,83 +214,35 @@ var threadQuery = function (field, value) {
     })
   })
 
-  // Get logged-in user's User object, populate feed and friends fields,
-  // and build json response
-  // router.get('/api/frontpage:feedType*?', isAuthenticated, function (req, res, next) {
-  //   console.log(req.params.feedType)
-  //   User
-  //   .findOne({ '_id': req.user._id })
-  //   .populate('feed')
-  //   .populate('friends')
-  //   .exec(function (err, userData) {
-  //     console.log(userData.username)
-  //     if (err) {
-  //       console.log(err)
-  //     } else {
-
-  //       // change content of feed depending on user selection (written by, written about)
-  //       if (req.params.feedType === 'isaid') {
-
-  //         //filter out threads not authored by the user; a db call is not required
-  //         var _isaid = userData.feed.filter(function(thread) {
-  //           return thread.author.real = req.user.username
-  //         })
-  //         userData.feed = _isaid
-  //       } else if (req.params.feedType === 'theysaid') {
-
-  //         // get threads where the user is the victim from db; they're not 
-  //         // included in a user document
-  //         threadQuery('victim', req.username)
-  //         .exec(function (err, theySaid) {
-  //           if (err) {
-  //             console.log(err)
-  //           } else {
-  //             userData.feed = theySaid
-  //           }
-  //         })
-  //       }
-
-  //       // remove some of the data, such as passwords, etc.
-  //       // that the client shouldn't recieve about his friends;
-  //       // here we replace the author user object containing _id,
-  //       // real username, and pseudonym, with simply either the username
-  //       // or pseudonym, depending on whether the author chose to remain
-  //       // anonymous or not. This is done to prevent users from seeing
-  //       // authors' real identity by using tools such as Firebug, etc.
-
-  //       userData.feed.forEach((thread) => {
-  //         if (thread.anonymous === true) {
-  //           thread.author[0] = thread.author[0].pseudonym
-  //         } else {
-  //           thread.author[0] = thread.author[0].real
-  //         }
-  //       })
-  //       res.jsonp(userData)
-  //     }
-  //   })
-  // })
 
   // Get logged-in user Object, populate feed and friends arrays, and build
   // json response. This route is designed to flexibly accomodate a url
-  // parameter for feed type (authored, subject, all). Each of these parameters
+  // parameter for feed type (authored, subject, tagged, all). Each of these parameters
   // will also have their own endpoint for maximum flexibility.
 
   router.get('/api/frontpage/:feedType*?', isAuthenticated, function (req, res, next) {
 
-    var theySaidThreads, iSaidThreads
-
-    console.log(req.params.feedType)
-
+    var theySaidThreads, iSaidThreads, tagged
     async.parallel([
       function(callback) {
         User.findOne({ '_id': req.user._id })
-          .populate('feed')
           .populate('friends')
+
+          // populate feed and its subdocuments
+          .populate({
+            path: 'feed',
+            populate: { path: 'comments',
+                        model: 'Comment',
+                        populate: { path: 'author',
+                                    model: 'User',
+                                    select: 'username' } }
+          })
           .exec(function (err, userData) {
             if (err) {
               callback(err)
             } else {
-            console.log("user found" + userData.username)
+            console.log("user found " + userData.username)
+            console.log(userData)
             callback(null, userData)
             }
           })
@@ -299,12 +277,21 @@ var threadQuery = function (field, value) {
             return thread.author.real = req.user.username
           })
         }
+
+        if (req.params.feedType === 'tagged') {
+          // filter out threads authored by the user
+          // (return only those he's tagged in).
+          tagged = userData.feed.filter(function (thread) {
+            return thread.author.real != req.user.username
+          })
+        }
         // if 'isaid' or 'theysaid' were supplied, set those threads
         // as the user's feed; else, use the users' default feed
         // (all threads he authored or was tagged in). iSaidThreads
         // and theySaidThreads will return either an array of
         // threads or an empty array.
          userData.feed = iSaidThreads || theySaidThreads || userData.feed
+
 
          // Finally, remove some of the data such as friends' passwords
          // that we don't want the client receive. Here, we replace
@@ -319,6 +306,12 @@ var threadQuery = function (field, value) {
             thread.author[0] = thread.author[0].real
           }
         })
+         //console.log(userData.feed)
+        if (userData.feed === []) {
+          userData.feed.push({text: "No threads found!",
+                              _id: "no_results"})
+        }
+        //console.log(userData.feed)
         res.json(userData)
       }
     )
@@ -418,8 +411,20 @@ var threadQuery = function (field, value) {
     })
   })
 
-  // post new thread
+   // post new thread
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
+
+        // update user's 'last posted' field
+        User.findOneAndUpdate(
+          req.user._id,
+          { 'lastPosted': Date.now() }, 
+          function (err, user) {
+            if (err) {
+              console.log(err)
+            }
+              console.log(user.lastPosted)
+
+        })
 
       // Create the new thread document and return it
       req.body.author = {}
@@ -461,6 +466,96 @@ var threadQuery = function (field, value) {
       return next()
   })
 
+
+  // // post new thread
+  // router.post('/api/threads', isAuthenticated, function (req, res, next) {
+  //   setImmediate(function () {
+  //     setImmediate(function () {
+
+  //       // update user's 'last posted' field
+  //       User.findOneAndUpdate(
+  //         req.user._id,
+  //         { 'lastPosted': Date.now() }, 
+  //         function (err, user) {
+  //           if (err) {
+  //             console.log(err)
+  //           }
+  //         })
+  //     })
+  //     setImmediate(function () {
+
+  //               // Create new author object
+  //       req.body.author = {}
+  //       req.body.author.real = req.user.username
+  //       req.body.author.pseudonym = '_' + getRandomUsername()
+
+  //       // turn anonymous entry into boolean
+  //       if (req.body.anonymous === 'anonymous') {
+  //         req.body.anonymous = true
+  //       } else {
+  //         req.body.anonymous = false
+  //       }
+  //       var thread = new Thread(req.body)
+  //       thread.save(function (err, thread) {
+  //         if (err) {
+  //           console.log(err)
+  //           return next(err)
+  //         }
+  //       })
+  //     })
+  //     setImmediate(function () {
+
+  //       // TODO: Use _id field, not facebookIds
+
+  //       req.body.included.push(req.user.facebookId)
+
+  //       // fan out thread ids to included users
+  //       asyncEach(req.body.included, function (user, callback) {
+  //         User.findOne({ 'facebookId': req.user.id },
+  //           function (err, user) {
+  //             req.user.feed.push()
+  //           })
+  //       }, function(err, users) {
+  //         if (err) {
+  //           return console.error(err)
+  //         }
+  //       })
+  //     })
+  //  })
+
+  //     // Isolate ids
+  //     var includedIds = req.body.included.map(function (included) {
+  //       return included.id
+  //     })
+  //     // Fan out thread id to included users
+  //     includedIds.push(req.user.facebookId)
+  //     User.find({
+  //       'facebookId': { $in: includedIds }
+  //     }, function(err, users) {
+  //       asyncEach(users, function (user, callback) {
+  //         user.feed.push(thread._id)
+  //         user.save(function (err, user) {
+  //           if (err) {
+  //             console.log(err)
+  //           }
+  //         })
+  //       })
+  //     })
+  //     User.find({
+  //       'facebookId': {$in: includedIds}
+  //     }, function(err, users) {
+  //       users.forEach((user) => {
+  //         user.feed.push(thread._id)
+  //         user.save((err, user) => {
+  //           if (err) {
+  //             console.log(err)
+  //           }
+  //         })
+  //       })
+  //     })
+  //       return next()
+  // })
+
   // Return all users
   router.get('/api/users', function (req, res, next) {
   User.find(function (err, users) {
@@ -486,7 +581,7 @@ var threadQuery = function (field, value) {
             }
           })
         } else {
-          return
+          return next()
         }
       })
   })
@@ -511,6 +606,5 @@ var threadQuery = function (field, value) {
         }
       })
   })
-
   return router
 }

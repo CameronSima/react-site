@@ -8,10 +8,7 @@ var UserSchema = new mongoose.Schema({
   // Friends the user manually selected to import from
   // facebook
   friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-
-  // used for 'History' page
-  threadsParticipatedIn: { type: mongoose.Schema.ObjectId, ref: 'Thread' },
-
+  
   // An array of Thread Ids of threads the user has authored or been tagged in
   feed: [{type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
 

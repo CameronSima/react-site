@@ -4,7 +4,7 @@ import { NavButtonList } from './NavButtons'
 import { NavButton } from './NavButtons'
 import DropdownBox from './Dropdown'
 import Menu from './Menu'
-import { Modal } from 'elemental'
+import CommentsBox from './Comments'
 
 var config = require('../../config')
 var helpers = require('../../helpers')
@@ -104,7 +104,8 @@ class Thread extends Component {
           {this.state.initialVoteCount}
         </div>
         <div>
-          <input type="text" placeholder="Comment..." />
+          <CommentsBox threadId={ this.props.id }
+                       comments={ this.props.comments } />
         </div>
         <hr></hr>
       </div>
@@ -123,6 +124,7 @@ class ThreadList extends Component {
       var threadNodes = sortedFeed.map(function (thread) {
         return (
           <Thread victim={ thread.victim } 
+                  comments={ thread.comments }
                   date={ thread.date }
                   author={ thread.author } 
                   included={ thread.included }

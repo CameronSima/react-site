@@ -229,3 +229,17 @@ a.button {
 	border: 1px solid #edeeee;
 	width: 400px;
 }
+
+.commentBox {
+	background-color: #F1F1F1;
+}
+
+.commentForm {
+	margin: 8px;
+}
+
+
+.comment {
+	line-height: 1.4;
+	padding: 5px;
+}

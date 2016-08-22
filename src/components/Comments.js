@@ -3,16 +3,13 @@ import React from 'react';
 var config = require('../../config');
 
 var Comment = React.createClass({
-  rawMarkup: function () {
-    var rawMarkup = marked(this.props.children.toString(), {sanitize: true})
-    return { __html: rawMarkup }
-  },
-
   render: function () {
     return (
     <div className="comment">
-      <h2 className="commentAuthor">{this.props.author}</h2>
-      <span dangerouslySetInnerHTML={this.rawMarkup()} />
+    <span>
+      <a className="commentAuthor">{ this.props.author.username }</a>
+       { ' ' + this.props.text }
+    </span>
     </div>
     )
   }
@@ -21,20 +18,6 @@ var Comment = React.createClass({
 var count = 0
 
 var CommentBox = React.createClass({
-  loadCommentsFromServer: function () {
-    console.log(this.props.pollInterval)
-    $.ajax({
-      url: config.apiUrl + 'comments',
-      dataType: 'json',
-      cache: false,
-      success: function (data) {
-        this.setState({data: data})
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString())
-      }.bind(this)
-    })
-  },
   handleCommentSubmit: function (comment) {
     var comments = this.state.data
     // Optimistically set an id on the new comment. It will be replaced by an
@@ -48,6 +31,7 @@ var CommentBox = React.createClass({
       dataType: 'json',
       type: 'POST',
       data: comment,
+      xhrFields: { withCredentials: true },
       success: function (data) {
         this.setState({data: data})
       }.bind(this),
@@ -58,22 +42,14 @@ var CommentBox = React.createClass({
     })
   },
   getInitialState: function () {
-    return {data: [],
-            pollInterval: config.pollInterval}
+    return {data: [] }
   },
-  componentWillUnmount: function () {
-    this.state.pollInterval = false;
-  },
-  componentDidMount: function () {
-    this.loadCommentsFromServer()
-    setInterval(this.loadCommentsFromServer, this.state.pollInterval)
-  },
+
   render: function () {
     return (
     <div className="commentBox">
-      <h1>Comments</h1>
-      <CommentList data={this.state.data} />
-      <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+      <CommentList comments={ this.props.comments } />
+      <CommentForm threadId={ this.props.threadId } onCommentSubmit={this.handleCommentSubmit} />
     </div>
     )
   }
@@ -81,52 +57,49 @@ var CommentBox = React.createClass({
 
 var CommentList = React.createClass({
   render: function () {
-    var commentNodes = this.props.data.map(function (comment) {
+    if (this.props.comments) {
+      var commentNodes = this.props.comments.map(function (comment) {
+        return (
+        <Comment author={comment.author} text={comment.text} key={comment._id}>
+          {comment.text}
+        </Comment>
+        )
+      })
       return (
-      <Comment author={comment.author} key={comment._id}>
-        {comment.text}
-      </Comment>
+      <div className="commentList">
+        { commentNodes }
+      </div>
       )
-    })
-    return (
-    <div className="commentList">
-      {commentNodes}
-    </div>
-    )
-  }
+    } else {
+      return (
+        <div></div> 
+      )
+    }
+  } 
 })
 
 var CommentForm = React.createClass({
   getInitialState: function () {
-    return {author: '', text: ''}
-  },
-  handleAuthorChange: function (e) {
-    this.setState({author: e.target.value})
+    return { text: '' }
   },
   handleTextChange: function (e) {
     this.setState({text: e.target.value})
   },
   handleSubmit: function (e) {
     e.preventDefault()
-    var author = this.state.author.trim()
     var text = this.state.text.trim()
-    if (!text || !author) {
+    if (!text) {
       return
     }
-    this.props.onCommentSubmit({author: author, text: text})
-    this.setState({author: '', text: ''})
+    this.props.onCommentSubmit({ text: text, thread: this.props.threadId })
+    this.setState({ text: ''})
   },
   render: function () {
     return (
     <form className="commentForm" onSubmit={this.handleSubmit}>
       <input
         type="text"
-        placeholder="Your name"
-        value={this.state.author}
-        onChange={this.handleAuthorChange} />
-      <input
-        type="text"
-        placeholder="Say something..."
+        placeholder="Comment"
         value={this.state.text}
         onChange={this.handleTextChange} />
       <input type="submit" value="Post" />

@@ -29,6 +29,9 @@ export default class FrontPage extends Component {
 			cache: false,
 			success: (data) => {
 				this.setState({data: data})
+				data.feed.forEach(function(thread) {
+					console.log(thread.comments)
+				})
 				// localStorage.setItem("user", data._id)
 				// console.log(localStorage.getItem("user"))
 			},
