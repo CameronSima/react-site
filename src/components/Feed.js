@@ -29,12 +29,12 @@ class Thread extends Component {
       return
     }
     $.ajax({
-      url: config.apiUrl + vote,
+      url: config.apiUrl + vote + '/' + thread_id,
       xhrFields: {withCredentials: true},
       type: 'POST',
       dataType: 'json',
       cache: false,
-      data: {thread_id: thread_id},
+      //data: {thread_id: thread_id},
       success: (data) => {
         this.setState({likesCount: data})
       },

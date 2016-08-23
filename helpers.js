@@ -11,6 +11,17 @@ module.exports = {
 		}
 	},
 
+	 formatDate(dateTime) {
+	    // Date is saved to db in GMT, format for local timezone
+	    var dateArr = new Date(dateTime).toLocaleString().split(' ')
+	    var date = dateArr[0].slice(0, -1)
+	    var time = dateArr[1].split(':').slice(0, 2).join(':')
+	    var maridiem = dateArr[2].toLowerCase()
+	    return (
+	      date + ' at ' + time + maridiem
+	      )
+  },
+
 	// Reorder threads by hotness
 	orderByHot: (threads) => {
 		var getScore = (likes, dislikes, date) => {

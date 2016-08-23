@@ -6,6 +6,7 @@ var path = require('path')
 var moniker = require('moniker')
 var async = require('async')
 var asyncEach = require('async-each')
+var _ = require('lodash')
 
 var Comment = mongoose.model('Comment')
 var Thread = mongoose.model('Thread')
@@ -48,6 +49,10 @@ module.exports = function (passport) {
     console.log('not authenticated')
     //res.redirect('http://localhost:3001/signup')
   }
+}
+
+var isInArray = function (item, array) {
+  return array.indexOf(item) > -1
 }
 
 var hasntVoted = function (user, array) {
@@ -566,6 +571,7 @@ var threadQuery = function (field, value) {
   })
 })
 
+// TODO: these don't work quite right
    router.post('/api/upvote', isAuthenticated, function (req, res, next) {
       Thread.findOne({
         _id: req.body.thread_id},
@@ -584,6 +590,40 @@ var threadQuery = function (field, value) {
           return next()
         }
       })
+  })
+
+  router.post('/api/upvote/thread/:id', isAuthenticated, function (req, res, next) {
+    Thread.find({
+      _id: req.params.id
+    }, function (err, thread) {
+      if (isInArray(req.user._id, thread.proShitters)) {
+        _.pull(thread.proShitters, req.user._id)
+      } else {
+        thread.proShitters.push(req.user._id)
+        if (isInArray(req.user._id, thread.proShittees)) {
+          _.pull(req.user._id, thread.proShittees)
+        }
+      }
+      thread.save()
+    })
+    return next()
+  })
+
+  router.post('/api/downvote/thread:id', isAuthenticated, function (req, res, next) {
+    Thread.find({
+      _id: req.params.id
+    }, function (err, thread) {
+      if (isInArray(req.user._id, thread.proShittees)) {
+        _.pull(thread.proShittees, req.user._id)
+      } else {
+        thread.proShittees.push(req.user._id)
+        if (isInArray(req.user._id. thread.proShitters)) {
+          _.pull(req.user._id, thread.proShitters)
+        }
+      }
+      thread.save()
+    })
+    return next()
   })
 
 

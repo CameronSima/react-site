@@ -1,8 +1,29 @@
-import React from 'react';
+import React from 'react'
 
-var config = require('../../config');
+var config = require('../../config')
+var helpers = require('../../helpers')
 
 var Comment = React.createClass({
+
+  timeStampToHoursAgo: function(date) {
+    var round = function(value) {
+      return Math.max(Math.round(value * 10) / 10, 2.7).toFixed(0)
+    }
+    console.log(new Date(date).toLocaleString())
+    var unixTime = Date.parse(date)
+    var now = Date.now()
+    return round((now - unixTime) / 3600000)
+  },
+
+  getTimeStamp: function(date) {
+    var ts = this.timeStampToHoursAgo(date)
+    if (ts > 23) {
+      return helpers.formatDate(date)
+    } else {
+      return ts + " hours ago"
+    }
+  },
+
   render: function () {
     return (
     <div className="comment">
@@ -10,12 +31,18 @@ var Comment = React.createClass({
       <a className="commentAuthor">{ this.props.author.username }</a>
        { ' ' + this.props.text }
     </span>
+    <br></br>
+    <div className="commentActions">
+      <a className="likeLink">Like</a>
+      <a className="replyLink">Reply</a>
+      <a className="dislikeLink">Dislike</a>
+      <span className="timestamp">{this.getTimeStamp(this.props.date)}</span>
+    </div>
     </div>
     )
   }
 })
 
-var count = 0
 
 var CommentBox = React.createClass({
   handleCommentSubmit: function (comment) {
@@ -60,8 +87,11 @@ var CommentList = React.createClass({
     if (this.props.comments) {
       var commentNodes = this.props.comments.map(function (comment) {
         return (
-        <Comment author={comment.author} text={comment.text} key={comment._id}>
-          {comment.text}
+        <Comment author={ comment.author } 
+                 text={ comment.text } 
+                 date={ comment.date }
+                 key={ comment._id} >
+          { comment.text }
         </Comment>
         )
       })
