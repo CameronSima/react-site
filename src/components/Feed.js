@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Button, ButtonGroup } from 'react-bootstrap'
 
 import { NavButtonList } from './NavButtons'
 import { NavButton } from './NavButtons'
@@ -13,10 +14,7 @@ var buttonObs = require('../../buttons')
 class Thread extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      initialVoteCount: this.props.likes - this.props.dislikes,
-      vote: ''
-    }
+    this.state = { vote: '', likes: this.props.initialLikes }
     this.sendLikeToServer = this.sendLikeToServer.bind(this)
   }
   rawMarkup() {
@@ -29,37 +27,20 @@ class Thread extends Component {
       return
     }
     $.ajax({
-      url: config.apiUrl + vote + '/' + thread_id,
-      xhrFields: {withCredentials: true},
+      url: config.apiUrl + vote + '/thread/' + thread_id,
+      xhrFields: { withCredentials: true },
       type: 'POST',
       dataType: 'json',
       cache: false,
       //data: {thread_id: thread_id},
-      success: (data) => {
-        this.setState({likesCount: data})
+      success: (likes) => {
+        console.log(likes)
+        this.setState({ likes: likes})
       },
       error: (xhr, status, err) => {
         console.log(this.url, status, err.toString())
       }
     })
-    if (vote === 'upvote') {
-      this.setState({initialVoteCount: this.state.initialVoteCount += 1,
-                     vote: vote})
-    } else {
-      this.setState({initialVoteCount: this.state.initialVoteCount -= 1,
-                     vote: vote})
-    }
-  }
-
-  formatDate(dateTime) {
-    // Date is saved to db in GMT, format for local timezone
-    var dateArr = new Date(dateTime).toLocaleString().split(' ')
-    var date = dateArr[0].slice(0, -1)
-    var time = dateArr[1].split(':').slice(0, 2).join(':')
-    var maridiem = dateArr[2].toLowerCase()
-    return (
-      date + ' at ' + time + maridiem
-      )
   }
 
   toggleModal() {
@@ -77,7 +58,7 @@ class Thread extends Component {
     return (
       <div className="thread">
         <div className="date">
-          { this.formatDate(this.props.date) }
+          { helpers.formatDate(this.props.date) }
         </div>
         <div>Dear </div> &nbsp;
         <h4 className="threadVictim"> {this.props.victim}, </h4>
@@ -101,11 +82,12 @@ class Thread extends Component {
                    value={ "downvote" } />          
 
         <div className="likeTotal">
-          {this.state.initialVoteCount}
+          { this.state.likes }
         </div>
         <div>
           <CommentsBox threadId={ this.props.id }
-                       comments={ this.props.comments } />
+                       comments={ this.props.comments }
+                        />
         </div>
         <hr></hr>
       </div>
@@ -128,8 +110,7 @@ class ThreadList extends Component {
                   date={ thread.date }
                   author={ thread.author } 
                   included={ thread.included }
-                  likes={ thread.likes } 
-                  dislikes={ thread.dislikes }
+                  initialLikes={ thread.likes } 
                   id={ thread._id}
                   key={ thread._id }>
             { thread.text }
@@ -294,13 +275,16 @@ var ThreadsBox = React.createClass({
       <ThreadForm friends={this.props.friends}
                   onThreadSubmit={ this.handleThreadSubmit }/>
       <div className="feedNav">
-        <NavButtonList divId={"feedNav"}
-                       eventFunc={this.changeState} 
-                       state={"sortFunc"} 
-                       buttons={buttonObs.mainNavButtons} />
+
         <Menu items={ ['ALL', 'I SAID', 'THEY SAID', 'I TAGGED'] }
-                      menuEventFunc={ this.setFeedType }
-               />
+                menuEventFunc={ this.setFeedType }
+         />
+
+        <ButtonGroup>
+          <Button onClick={ () => { this.setState({'sortFunc': helpers.orderByDate}) }}>Home</Button>
+          <Button onClick={ () => { this.setState({'sortFunc': helpers.orderByHot}) }}>Heat</Button>
+        </ButtonGroup>
+
       </div>
       <ThreadList data={ this.props.feed }
                   sortFunc={ this.state.sortFunc } />

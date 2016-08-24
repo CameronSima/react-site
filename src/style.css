@@ -29,7 +29,7 @@ hr {
 	text-align: center;
 }
 
-#feedNav {
+.feedNav {
 	margin-top: 20px;
 }
 
@@ -213,9 +213,9 @@ a.button {
 	opacity: 0.8;
 }
 
-.btn-link:hover, .btn-link:active:hover {
+/*.btn-link:hover, .btn-link:active:hover {
 	background-color: #00FF76 !important;
-	}
+	}*/
 
 .facebookFriend {
 	display: block;
@@ -244,14 +244,18 @@ a.button {
 	padding: 5px;
 }
 
-.replyLink {
-	margin: 5px;
+.commentActions {
+	opacity: .7;
 }
 
-.likeLink {
+.replyLink, .likeLink, .dislikeLink {
 	margin: 5px;
+	cursor: pointer;
 }
 
-.dislikeLink {
-	margin: 5px;
+.btn {
+	webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	border: 1px solid #efefef;
+  	border-radius: 0px;
 }

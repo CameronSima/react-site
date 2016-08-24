@@ -29,7 +29,6 @@ module.exports = function (passport) {
       res.header('Access-Control-Allow-Origin', origin)
     }
 
-
     res.header('Content-Type', 'application/json')
     res.header('Access-Control-Allow-Credentials', true)
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -55,19 +54,12 @@ var isInArray = function (item, array) {
   return array.indexOf(item) > -1
 }
 
-var hasntVoted = function (user, array) {
-  console.log(array.length)
-  console.log('************')
-  console.log(array)
-  console.log(user._id)
-
-  if (array.indexOf(user._id) === -1) {
-    console.log('hast voted')
-    return true
-  } else {
-    return false
-  }
+var remove = function (item, array) {
+  return array.filter(function(element) {
+    return element != item
+  })
 }
+
 
 var getRandomUsername = function () {
   return moniker.choose().split('-').join(' ')
@@ -145,7 +137,6 @@ var threadQuery = function (field, value) {
     // save new comment
     var comment = new Comment(req.body)
     comment.author = req.user._id
-    console.log(comment)
     comment.save(function (err, comment) {
       if (err) { return next(err); }
 
@@ -177,7 +168,6 @@ var threadQuery = function (field, value) {
       if (err) {
         console.log(err)
       } else {
-        console.log(feed)
         res.json(feed)
       }
     })
@@ -247,7 +237,6 @@ var threadQuery = function (field, value) {
               callback(err)
             } else {
             console.log("user found " + userData.username)
-            console.log(userData)
             callback(null, userData)
             }
           })
@@ -472,95 +461,6 @@ var threadQuery = function (field, value) {
   })
 
 
-  // // post new thread
-  // router.post('/api/threads', isAuthenticated, function (req, res, next) {
-  //   setImmediate(function () {
-  //     setImmediate(function () {
-
-  //       // update user's 'last posted' field
-  //       User.findOneAndUpdate(
-  //         req.user._id,
-  //         { 'lastPosted': Date.now() }, 
-  //         function (err, user) {
-  //           if (err) {
-  //             console.log(err)
-  //           }
-  //         })
-  //     })
-  //     setImmediate(function () {
-
-  //               // Create new author object
-  //       req.body.author = {}
-  //       req.body.author.real = req.user.username
-  //       req.body.author.pseudonym = '_' + getRandomUsername()
-
-  //       // turn anonymous entry into boolean
-  //       if (req.body.anonymous === 'anonymous') {
-  //         req.body.anonymous = true
-  //       } else {
-  //         req.body.anonymous = false
-  //       }
-  //       var thread = new Thread(req.body)
-  //       thread.save(function (err, thread) {
-  //         if (err) {
-  //           console.log(err)
-  //           return next(err)
-  //         }
-  //       })
-  //     })
-  //     setImmediate(function () {
-
-  //       // TODO: Use _id field, not facebookIds
-
-  //       req.body.included.push(req.user.facebookId)
-
-  //       // fan out thread ids to included users
-  //       asyncEach(req.body.included, function (user, callback) {
-  //         User.findOne({ 'facebookId': req.user.id },
-  //           function (err, user) {
-  //             req.user.feed.push()
-  //           })
-  //       }, function(err, users) {
-  //         if (err) {
-  //           return console.error(err)
-  //         }
-  //       })
-  //     })
-  //  })
-
-  //     // Isolate ids
-  //     var includedIds = req.body.included.map(function (included) {
-  //       return included.id
-  //     })
-  //     // Fan out thread id to included users
-  //     includedIds.push(req.user.facebookId)
-  //     User.find({
-  //       'facebookId': { $in: includedIds }
-  //     }, function(err, users) {
-  //       asyncEach(users, function (user, callback) {
-  //         user.feed.push(thread._id)
-  //         user.save(function (err, user) {
-  //           if (err) {
-  //             console.log(err)
-  //           }
-  //         })
-  //       })
-  //     })
-  //     User.find({
-  //       'facebookId': {$in: includedIds}
-  //     }, function(err, users) {
-  //       users.forEach((user) => {
-  //         user.feed.push(thread._id)
-  //         user.save((err, user) => {
-  //           if (err) {
-  //             console.log(err)
-  //           }
-  //         })
-  //       })
-  //     })
-  //       return next()
-  // })
-
   // Return all users
   router.get('/api/users', function (req, res, next) {
   User.find(function (err, users) {
@@ -571,80 +471,88 @@ var threadQuery = function (field, value) {
   })
 })
 
-// TODO: these don't work quite right
-   router.post('/api/upvote', isAuthenticated, function (req, res, next) {
-      Thread.findOne({
-        _id: req.body.thread_id},
-        function(err, thread) {
-          if (hasntVoted(req.user, thread.proShitters)) {
-          thread.proShitters.push(req.user._id)
-          var index = thread.proShittees.indexOf(req.user._id)
-          thread.proShittees.splice(index, 1)
-          thread.likes += 1
-          thread.save((err, thread) => {
-            if (err) {
-              console.log(err)
-            }
-          })
-        } else {
-          return next()
-        }
-      })
-  })
+  // Voting
+
+  // for each of these routes, the user id is allowed in only
+  // one of either array: if the user likes, be sure he isn't
+  // also counted as a disliker, etc. 
 
   router.post('/api/upvote/thread/:id', isAuthenticated, function (req, res, next) {
-    Thread.find({
-      _id: req.params.id
-    }, function (err, thread) {
-      if (isInArray(req.user._id, thread.proShitters)) {
-        _.pull(thread.proShitters, req.user._id)
-      } else {
-        thread.proShitters.push(req.user._id)
-        if (isInArray(req.user._id, thread.proShittees)) {
-          _.pull(req.user._id, thread.proShittees)
-        }
-      }
-      thread.save()
-    })
-    return next()
-  })
-
-  router.post('/api/downvote/thread:id', isAuthenticated, function (req, res, next) {
-    Thread.find({
-      _id: req.params.id
-    }, function (err, thread) {
-      if (isInArray(req.user._id, thread.proShittees)) {
-        _.pull(thread.proShittees, req.user._id)
-      } else {
-        thread.proShittees.push(req.user._id)
-        if (isInArray(req.user._id. thread.proShitters)) {
-          _.pull(req.user._id, thread.proShitters)
-        }
-      }
-      thread.save()
-    })
-    return next()
-  })
-
-
-  router.post('/api/downvote', isAuthenticated, function (req, res, next) {
-      Thread.findOne({
-        _id: req.body.thread_id},
-        function(err, thread) {
-          if (hasntVoted(req.user, thread.proShittees)) {
-          thread.proShittees.push(req.user._id)
-          var index = thread.proShitters.indexOf(req.user._id)
-          thread.proShitters.splice(index, 1)
-          thread.dislikes += 1
-          thread.save((err, thread) => {
-            if (err) {
-              console.log(err)
-            }
-          })
+    var id = req.user._id
+    Thread.findOne({ '_id': req.params.id }, 
+      function (err, thread) {
+        if (isInArray(id, thread.proShitters)) {
+          thread.proShitters.pull(id)
         } else {
-          return
+          if (isInArray(id, thread.proShittees))
+            thread.proShittees.pull(id)
+            thread.proShitters.push(id)
         }
-      })
+        thread.likes = thread.getLikesCount()
+        thread.save(function (err, thread) {
+          res.json(thread.getLikesCount())
+        })
+      }
+    )
+  })
+
+  router.post('/api/downvote/thread/:id', isAuthenticated, function (req, res, next) {
+    var id = req.user._id
+    Thread.findOne({ '_id': req.params.id }, 
+      function (err, thread) {
+        if (isInArray(id, thread.proShittees)) {
+          thread.proShittees.pull(id)
+        } else {
+          if (isInArray(id, thread.proShitters))
+            thread.proShitters.pull(id)
+            thread.proShittees.push(id)
+        }
+        thread.likes = thread.getLikesCount()
+        thread.save(function (err, thread) {
+          res.json(thread.getLikesCount())
+        })
+      }
+    )
+  })
+
+  router.post('/api/upvote/comment/:id', isAuthenticated, function (req, res, next) {
+    var id = req.user._id
+    Comment.findOne({ '_id': req.params.id }, 
+      function (err, comment) {
+        if (isInArray(id, comment.proShitters)) {
+          comment.proShitters.pull(id)
+        } else {
+          if (isInArray(id, comment.proShittees))
+            comment.proShittees.pull(id)
+            comment.proShitters.push(id)
+        }
+        comment.likes = comment.getLikesCount()
+        comment.save(function (err, comment) {
+          console.log(comment)
+          res.json(comment.likes)
+        })
+      }
+    )
+  })
+
+  router.post('/api/downvote/comment/:id', isAuthenticated, function (req, res, next) {
+    var id = req.user._id
+    Comment.findOne({ '_id': req.params.id }, 
+      function (err, comment) {
+        if (isInArray(id, comment.proShittees)) {
+          comment.proShittees.pull(id)
+        } else {
+          if (isInArray(id, comment.proShitters))
+            comment.proShitters.pull(id)
+            comment.proShittees.push(id)
+        }
+        comment.likes = comment.getLikesCount()
+        comment.save(function (err, comment) {
+          console.log(comment)
+          res.json(comment.likes)
+        })
+      }
+    )
   })
   return router
 }

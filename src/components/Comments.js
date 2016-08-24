@@ -4,24 +4,27 @@ var config = require('../../config')
 var helpers = require('../../helpers')
 
 var Comment = React.createClass({
-
-  timeStampToHoursAgo: function(date) {
-    var round = function(value) {
-      return Math.max(Math.round(value * 10) / 10, 2.7).toFixed(0)
-    }
-    console.log(new Date(date).toLocaleString())
-    var unixTime = Date.parse(date)
-    var now = Date.now()
-    return round((now - unixTime) / 3600000)
+  getInitialState: function() {
+    return {vote: '', likesCount: 0 }
   },
-
-  getTimeStamp: function(date) {
-    var ts = this.timeStampToHoursAgo(date)
-    if (ts > 23) {
-      return helpers.formatDate(date)
-    } else {
-      return ts + " hours ago"
+  sendLikeToServer: function(thread_id, vote) {
+    if (this.state.vote === vote) {
+      return
     }
+    $.ajax({
+      url: config.apiUrl + vote + '/comment/' + thread_id,
+      xhrFields: { withCredentials: true },
+      type: 'POST',
+      dataType: 'json',
+      cache: false,
+      //data: {thread_id: thread_id},
+      success: (data) => {
+        this.setState({likesCount: data})
+      },
+      error: (xhr, status, err) => {
+        console.log(this.url, status, err.toString())
+      }
+    })
   },
 
   render: function () {
@@ -33,10 +36,11 @@ var Comment = React.createClass({
     </span>
     <br></br>
     <div className="commentActions">
-      <a className="likeLink">Like</a>
+      { this.props.likes }
+      <a className="dislikeLink" onClick={ () => { this.sendLikeToServer(this.props.id, 'downvote')} }>Dislike</a>
+      <a className="likeLink" onClick={ () => { this.sendLikeToServer(this.props.id, 'upvote')} }>Like</a>
       <a className="replyLink">Reply</a>
-      <a className="dislikeLink">Dislike</a>
-      <span className="timestamp">{this.getTimeStamp(this.props.date)}</span>
+      <span className="timestamp">{ helpers.formatDate(this.props.date) }</span>
     </div>
     </div>
     )
@@ -89,7 +93,9 @@ var CommentList = React.createClass({
         return (
         <Comment author={ comment.author } 
                  text={ comment.text } 
+                 likes={ comment.likes }
                  date={ comment.date }
+                 id={ comment._id }
                  key={ comment._id} >
           { comment.text }
         </Comment>
