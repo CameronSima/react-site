@@ -17,34 +17,11 @@ module.exports = {
 	// TODO: Move as much of this logic server-side as possible; 
 	// try to only convert toLocaleString()
 	 formatDate(dateTime) {
-	 	var monthNames = ["January", "February", "March", "April", "May", "June",
-  			"July", "August", "September", "October", "November", "December"
-		];
-	 	var timeStampToHoursAgo = function(date) {
-		    var round = function(value) {
-		      return Math.max(Math.round(value * 10) / 10, 2.7).toFixed(0)
-		    }
-		    var unixTime = Date.parse(date)
-		    var now = Date.now()
-		    return round((now - unixTime) / 3600000)
-		  }
+	 
+	    var relativeTime = moment(dateTime).fromNow()
+	    var objectiveTime = moment(dateTime).format('MMMM Do [at] h:mm a')
+	    return { relative: relativeTime, objective: objectiveTime }
 
-		var ts = timeStampToHoursAgo(dateTime)
-		    if (ts < 23) {
-		      return ts + " hours ago"
-		    }
-
-	    // Date is saved to db in GMT, format for local timezone
-	    var date = new Date(dateTime)
-	    var month = monthNames[date.getMonth()]
-	    var dateStr = date.toLocaleString()
-	    var day = dateStr.split('/')[1]
-	    var date = dateStr[0].slice(0, -1).split(' ')
-	    var time = dateStr.split(' ')[1].split(':').slice(0, 2).join(':')
-	    var maridiem = dateStr.split(' ')[2].toLowerCase()
-	    return (
-	       month + ' ' + day + ' at ' + time + maridiem
-	      )
   },
 
 	// Reorder threads by hotness

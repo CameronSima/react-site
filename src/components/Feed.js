@@ -6,6 +6,7 @@ import { NavButton } from './NavButtons'
 import DropdownBox from './Dropdown'
 import Menu from './Menu'
 import CommentsBox from './Comments'
+import ReplyModal from './ReplyModal'
 
 var config = require('../../config')
 var helpers = require('../../helpers')
@@ -16,6 +17,8 @@ class Thread extends Component {
     super(props)
     this.state = { vote: '', likes: this.props.initialLikes }
     this.sendLikeToServer = this.sendLikeToServer.bind(this)
+    this.setRelativeDate = this.setRelativeDate.bind(this)
+    this.setObjectiveDate = this.setObjectiveDate.bind(this)
   }
   rawMarkup() {
     var rawMarkup = marked(this.props.children.toString(), { sanitize: true })
@@ -54,11 +57,25 @@ class Thread extends Component {
 </Modal>
   }
 
+  setObjectiveDate(e) {
+    console.log(e.target.innerHTML)
+    e.target.innerHTML = helpers.formatDate(this.props.date).objective
+  }
+
+  setRelativeDate(e) {
+    e.target.innerHTML = helpers.formatDate(this.props.date).relative
+  }
+
+
+
   render() {
     return (
       <div className="thread">
-        <div className="date">
-          { helpers.formatDate(this.props.date) }
+        <div className="dateOuter">
+          <div className="date" onMouseOver={ this.setObjectiveDate } 
+                                onMouseLeave={this.setRelativeDate } >
+            { helpers.formatDate(this.props.date).relative }
+          </div>
         </div>
         <div>Dear </div> &nbsp;
         <h4 className="threadVictim"> {this.props.victim}, </h4>

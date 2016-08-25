@@ -1,5 +1,7 @@
 import React from 'react'
 
+import ReplyModal from './ReplyModal'
+
 var config = require('../../config')
 var helpers = require('../../helpers')
 
@@ -37,10 +39,17 @@ var Comment = React.createClass({
     <br></br>
     <div className="commentActions">
       { this.props.likes }
-      <a className="dislikeLink" onClick={ () => { this.sendLikeToServer(this.props.id, 'downvote')} }>Dislike</a>
-      <a className="likeLink" onClick={ () => { this.sendLikeToServer(this.props.id, 'upvote')} }>Like</a>
-      <a className="replyLink">Reply</a>
-      <span className="timestamp">{ helpers.formatDate(this.props.date) }</span>
+      <a className="dislikeLink" 
+         onClick={ () => { this.sendLikeToServer(this.props.id, 'downvote')} }>Dislike</a>
+
+      <a className="likeLink" 
+         onClick={ () => { this.sendLikeToServer(this.props.id, 'upvote')} }>Like</a>
+
+      <ReplyModal OP={ this.props.author.username } 
+                  opId={ this.props.id }
+                  handleCommentSubmit={ this.props.handleCommentSubmit } />
+
+      <span className="timestamp">{ helpers.formatDate(this.props.date).relative }</span>
     </div>
     </div>
     )
@@ -58,7 +67,7 @@ var CommentBox = React.createClass({
     var newComments = comments.concat([comment])
     this.setState({data: newComments})
     $.ajax({
-      url: config.apiUrl + 'comments',
+      url: config.apiUrl + 'comments/',
       dataType: 'json',
       type: 'POST',
       data: comment,
@@ -80,7 +89,9 @@ var CommentBox = React.createClass({
     return (
     <div className="commentBox">
       <CommentList comments={ this.props.comments } />
-      <CommentForm threadId={ this.props.threadId } onCommentSubmit={this.handleCommentSubmit} />
+
+      <CommentForm threadId={ this.props.threadId } 
+                   onCommentSubmit={ this.handleCommentSubmit } />
     </div>
     )
   }
@@ -91,7 +102,8 @@ var CommentList = React.createClass({
     if (this.props.comments) {
       var commentNodes = this.props.comments.map(function (comment) {
         return (
-        <Comment author={ comment.author } 
+        <Comment 
+                 author={ comment.author } 
                  text={ comment.text } 
                  likes={ comment.likes }
                  date={ comment.date }

@@ -132,29 +132,42 @@ var threadQuery = function (field, value) {
     })
   })
 
-  router.post('/api/comments/', function (req, res, next) {
+  router.post('/api/comments/', isAuthenticated, function (req, res, next) {
+
+
+    console.log("REQ BODY")
+    console.log(req.body)
 
     // save new comment
     var comment = new Comment(req.body)
     comment.author = req.user._id
     comment.save(function (err, comment) {
-      if (err) { return next(err); }
-
-      // add comment id to thread object
-      var conditions = { _id: req.body.thread }
-
-      var update = {
-        $addToSet: { comments: comment._id }
+      if (err) { 
+        console.log(err)
+        return next(err); 
+      } else {
+        console.log("COMMENT FROM DB")
+        console.log(comment)
       }
-      Thread.findOneAndUpdate(
-        conditions, update, function (err, thread) {
-        if (err) {
-          console.log(err)
-        } else {
+
+      if (req.body.thread) { 
+        // add comment id to thread object if its a top-level comment
+        var conditions = { _id: req.body.thread }
+  
+        var update = {
+          $addToSet: { comments: comment._id }
         }
-      })
+        Thread.findOneAndUpdate(
+          conditions, update, function (err, thread) {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log("THREAD FROM DB")
+            console.log(thread)
+          }
+        })
+      }
     })
-    return next()
   })
 
   router.post('/api/thread/:id/:parent', isAuthenticated, function (req, res, next) {

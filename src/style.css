@@ -140,6 +140,7 @@ a.button {
 
 .suggestedItem {
 	cursor: pointer;
+	margin: 5px;
 }
 
 #loginPanel {
@@ -211,7 +212,10 @@ a.button {
 
 .date {
 	opacity: 0.8;
+	cursor: default;
+	display: inline;
 }
+
 
 /*.btn-link:hover, .btn-link:active:hover {
 	background-color: #00FF76 !important;
@@ -248,9 +252,10 @@ a.button {
 	opacity: .7;
 }
 
-.replyLink, .likeLink, .dislikeLink {
+.replyLink, .likeLink, .dislikeLink, .closeLink {
 	margin: 5px;
 	cursor: pointer;
+	display: inline;
 }
 
 .btn {
@@ -258,4 +263,8 @@ a.button {
 	box-shadow: none !important;
 	border: 1px solid #efefef;
   	border-radius: 0px;
+}
+
+.modal {
+	height: 400px;
 }
