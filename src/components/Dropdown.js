@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import { Modal } from 'react-bootstrap'
+
+import TaggedModal from './TaggedModal'
 
 var helpers = require('../../helpers')
 
@@ -9,14 +12,15 @@ export default class DropdownBox extends Component {
     this.populate = this.populate.bind(this)
   }
   populate(item) {
-    var tagged = this.state.tagged
-
     // Prevent duplicates in tagged array
-    if (helpers.isInArray(item, tagged) === false) {
-      tagged.push(item)
-      this.setState({tagged: tagged})
-      this.props.handleTagged(this.state.tagged)
-    }
+    var tagged = this.state.tagged.filter(function(obj) {
+      return obj.id !== item.id
+    })
+
+    tagged.push(item)
+    this.setState({tagged: tagged})
+    this.props.handleTagged(this.state.tagged)
+
     this.props.clearState('included')
     this.props.clearState('includedSuggestions')
   }
@@ -47,23 +51,13 @@ export default class DropdownBox extends Component {
         */}
         { 
           this.props.title && 
-        <TaggedButton tagged={ this.state.tagged }
-                      title={ this.props.title } />
+            <TaggedModal tagged={ this.state.tagged }
+                          title={ this.props.title }
+                          suggestions={ this.state.tagged } />
+
         }
       </div>
       )
   }
 }
 
-class TaggedButton extends Component {
-  constructor(props) {
-    super(props) 
-  }
-  render() {
-    return (
-      <button className="btn btn-primary" id="taggedButton" type="button">
-        { this.props.title } <span className="badge"> { this.props.tagged.length } </span>
-      </button>
-      )
-  }
-}
