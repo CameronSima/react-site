@@ -5,23 +5,33 @@ module.exports = {
 		return array.indexOf(item) > -1
 	},
 
-	changeState: (obj) => {
-		for (var key in obj) {
-			this.setState({key: obj[key]})
-		}
+	// build array of nested children objects from parent 
+	// property, used for threading comment trees from
+	// flat array of thread comments
+	buildTree(data) {
+		var nodeMap = {}
+		 return data.reduce(function (rootArr, datum) {
+		 	datum.children = []
+		 	nodeMap[datum._id] = datum
+		 	if (typeof datum.parent === "undefined") {
+		 		return rootArr.concat(datum)
+		 	} else {
+		 		var parentNode = nodeMap[datum.parent]
+		 		delete datum.parent
+		 		parentNode.children.push(datum)
+		 		return rootArr
+		 	}
+		 }, [])
 	},
 
+	
 	// format date to show either time in hours ago, or, if dateTime was
 	// 24 hours ago or more, show the date
 
-	// TODO: Move as much of this logic server-side as possible; 
-	// try to only convert toLocaleString()
 	 formatDate(dateTime) {
-	 
 	    var relativeTime = moment(dateTime).fromNow()
 	    var objectiveTime = moment(dateTime).format('MMMM Do [at] h:mm a')
 	    return { relative: relativeTime, objective: objectiveTime }
-
   },
 
 	// Reorder threads by hotness

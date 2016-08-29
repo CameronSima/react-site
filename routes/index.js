@@ -133,8 +133,6 @@ var threadQuery = function (field, value) {
   })
 
   router.post('/api/comments/', isAuthenticated, function (req, res, next) {
-
-
     console.log("REQ BODY")
     console.log(req.body)
 
@@ -145,29 +143,24 @@ var threadQuery = function (field, value) {
       if (err) { 
         console.log(err)
         return next(err); 
-      } else {
-        console.log("COMMENT FROM DB")
-        console.log(comment)
       }
 
-      if (req.body.thread) { 
-        // add comment id to thread object if its a top-level comment
-        var conditions = { _id: req.body.thread }
-  
-        var update = {
-          $addToSet: { comments: comment._id }
+      // save comment to thread
+      var conditions = { _id: req.body.thread }
+      var update = { $addToSet: { comments: comment._id } }
+      var model = Thread
+
+      model.findOneAndUpdate(
+        conditions, update, function (err, doc) {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log("DOC FROM DB")
+          //console.log(doc)
         }
-        Thread.findOneAndUpdate(
-          conditions, update, function (err, thread) {
-          if (err) {
-            console.log(err)
-          } else {
-            console.log("THREAD FROM DB")
-            console.log(thread)
-          }
-        })
-      }
+      })
     })
+    return next()
   })
 
   router.post('/api/thread/:id/:parent', isAuthenticated, function (req, res, next) {
@@ -283,7 +276,7 @@ var threadQuery = function (field, value) {
           iSaidThreads = userData.feed.filter(function (thread) {
             return thread.author.real = req.user.username
           })
-        }
+        }''
 
         if (req.params.feedType === 'tagged') {
           // filter out threads authored by the user
@@ -351,6 +344,8 @@ var threadQuery = function (field, value) {
           }
         })
       },
+      // TODO: Make sure we get the friends' current facebook picture 
+      // (currently not updating)
       // return already added to friends array
       function(callback) {
         User.findOne({'_id': req.user._id})

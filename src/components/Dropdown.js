@@ -12,19 +12,30 @@ export default class DropdownBox extends Component {
     this.populate = this.populate.bind(this)
   }
   populate(item) {
+  //   // Prevent duplicates in tagged array
+  //   var tagged = this.state.tagged.filter(function(obj) {
+  //     return obj.id !== item.id
+  //   })
+  //   console.log(obj)
+  //   tagged.push(item)
+  //   this.setState({tagged: tagged})
+  //   this.props.handleTagged(this.state.tagged)
+
+  //   this.props.clearState('included')
+  //   this.props.clearState('includedSuggestions')
+  // }
     // Prevent duplicates in tagged array
-    var tagged = this.state.tagged.filter(function(obj) {
-      return obj.id !== item.id
-    })
-
-    tagged.push(item)
-    this.setState({tagged: tagged})
-    this.props.handleTagged(this.state.tagged)
-
+    var tagged = this.state.tagged
+    if (helpers.isInArray(item, tagged) === false) {
+      tagged.push(item)
+      this.setState({tagged: tagged})
+      this.props.handleTagged(this.state.tagged)
+    }
     this.props.clearState('included')
     this.props.clearState('includedSuggestions')
   }
-  render() {
+
+   render() {
     var suggestions
     if (this.props.data) {
       suggestions = this.props.data.map((friend) => {
@@ -51,7 +62,8 @@ export default class DropdownBox extends Component {
         */}
         { 
           this.props.title && 
-            <TaggedModal tagged={ this.state.tagged }
+            <TaggedModal  
+                          tagged={ this.state.tagged }
                           title={ this.props.title }
                           suggestions={ this.state.tagged } />
 

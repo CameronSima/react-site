@@ -8,6 +8,7 @@ var cookieParser = require('cookie-parser')
 var mongoose = require('mongoose')
 var passport = require('passport')
 var session = require('express-session')
+var bluebird = require('bluebird')
 var mongoStore = require('connect-mongo')(session)
 var app = express()
 
@@ -38,7 +39,7 @@ initPassport(passport)
 
 // connect to MongoDB
 
-mongoose.Promise = global.Promise
+mongoose.Promise = bluebird
 mongoose.connect('mongodb://localhost/shitlistanitsocialmediatest', function (err, db) {
   if (!err) {
     console.log('Connected to Database. . .')

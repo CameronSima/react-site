@@ -7,6 +7,7 @@ import FriendsBox from './Friends'
 import ThreadForm from './Feed'
 
 var config = require('../../config')
+var helpers = require('../../helpers')
 
 export default class FrontPage extends Component {
 	constructor(props) {
@@ -29,12 +30,19 @@ export default class FrontPage extends Component {
 			cache: false,
 			success: (data) => {
 				this.setState({data: data})
+				
 				// localStorage.setItem("user", data._id)
 				// console.log(localStorage.getItem("user"))
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
 			}
+		})
+	}
+
+	buildCommentTree(feed) {
+		return feed.map(function(thread) {
+			return helpers.buildTree(thread.comments)
 		})
 	}
 

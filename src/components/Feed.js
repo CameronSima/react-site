@@ -86,6 +86,10 @@ class Thread extends Component {
           <a onClick={this.toggleModal}> { this.props.included.length } others. </a>
 
         </div>
+          <hr></hr>
+          <div className="likeTotal">
+            { this.state.likes }
+          </div>
         <NavButton divId="like-button" 
                    title="like"
                    eventFunc={ this.sendLikeToServer }
@@ -96,11 +100,9 @@ class Thread extends Component {
                    title="dislike"
                    eventFunc={ this.sendLikeToServer }
                    state={ this.props.id }
-                   value={ "downvote" } />          
+                   value={ "downvote" } /> 
+        <hr></hr>         
 
-        <div className="likeTotal">
-          { this.state.likes }
-        </div>
         <div>
           <CommentsBox threadId={ this.props.id }
                        comments={ this.props.comments }
@@ -185,6 +187,7 @@ var ThreadForm = React.createClass({
     var text = this.state.text.trim()
     var includedArr = this.state.includedArr
     var victim = this.state.victim.trim()
+    console.log(includedArr)
     if (!text || includedArr.length < 1 || !victim) {
       return
     }
