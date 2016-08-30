@@ -13,6 +13,7 @@ var Thread = mongoose.model('Thread')
 var User = mongoose.model('User')
 
 module.exports = function (passport) {
+
   // Additional middleware which will set headers that we need on each request.
   router.use(function (req, res, next) {
     // Set permissive CORS header - this allows this server to be used only as
@@ -59,7 +60,6 @@ var remove = function (item, array) {
     return element != item
   })
 }
-
 
 var getRandomUsername = function () {
   return moniker.choose().split('-').join(' ')
@@ -137,6 +137,7 @@ var threadQuery = function (field, value) {
     // create new comment
     var comment = new Comment(req.body)
     comment.author = req.user._id
+    comment.ancestors.push(comment.parent)
 
     // save comment to thread
     Thread.findOne({ _id: req.body.thread })
@@ -146,6 +147,7 @@ var threadQuery = function (field, value) {
       thread.comments.push(comment._id)
       thread.save()
     })
+    console.log(comment)
     comment.save()
 
   return next()
@@ -289,6 +291,10 @@ var threadQuery = function (field, value) {
          // or not.
          userData.feed.forEach(function(thread) {
           if (thread.anonymous === true) {
+
+            // If the user wrote the comment and the thread and posted
+            // anonymously, show his pseudonym instead of real name when
+            // commenting
             thread.comments.forEach(function (comment) {
               if (thread.author[0].real === comment.author.username) {
                 comment.author.username = thread.author[0].pseudonym

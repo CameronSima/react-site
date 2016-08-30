@@ -10,7 +10,7 @@ var ThreadSchema = new mongoose.Schema({
   proShittees: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User',
                   unique: true, dropDups: true 
                 }],
-  likes: Number,
+  likes: { type: Number, default: 0 },
   // For testing purposes, use simple Strings 
   // author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   // victim: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

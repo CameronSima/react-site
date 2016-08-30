@@ -6,10 +6,10 @@ var CommentSchema = new mongoose.Schema({
   text: String,
   proShitters: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   proShittees: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  likes: Number,
+  likes: { type: Number, default: 0 },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   parent: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  //children: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  ancestors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
 })
 
 CommentSchema.methods.getLikesCount = function() {

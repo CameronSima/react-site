@@ -1,9 +1,45 @@
-import React from 'react'
+import React, { Component } from 'react'
 
 import ReplyModal from './ReplyModal'
 
 var config = require('../../config')
 var helpers = require('../../helpers')
+
+class Reply  extends Component {
+  render() {
+    return (
+      <div className="reply">
+        
+        {this.props.text}
+        <RepliesList replies={this.props.children} />
+    
+      </div>
+      )
+  }
+}
+
+class RepliesList extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    var replies = this.props.replies.map(function(reply) {
+      console.log(reply)
+      return (
+        <div>
+          <Reply author={reply.author} text={reply.text} children={reply.children} key={ reply._id } />
+        </div>
+        )
+})
+    return (
+      <div className="repliesList">
+        { replies }
+      </div>
+    )
+  }
+}
+
 
 var Comment = React.createClass({
   getInitialState: function() {
@@ -51,6 +87,9 @@ var Comment = React.createClass({
 
       <span className="timestamp">{ helpers.formatDate(this.props.date).relative }</span>
     </div>
+    <div className="replies">
+      <RepliesList replies={ this.props.replies} />
+    </div>
     </div>
     )
   }
@@ -96,9 +135,10 @@ var CommentList = React.createClass({
       // use buildTree helper to turn the flat array of comments
       // into a nested object by using the .parent property
 
-      //var threadedComments = helpers.buildTree(this.props.comments)
-      //console.log(threadedComments)
-      var commentNodes = this.props.comments.map(function (comment) {
+      var threadedComments = helpers.buildTree(this.props.comments)
+      
+      var commentNodes = threadedComments.map(function (comment) {
+        //console.log(comment.children)
         return (
         <Comment threadId={ threadId }
                  author={ comment.author } 
@@ -106,6 +146,7 @@ var CommentList = React.createClass({
                  likes={ comment.likes }
                  date={ comment.date }
                  id={ comment._id }
+                 replies={ comment.children }
                  key={ comment._id} >
           { comment.text }
         </Comment>
