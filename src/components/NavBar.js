@@ -44,9 +44,9 @@ export default class NavBar extends Component {
           <ul className="nav navbar-nav navbar-right">
             <form className="navbar-form navbar-left" role="search">
               <div className="form-group">
-                <input type="text" class="form-control" placeholder="Search the Shit List"></input>
+                <input type="text" className="form-control" placeholder="Search the Shit List"></input>
               </div>
-              <button type="submit" class="btn btn-default">Submit</button>
+              <button type="submit" className="btn btn-default">Submit</button>
               <br></br>
               <li onClick={this.logout} style={{float: 'right'}} target="_blank">Log out</li>
             </form>
