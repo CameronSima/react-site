@@ -141,21 +141,12 @@ var threadQuery = function (field, value) {
     // save comment to thread
     Thread.findOne({ _id: req.body.thread })
     .exec(function(err, thread) {
-
     })
     .then(function (thread) {
-      console.log(thread.anonymous)
-      console.log(thread.author[0].pseudonym)
-      if (thread.anonymous) {
-        comment.author = thread.author[0].pseudonym
-        
-
-      }
       thread.comments.push(comment._id)
       thread.save()
     })
     comment.save()
-
 
   return next()
   })
@@ -298,6 +289,11 @@ var threadQuery = function (field, value) {
          // or not.
          userData.feed.forEach(function(thread) {
           if (thread.anonymous === true) {
+            thread.comments.forEach(function (comment) {
+              if (thread.author[0].real === comment.author.username) {
+                comment.author.username = thread.author[0].pseudonym
+              }
+            })
             thread.author[0] = thread.author[0].pseudonym
           } else {
             thread.author[0] = thread.author[0].real
