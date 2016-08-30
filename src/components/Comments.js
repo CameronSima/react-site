@@ -46,8 +46,8 @@ var Comment = React.createClass({
          onClick={ () => { this.sendLikeToServer(this.props.id, 'upvote')} }>Like</a>
 
       <ReplyModal OP={ this.props.author.username } 
-                  threadId={ this.props.threadId }
-                  opComment={ this.props.id } />
+                  thread={ this.props.threadId }
+                  parent={ this.props.id } />
 
       <span className="timestamp">{ helpers.formatDate(this.props.date).relative }</span>
     </div>
@@ -96,9 +96,9 @@ var CommentList = React.createClass({
       // use buildTree helper to turn the flat array of comments
       // into a nested object by using the .parent property
 
-      var threadedComments = helpers.buildTree(this.props.comments)
-      console.log(threadedComments)
-      var commentNodes = threadedComments.map(function (comment) {
+      //var threadedComments = helpers.buildTree(this.props.comments)
+      //console.log(threadedComments)
+      var commentNodes = this.props.comments.map(function (comment) {
         return (
         <Comment threadId={ threadId }
                  author={ comment.author } 

@@ -29,7 +29,7 @@ export default class ReplyModal extends Component {
     this.setState({data: newComments})
     $.ajax({
       url: config.apiUrl + 'comments/',
-      dataType: 'application/json',
+      dataType: 'json',
       type: 'POST',
       data: comment,
       xhrFields: { withCredentials: true },
@@ -54,8 +54,8 @@ export default class ReplyModal extends Component {
   		return
   	} else {
   		this.sendComment({ text: text, 
-  											 parent: this.props.opId, 
-  											 thread: this.props.threadId })
+  											 parent: this.props.parent, 
+  											 thread: this.props.thread })
   		
   		this.setState({ text: '' })
   		this.close()

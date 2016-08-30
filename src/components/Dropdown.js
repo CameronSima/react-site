@@ -8,29 +8,18 @@ var helpers = require('../../helpers')
 export default class DropdownBox extends Component {
   constructor(props) {
     super(props)
-    this.state = { tagged: [] }
+    //this.state = { tagged: [] }
     this.populate = this.populate.bind(this)
   }
   populate(item) {
   //   // Prevent duplicates in tagged array
-  //   var tagged = this.state.tagged.filter(function(obj) {
-  //     return obj.id !== item.id
-  //   })
-  //   console.log(obj)
-  //   tagged.push(item)
-  //   this.setState({tagged: tagged})
-  //   this.props.handleTagged(this.state.tagged)
+    var tagged = this.props.includedArr.filter(function(obj) {
+      return obj.id !== item.id
+    })
+    tagged.push(item)
+    //this.setState({tagged: tagged})
+    this.props.handleTagged(tagged)
 
-  //   this.props.clearState('included')
-  //   this.props.clearState('includedSuggestions')
-  // }
-    // Prevent duplicates in tagged array
-    var tagged = this.state.tagged
-    if (helpers.isInArray(item, tagged) === false) {
-      tagged.push(item)
-      this.setState({tagged: tagged})
-      this.props.handleTagged(this.state.tagged)
-    }
     this.props.clearState('included')
     this.props.clearState('includedSuggestions')
   }
@@ -63,9 +52,8 @@ export default class DropdownBox extends Component {
         { 
           this.props.title && 
             <TaggedModal  
-                          tagged={ this.state.tagged }
-                          title={ this.props.title }
-                          suggestions={ this.state.tagged } />
+                          tagged={ this.props.includedArr }
+                          title={ this.props.title } />
 
         }
       </div>

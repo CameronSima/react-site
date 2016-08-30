@@ -39,7 +39,7 @@ export default class TaggedModal extends Component {
 			<div className="taggedModal">
 				<div onClick={ this.open }>
 					<TaggedButton title={ this.props.title }
-												tagged={this.props.tagged } />
+								  tagged={this.props.tagged } />
 				</div>
 
 				<Modal show={ this.state.showModal } onHide={ this.close }>

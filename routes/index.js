@@ -133,49 +133,46 @@ var threadQuery = function (field, value) {
   })
 
   router.post('/api/comments/', isAuthenticated, function (req, res, next) {
-    console.log("REQ BODY")
-    console.log(req.body)
 
-    // save new comment
+    // create new comment
     var comment = new Comment(req.body)
     comment.author = req.user._id
-    comment.save(function (err, comment) {
-      if (err) { 
-        console.log(err)
-        return next(err); 
-      }
 
-      // save comment to thread
-      var conditions = { _id: req.body.thread }
-      var update = { $addToSet: { comments: comment._id } }
-      var model = Thread
+    // save comment to thread
+    Thread.findOne({ _id: req.body.thread })
+    .exec(function(err, thread) {
 
-      model.findOneAndUpdate(
-        conditions, update, function (err, doc) {
-        if (err) {
-          console.log(err)
-        } else {
-          console.log("DOC FROM DB")
-          //console.log(doc)
-        }
-      })
     })
-    return next()
+    .then(function (thread) {
+      console.log(thread.anonymous)
+      console.log(thread.author[0].pseudonym)
+      if (thread.anonymous) {
+        comment.author = thread.author[0].pseudonym
+        
+
+      }
+      thread.comments.push(comment._id)
+      thread.save()
+    })
+    comment.save()
+
+
+  return next()
   })
 
-  router.post('/api/thread/:id/:parent', isAuthenticated, function (req, res, next) {
-
-  })
 
   // Get a single thread
   router.get('/api/thread/:id', isAuthenticated, function (req, res, next) {
     threadQuery('_id', req.params.id)
-    .exec(function (err, feed) {
+
+    .exec(function (err, thread) {
       if (err) {
         console.log(err)
       } else {
-        res.json(feed)
+        console.log(thread)
+        res.json(thread)
       }
+      return next()
     })
   })
 

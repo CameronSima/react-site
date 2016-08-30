@@ -83,7 +83,7 @@ class Thread extends Component {
         <p>signed,</p>
         <div>
           {this.props.author} and 
-          <a onClick={this.toggleModal}> { this.props.included.length } others. </a>
+          <a onClick={ this.toggleModal }> { this.props.included.length } others. </a>
 
         </div>
           <hr></hr>
@@ -153,7 +153,7 @@ var ThreadForm = React.createClass({
             text: '', 
             included: '',
             includedArr: [],
-            includedSuggestions: '',
+            includedSuggestions: [],
             victim: '',
             ct: '',
             anonymous: ''
@@ -202,7 +202,9 @@ var ThreadForm = React.createClass({
                   included: '',
                   victim: '',
                   includedArr: [],
-                  anonymous: ''
+                  includedSuggestions: [],
+                  anonymous: '',
+
                   })
   },
   render: function () {
@@ -228,7 +230,8 @@ var ThreadForm = React.createClass({
           value={this.state.included}
           onChange={this.handleIncludedChange} />
         <br></br>
-        <DropdownBox data={this.state.includedSuggestions} 
+        <DropdownBox data={this.state.includedSuggestions}
+                     includedArr={this.state.includedArr} 
                      handleTagged={this.handleTagged} 
                      title={ 'TAGGED' }
                      clearState={this.clearState} />
