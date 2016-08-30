@@ -5,40 +5,54 @@ import ReplyModal from './ReplyModal'
 var config = require('../../config')
 var helpers = require('../../helpers')
 
-class Reply  extends Component {
-  render() {
-    return (
-      <div className="reply">
+// class Reply  extends Component {
+//   render() {
+//     return (
+//       <div className="reply">
         
-        {this.props.text}
-        <RepliesList replies={this.props.children} />
+//         <Comment threadId={ this.props.thread }
+//                  author={ this.props.reply.author } 
+//                  text={ this.props.reply.text } 
+//                  likes={ this.props.reply.likes }
+//                  date={ this.props.reply.date }
+//                  id={ this.props.reply._id }
+//                  replies={ this.props.reply.children }
+//                  key={ this.props.reply._id} />
+//         <RepliesList replies={this.props.reply.children} />
     
-      </div>
-      )
-  }
-}
+//       </div>
+//       )
+//   }
+// }
 
-class RepliesList extends Component {
-  constructor(props) {
-    super(props)
-  }
+// class RepliesList extends Component {
+//   constructor(props) {
+//     super(props)
+//   }
 
-  render() {
-    var replies = this.props.replies.map(function(reply) {
-      console.log(reply)
-      return (
-        <div>
-          <Reply author={reply.author} text={reply.text} children={reply.children} key={ reply._id } />
-        </div>
-        )
-})
-    return (
-      <div className="repliesList">
-        { replies }
-      </div>
-    )
-  }
-}
+//   render() {
+//     var thread = this.props.thread
+//     var replies = this.props.replies.map(function(reply) {
+//       console.log(reply)
+//       return (
+//         <div>
+//           <Reply reply={ reply } 
+//                  thread={ thread } 
+//                  key={ reply._id } />
+//         </div>
+//         )
+// })
+//     return (
+//       <div className="repliesList" key={ thread + '_replies'}>
+//         { replies }
+//       </div>
+//     )
+//   }
+// }
+
+//TODO: just recurse with comment / commentList components,
+// no need for a separate replies component when all it does is
+// render comment components
 
 
 var Comment = React.createClass({
@@ -88,41 +102,10 @@ var Comment = React.createClass({
       <span className="timestamp">{ helpers.formatDate(this.props.date).relative }</span>
     </div>
     <div className="replies">
-      <RepliesList replies={ this.props.replies} />
+      <CommentList comments={ this.props.replies } 
+                   threadId={ this.props.threadId } />
     </div>
     </div>
-    )
-  }
-})
-
-var CommentForm = React.createClass({
-  getInitialState: function () {
-    return { text: '' }
-  },
-  handleTextChange: function (e) {
-    this.setState({text: e.target.value})
-  },
-  handleSubmit: function (e) {
-    e.preventDefault()
-    var text = this.state.text.trim()
-    var id = this.props.threadId
-    if (!text || !id) {
-      return
-    }
-    this.props.onCommentSubmit({ text: text, thread: id })
-    this.setState({ text: ''})
-  },
-  render: function () {
-    return (
-    <form className="commentForm" onSubmit={this.handleSubmit}>
-      <input
-        className="replyInput"
-        type="text"
-        placeholder="Comment"
-        value={this.state.text}
-        onChange={this.handleTextChange} />
-      <input type="submit" value="Post" />
-    </form>
     )
   }
 })
@@ -164,6 +147,39 @@ var CommentList = React.createClass({
     }
   } 
 })
+
+var CommentForm = React.createClass({
+  getInitialState: function () {
+    return { text: '' }
+  },
+  handleTextChange: function (e) {
+    this.setState({text: e.target.value})
+  },
+  handleSubmit: function (e) {
+    e.preventDefault()
+    var text = this.state.text.trim()
+    var id = this.props.threadId
+    if (!text || !id) {
+      return
+    }
+    this.props.onCommentSubmit({ text: text, thread: id })
+    this.setState({ text: ''})
+  },
+  render: function () {
+    return (
+    <form className="commentForm" onSubmit={this.handleSubmit}>
+      <input
+        className="replyInput"
+        type="text"
+        placeholder="Comment"
+        value={this.state.text}
+        onChange={this.handleTextChange} />
+      <input type="submit" value="Post" />
+    </form>
+    )
+  }
+})
+
 
 var CommentBox = React.createClass({
   handleCommentSubmit: function (comment) {
