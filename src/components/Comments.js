@@ -1,63 +1,15 @@
 import React, { Component } from 'react'
-
 import ReplyModal from './ReplyModal'
+
+var _ = require('lodash')
 
 var config = require('../../config')
 var helpers = require('../../helpers')
 
-// class Reply  extends Component {
-//   render() {
-//     return (
-//       <div className="reply">
-        
-//         <Comment threadId={ this.props.thread }
-//                  author={ this.props.reply.author } 
-//                  text={ this.props.reply.text } 
-//                  likes={ this.props.reply.likes }
-//                  date={ this.props.reply.date }
-//                  id={ this.props.reply._id }
-//                  replies={ this.props.reply.children }
-//                  key={ this.props.reply._id} />
-//         <RepliesList replies={this.props.reply.children} />
-    
-//       </div>
-//       )
-//   }
-// }
-
-// class RepliesList extends Component {
-//   constructor(props) {
-//     super(props)
-//   }
-
-//   render() {
-//     var thread = this.props.thread
-//     var replies = this.props.replies.map(function(reply) {
-//       console.log(reply)
-//       return (
-//         <div>
-//           <Reply reply={ reply } 
-//                  thread={ thread } 
-//                  key={ reply._id } />
-//         </div>
-//         )
-// })
-//     return (
-//       <div className="repliesList" key={ thread + '_replies'}>
-//         { replies }
-//       </div>
-//     )
-//   }
-// }
-
-//TODO: just recurse with comment / commentList components,
-// no need for a separate replies component when all it does is
-// render comment components
-
 
 var Comment = React.createClass({
   getInitialState: function() {
-    return {vote: '', likesCount: 0 }
+    return { vote: '', likesCount: 0 }
   },
   sendLikeToServer: function(thread_id, vote) {
     if (this.state.vote === vote) {
@@ -80,6 +32,7 @@ var Comment = React.createClass({
   },
 
   render: function () {
+
     return (
     <div className="comment">
     <span>
@@ -97,13 +50,15 @@ var Comment = React.createClass({
 
       <ReplyModal OP={ this.props.author.username } 
                   thread={ this.props.threadId }
-                  parent={ this.props.id } />
+                  parent={ this.props.id }
+                  onCommentSubmit={ this.props.onCommentSubmit } />
 
       <span className="timestamp">{ helpers.formatDate(this.props.date).relative }</span>
     </div>
     <div className="replies">
       <CommentList comments={ this.props.replies } 
-                   threadId={ this.props.threadId } />
+                   threadId={ this.props.threadId }
+                   onCommentSubmit={ this.props.onCommentSubmit } />
     </div>
     </div>
     )
@@ -113,15 +68,9 @@ var Comment = React.createClass({
 var CommentList = React.createClass({
   render: function () {
     var threadId = this.props.threadId
-    if (this.props) {
-
-      // use buildTree helper to turn the flat array of comments
-      // into a nested object by using the .parent property
-
-      var threadedComments = helpers.buildTree(this.props.comments)
-      
-      var commentNodes = threadedComments.map(function (comment) {
-        //console.log(comment.children)
+    var onCommentSubmit = this.props.onCommentSubmit
+    if (this.props.comments) {     
+      var commentNodes = this.props.comments.map(function (comment) {
         return (
         <Comment threadId={ threadId }
                  author={ comment.author } 
@@ -129,8 +78,9 @@ var CommentList = React.createClass({
                  likes={ comment.likes }
                  date={ comment.date }
                  id={ comment._id }
-                 replies={ comment.children }
-                 key={ comment._id} >
+                 replies={ comment.replies }
+                 key={ comment._id}
+                 onCommentSubmit={ onCommentSubmit } >
           { comment.text }
         </Comment>
         )
@@ -146,6 +96,74 @@ var CommentList = React.createClass({
       )
     }
   } 
+})
+
+
+var CommentBox = React.createClass({
+
+    // turn flat array of comments into threaded comment array
+    buildTree: function(array, parent, tree) {
+      var self = this
+      tree = typeof parent !== 'undefined' ? tree : []
+      parent = typeof parent !== 'undefined' ? parent : { _id: 0 }
+
+      var replies = _.filter(array, function (child) {
+        return child.parent == parent._id
+      })
+
+      if (!_.isEmpty(replies)) {
+        if ( parent._id == '0' ) {
+          tree = replies
+        } else {
+          parent['replies'] = replies
+        }
+        _.each(replies, function(child) {
+          self.buildTree(array, child)
+        })
+      }
+      return tree
+  },
+
+  handleCommentSubmit: function (comment) {
+    var comments = this.props.comments
+    var newComments = comments.concat([comment])
+    this.setState({data: newComments})
+    $.ajax({
+      url: config.apiUrl + 'comments/',
+      dataType: 'json',
+      type: 'POST',
+      data: comment,
+      xhrFields: { withCredentials: true },
+      success: function (data) {
+        this.setState({data: data})
+        
+      }.bind(this),
+      error: function (xhr, status, err) {
+
+        console.error(this.props.url, status, err.toString())
+      }.bind(this)
+    })
+  },
+  getInitialState: function () {
+    return {data: [] }
+  },
+
+  render: function () {
+    //console.log(this.props.comments)
+
+    var threadedComments = this.buildTree(this.props.comments)
+    console.log(threadedComments)
+    return (
+    <div className="commentBox">
+      <CommentList threadId={ this.props.threadId } 
+                   comments={ threadedComments }
+                   onCommentSubmit={ this.handleCommentSubmit } />
+
+      <CommentForm threadId={ this.props.threadId } 
+                   onCommentSubmit={ this.handleCommentSubmit } />
+    </div>
+    )
+  }
 })
 
 var CommentForm = React.createClass({
@@ -180,43 +198,5 @@ var CommentForm = React.createClass({
   }
 })
 
-
-var CommentBox = React.createClass({
-  handleCommentSubmit: function (comment) {
-    var comments = this.props.comments
-    var newComments = comments.concat([comment])
-    this.setState({data: newComments})
-    $.ajax({
-      url: config.apiUrl + 'comments/',
-      dataType: 'json',
-      type: 'POST',
-      data: comment,
-      xhrFields: { withCredentials: true },
-      success: function (data) {
-        this.setState({data: data})
-        
-      }.bind(this),
-      error: function (xhr, status, err) {
-
-        console.error(this.props.url, status, err.toString())
-      }.bind(this)
-    })
-  },
-  getInitialState: function () {
-    return {data: [] }
-  },
-
-  render: function () {
-    return (
-    <div className="commentBox">
-      <CommentList threadId={ this.props.threadId } 
-                   comments={ this.props.comments } />
-
-      <CommentForm threadId={ this.props.threadId } 
-                   onCommentSubmit={ this.handleCommentSubmit } />
-    </div>
-    )
-  }
-})
 
 module.exports = CommentBox

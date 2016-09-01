@@ -8,12 +8,12 @@ var CommentSchema = new mongoose.Schema({
   proShittees: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   likes: { type: Number, default: 0 },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  parent: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  ancestors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
+  parent: { type: String, default: 0 },
+  ancestors: { type: String, default: '#' }
 })
 
 CommentSchema.methods.getLikesCount = function() {
   return this.proShitters.length - this.proShittees.length
 }
 
-mongoose.model('Comment', CommentSchema)
+module.exports = mongoose.model('Comment', CommentSchema)

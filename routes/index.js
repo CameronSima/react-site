@@ -43,7 +43,6 @@ module.exports = function (passport) {
 
   var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log('authenticated')
     return next()
   } else {
     console.log('not authenticated')
@@ -123,7 +122,7 @@ var threadQuery = function (field, value) {
   );
 
   // Get thread comments
-  router.get('/api/comments', function (req, res, next) {
+  router.get('/api/comments/:threadId', function (req, res, next) {
     Comment.find({
       thread: req.params.threadId
     })
@@ -133,24 +132,54 @@ var threadQuery = function (field, value) {
   })
 
   router.post('/api/comments/', isAuthenticated, function (req, res, next) {
+    console.log(req.body)
 
-    // create new comment
-    var comment = new Comment(req.body)
-    comment.author = req.user._id
-    comment.ancestors.push(comment.parent)
+    async.waterfall([
+      function(callback) {
+        if (req.body.parent) {
+          Comment.findOne({ _id: req.body.parent })
+          .exec(function (err, parent) {
+            if (err) {
+              console.log(err)
+            }
+            callback(null, parent.ancestors)     
+          })
+        } else {
+          callback(null, null)
+        }
+      },
+      function(ancestors, callback) {
+        var comment = new Comment(req.body)
+        comment.author = req.user._id
 
-    // save comment to thread
-    Thread.findOne({ _id: req.body.thread })
-    .exec(function(err, thread) {
-    })
-    .then(function (thread) {
-      thread.comments.push(comment._id)
-      thread.save()
-    })
-    console.log(comment)
-    comment.save()
+        if (ancestors) {
+          comment.ancestors = ancestors + '#' + comment.parent
+        } else {
+          comment.parent = 0
+        }
 
-  return next()
+        comment.save(function(err, comment) {
+          console.log(comment)
+        })
+        callback(null, comment)
+      },
+      function(comment, callback) {
+        // save comment to thread
+        Thread.findOne({ _id: comment.thread })
+        .exec(function(err, thread) {
+        })
+        .then(function (thread) {
+          thread.comments.push(comment._id)
+          thread.save()
+        })
+        console.log("SECOND FUNCTION")
+        callback(null, null)
+      }
+    ], function(err, result) {
+          console.log("THIRD FUNCTION")
+          res.status(200)
+          return next()
+       })
   })
 
 
@@ -232,7 +261,6 @@ var threadQuery = function (field, value) {
             if (err) {
               callback(err)
             } else {
-            console.log("user found " + userData.username)
             callback(null, userData)
             }
           })

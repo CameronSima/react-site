@@ -40,11 +40,6 @@ export default class FrontPage extends Component {
 		})
 	}
 
-	buildCommentTree(feed) {
-		return feed.map(function(thread) {
-			return helpers.buildTree(thread.comments)
-		})
-	}
 
 	setFeedType(feedType) {
 		console.log(feedType)

@@ -1,30 +1,11 @@
 var config = require('./config')
+var _ = require('lodash')
 
 module.exports = {
 	isInArray: (item, array) => {
 		return array.indexOf(item) > -1
 	},
 
-	// build array of nested children objects from parent 
-	// property, used for threading comment trees from
-	// flat array of thread comments
-	buildTree(data) {
-		var nodeMap = {}
-		 return data.reduce(function (rootArr, datum) {
-		 	datum.children = []
-		 	nodeMap[datum._id] = datum
-		 	if (typeof datum.parent === "undefined") {
-		 		return rootArr.concat(datum)
-		 	} else {
-		 		var parentNode = nodeMap[datum.parent]
-		 		delete datum.parent
-		 		parentNode.children.push(datum)
-		 		return rootArr
-		 	}
-		 }, [])
-	},
-
-	
 	// format date to show either time in hours ago, or, if dateTime was
 	// 24 hours ago or more, show the date
 

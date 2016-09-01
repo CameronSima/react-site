@@ -12,6 +12,7 @@ export default class ReplyModal extends Component {
 		this.sendComment = this.sendComment.bind(this)
 		this.handleTextChange = this.handleTextChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
+  
 	}
 	close() {
 		this.setState({ showModal: false })
@@ -53,7 +54,7 @@ export default class ReplyModal extends Component {
   	if (!text) {
   		return
   	} else {
-  		this.sendComment({ text: text, 
+  		this.props.onCommentSubmit({ text: text, 
   											 parent: this.props.parent, 
   											 thread: this.props.thread })
   		

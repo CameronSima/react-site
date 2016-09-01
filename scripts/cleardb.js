@@ -3,7 +3,9 @@ const async = require('async')
 
 const User = mongoose.model('User', require('../models/User'))
 const Thread = mongoose.model('Thread', require('../models/Thread'))
-//const Comment = mongoose.model('Comment', require('../models/Comment'))
+const Comment = mongoose.model('Comment', require('../models/Comment'))
+
+
 
 // connect to MongoDB
 mongoose.connect('mongodb://localhost/shitlistanitsocialmediatest', function (err, db) {
@@ -14,11 +16,11 @@ mongoose.connect('mongodb://localhost/shitlistanitsocialmediatest', function (er
   }
 })
 
-// Comment.find((err, comments) => {
-// 	async.each(comments, (comment) => {
-// 		comment.remove()
-// 	})
-// })
+Comment.find((err, comments) => {
+	async.each(comments, (comment) => {
+		comment.remove()
+	})
+})
 
 
 Thread.find((err, threads) => {
@@ -33,4 +35,4 @@ Thread.find((err, threads) => {
 // 	})
 // })
 
-mongoose.disconnect()
+//mongoose.disconnect()
