@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { NavButton } from './NavButtons'
+import { NavButton } from '../Utility/NavButtons'
 import ReactDOM from 'react-dom'
 
-var config = require('../../config')
+var config = require('../../../config')
 var helpers = require('../../helpers')
 
 
@@ -126,6 +126,18 @@ export default class AddFriendsBox extends Component {
 
 		})
 	}
+	onAddFile(res){
+    var newFile = {
+      id:uuid(),
+      name:res.file.name,
+      size: res.file.size,
+      altText:'',
+      caption: '',
+      file:res.file,
+      url:res.imageUrl
+    };
+    this.executeAction(newImageAction, newFile);
+  }
 
 	componentDidMount() {
 		this.loadDataFromServer()

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
+var config = require('../../../config')
 
-var config = require('../../config')
 
 export default class NavBar extends Component {
   logout() {

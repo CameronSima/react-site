@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal } from 'react-bootstrap'
 
-import TaggedModal from './TaggedModal'
+import TaggedModal from '../Modal/TaggedModal'
 
 var helpers = require('../../helpers')
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal } from 'react-bootstrap'
 
-var config = require('../../config')
+var config = require('../../../config')
 
 class TaggedButton extends Component {
   constructor(props) {

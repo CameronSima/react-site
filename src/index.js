@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import { Router, Route, IndexRoute, hashHistory, browserHistory, NotFoundView } from 'react-router';
+
+import { Router, Route, IndexRoute, 
+         hashHistory, browserHistory, 
+         NotFoundView } from 'react-router';
+
 import ReactDOM from 'react-dom';
 // import App from './components/App';
-import NavBar from './components/NavBar';
-import Feed from './components/Feed';
-import FrontPage from './components/FrontPage';
-import Signup from './components/signup';
-import Comments from './components/Comments';
-import AddFriends from './components/AddFriends';
+import NavBar from './components/Utility/NavBar';
+//import ThreadBox from './components/Feed/ThreadBox';
+import FrontPage from './components/Page/FrontPage';
+import Signup from './components/Page/signup';
+import AddFriends from './components/Page/AddFriends';
 
 const config = require('../config');
 
@@ -39,7 +42,6 @@ ReactDOM.render((
                   <Route path='/' component={ NavBar }>
                     <IndexRoute component={ FrontPage } onEnter= { authCheck }/>
                     <Route path='signup' component={ Signup } />
-                    <Route path='comments' component={ Comments } />
                     <Route path='addFriends' component={ AddFriends } />
                     <Route path='*' component={ NotFoundView } />
                   </Route>

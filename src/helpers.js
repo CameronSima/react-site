@@ -1,4 +1,4 @@
-var config = require('./config')
+var config = require('../config')
 var _ = require('lodash')
 
 module.exports = {
@@ -57,6 +57,5 @@ module.exports = {
 				)
 		})
 	},
-
 
 }

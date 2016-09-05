@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal } from 'react-bootstrap'
 
-var config = require('../../config')
+var config = require('../../../config')
 
 export default class ReplyModal extends Component {
 	constructor(props) {

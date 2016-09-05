@@ -10,7 +10,10 @@ var passport = require('passport')
 var session = require('express-session')
 var bluebird = require('bluebird')
 var mongoStore = require('connect-mongo')(session)
+var favicon = require('serve-favicon');
 var app = express()
+
+app.use(favicon(path.join(__dirname, '/src/assets/favicon.ico')))
 
 app.set('port', settings.expressPort)
 

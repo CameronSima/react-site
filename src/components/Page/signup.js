@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-var config = require('../../config')
+var config = require('../../../config')
 
 class FacebookLogin extends Component {
   render() {

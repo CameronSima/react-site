@@ -8,6 +8,11 @@
 	src: url('assets/LeagueGothic-Regular.ttf') format('truetype');
 }
 
+@font-face {
+	font-family: 'Declaration';
+	src: url('assets/USDeclaration.ttf') format('truetype');
+}
+
 
 html {
 	position: relative;
@@ -83,9 +88,9 @@ hr {
   max-height: 500px;
 }
 
-.thread div:nth-child(2) {
+/*.thread div:nth-child(2) {
 	display: inline-block;
-}
+}*/
 
 .threadVictim {
 	display: inline-block;
@@ -119,14 +124,12 @@ a.button {
 }
 
 
-.threadForm input:nth-child(1) {
-	height: 80px;
-}
-
 .textInput {
 	width: 480px;
 	height: 40px;
 	margin: 8px;
+	height: 22px;
+	font-size: 12px !important;
 }
 
 .thread {
@@ -246,16 +249,27 @@ a.button {
 .comment {
 	line-height: 1.4;
 	padding: 5px;
+	width: 456px;
+	overflow-wrap: break-word;
+}
+
+.replyInput {
+	margin-top: 8px;
+	width: 451px;
 }
 
 .commentActions {
 	opacity: .7;
 }
 
-.replyLink, .likeLink, .dislikeLink, .closeLink {
+.replyLink, .likeLink, .dislikeLink, .closeLink, .commentAuthor {
 	margin: 5px;
 	cursor: pointer;
 	display: inline;
+}
+
+.replyButton {
+	margin-bottom: 8px;
 }
 
 .btn {
@@ -267,4 +281,13 @@ a.button {
 
 .modal {
 	height: 400px;
+}
+
+.salutation {
+	font-family: 'Declaration';
+	font-size: 24px;
+}
+
+.imagePreview {
+	background: 50% 50% no-repeat;
 }

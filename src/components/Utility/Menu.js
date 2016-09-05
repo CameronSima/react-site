@@ -6,7 +6,7 @@ var helpers = require('../../helpers')
 export default class Menu extends Component {
 	constructor(props) {
 		super(props)
-		this.state = {title: this.props.items[0]}
+		this.state = { title: this.props.items[0] }
 		this.handleClick = this.handleClick.bind(this)
 	}
 	renderMenuItem(title, i) {

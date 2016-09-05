@@ -2,12 +2,11 @@
 // handles retrieving data for both
 
 import React, { Component } from 'react'
-import FeedBox from './Feed'
-import FriendsBox from './Friends'
-import ThreadForm from './Feed'
+import ThreadsBox from '../Feed/ThreadsBox'
+import FriendsBox from '../FriendsFeed/FriendsBox'
 
-var config = require('../../config')
-var helpers = require('../../helpers')
+var config = require('../../../config')
+var helpers = ('../../helpers')
 
 export default class FrontPage extends Component {
 	constructor(props) {
@@ -59,7 +58,7 @@ export default class FrontPage extends Component {
 			return (
 				<div className="FrontPage">
 					<FriendsBox data={ this.state.data.friends } />
-					<FeedBox feed={ this.state.data.feed } 
+					<ThreadsBox feed={ this.state.data.feed } 
 							 friends={ this.state.data.facebookFriends }
 							 setFeedType={this.setFeedType } />		
 
