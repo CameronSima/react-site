@@ -46,6 +46,7 @@ module.exports = function (passport) {
     return next()
   } else {
     console.log('not authenticated')
+    res.json('not logged in')
     //res.redirect('http://localhost:3001/signup')
   }
 }

@@ -170,8 +170,12 @@ a.button {
 }
 
 #navTitle {
-	font-family: 'Cornerstone';
-	color: #00FF76;
+	font-family: 'Declaration';
+	/*color: #00FF76;*/
+}
+
+.navbar {
+	position: relative !important;
 }
 
 #loginWithFacebook {

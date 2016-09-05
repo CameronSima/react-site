@@ -25,7 +25,7 @@ export default class NavBar extends Component {
       <div className="navbar navbar-default navbar-fixed-top">
       <div className="container">
         <div className="navbar-header">
-          <a href="../" id="navTitle" className="navbar-brand">Shit List</a>
+          <a href="../" id="navTitle" className="navbar-brand">Dirty Laundry</a>
           <button className="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>

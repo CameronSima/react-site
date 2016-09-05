@@ -4,6 +4,9 @@
 import React, { Component } from 'react'
 import ThreadsBox from '../Feed/ThreadsBox'
 import FriendsBox from '../FriendsFeed/FriendsBox'
+import NavBar from '../Utility/NavBar'
+
+var Router = require('react-router')
 
 var config = require('../../../config')
 var helpers = ('../../helpers')
@@ -27,11 +30,10 @@ export default class FrontPage extends Component {
 			dataType: 'json',
 			xhrFields: { withCredentials: true },
 			cache: false,
-			success: (data) => {
-				this.setState({data: data})
-				
-				// localStorage.setItem("user", data._id)
-				// console.log(localStorage.getItem("user"))
+			success: (response) => {
+				this.setState({ data: response })
+				console.log(response)
+				this.checkAuth(response)
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
@@ -39,6 +41,11 @@ export default class FrontPage extends Component {
 		})
 	}
 
+	checkAuth(response) {
+		if (response === 'not logged in') {
+			Router.browserHistory.push('/signup')
+		}
+	}
 
 	setFeedType(feedType) {
 		console.log(feedType)
@@ -57,6 +64,7 @@ export default class FrontPage extends Component {
 		render() {
 			return (
 				<div className="FrontPage">
+					<NavBar />
 					<FriendsBox data={ this.state.data.friends } />
 					<ThreadsBox feed={ this.state.data.feed } 
 							 friends={ this.state.data.facebookFriends }

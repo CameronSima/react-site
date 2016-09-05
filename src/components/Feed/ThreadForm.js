@@ -1,6 +1,6 @@
 import React from 'react'
 
-//import Menu from '../Utility/Menu'
+import Menu from '../Utility/Menu'
 import DropdownBox from '../Utility/Dropdown'
 
 var ThreadForm = React.createClass({
@@ -81,7 +81,9 @@ var ThreadForm = React.createClass({
     return (
     <div id="threadInputs">
       <div className="submitActions">
-
+        <Menu items={ ['TEXT', 'PHOTO'] }
+                  //menuEventFunc={ this.setFeedType } 
+                  />
         </div>
       <form className="threadForm" onSubmit={this.handleSubmit}>
         <textarea

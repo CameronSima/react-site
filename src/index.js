@@ -5,9 +5,7 @@ import { Router, Route, IndexRoute,
          NotFoundView } from 'react-router';
 
 import ReactDOM from 'react-dom';
-// import App from './components/App';
 import NavBar from './components/Utility/NavBar';
-//import ThreadBox from './components/Feed/ThreadBox';
 import FrontPage from './components/Page/FrontPage';
 import Signup from './components/Page/signup';
 import AddFriends from './components/Page/AddFriends';
@@ -39,11 +37,11 @@ var authCheck = function (nextState, replace, callback) {
 
 ReactDOM.render((
                 <Router history = { browserHistory }>
-                  <Route path='/' component={ NavBar }>
-                    <IndexRoute component={ FrontPage } onEnter= { authCheck }/>
+         
+                    <Route path='/' component={ FrontPage } onEnter= { authCheck }/>
                     <Route path='signup' component={ Signup } />
                     <Route path='addFriends' component={ AddFriends } />
                     <Route path='*' component={ NotFoundView } />
-                  </Route>
+           
                 </Router>
   ), document.getElementById('root'));

@@ -3,8 +3,7 @@ import { Button, ButtonGroup } from 'react-bootstrap'
 
 import ThreadList from './ThreadList'
 import ThreadForm from './ThreadForm'
-
-//import Menu from '../Utility/Menu'
+import Menu from '../Utility/Menu'
 
 var config = require('../../../config')
 var helpers = require('../../helpers')
@@ -51,7 +50,9 @@ var ThreadsBox = React.createClass({
       <ThreadForm friends={this.props.friends}
                   onThreadSubmit={ this.handleThreadSubmit }/>
       <div className="feedNav">
-
+        <Menu items={ ['ALL', 'I SAID', 'THEY SAID', 'I TAGGED'] }
+              menuEventFunc={ this.setFeedType }
+         />
 
 
         <ButtonGroup>
