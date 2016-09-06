@@ -19,6 +19,7 @@ var ThreadSchema = new mongoose.Schema({
 
   // TODO: make an object, not an array containing one object.
   author: [{
+    id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     real: String,
     pseudonym: String
   }],

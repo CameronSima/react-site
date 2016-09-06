@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import NavButtonList from '../Utility/NavButtons'
 
-class FriendContainer extends Component {
+export default class FriendContainer extends Component {
 	rawMarkup() {
 		let rawMarkup = marked(this.props.children.toString(), {sanitize: true })
 		return {__html: rawMarkup }
@@ -15,7 +14,6 @@ class FriendContainer extends Component {
 				<p>
 					{ this.props.friend}
 				</p>
-				<NavButtonList buttons={ buttonObs.friendComponentButtons } />
 				<hr></hr>
 			</div>
 			)

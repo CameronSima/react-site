@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
+import { Button, ButtonGroup } from 'react-bootstrap'
 
-import CommentsBox from '../Comments'
+import CommentBox from '../Comment/CommentBox'
 
 var helpers = require('../../helpers')
 var config = require('../../../config')
@@ -80,22 +81,16 @@ export default class Thread extends Component {
           <div className="likeTotal">
             { this.state.likes }
           </div>
-        <NavButton divId="like-button" 
-                   title="like"
-                   eventFunc={ this.sendLikeToServer }
-                   state={ this.props.id }
-                   value={ "upvote" } />
 
-        <NavButton divId="dislike-button" 
-                   title="dislike"
-                   eventFunc={ this.sendLikeToServer }
-                   state={ this.props.id }
-                   value={ "downvote" } /> 
+        <ButtonGroup>
+          <Button onClick={() => {this.sendLikeToServer(this.props.id, "upvote")}}>Like</Button>
+          <Button onClick={() => {this.sendLikeToServer(this.props.id, "downvote")}}>Dislike</Button>
+        </ButtonGroup>
         <hr></hr>         
 
         <div>
-          <CommentsBox threadId={ this.props.id }
-                       comments={ this.props.comments }
+          <CommentBox threadId={ this.props.id }
+                      comments={ this.props.comments }
                         />
         </div>
         <hr></hr>

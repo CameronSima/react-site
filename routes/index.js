@@ -41,15 +41,15 @@ module.exports = function (passport) {
 
   // helper functions
 
-//   var isAuthenticated = function (req, res, next) {
-//   if (req.isAuthenticated()) {
-//     return next()
-//   } else {
-//     console.log('not authenticated')
-//     res.json('not logged in')
-//     //res.redirect('http://localhost:3001/signup')
-//   }
-// }
+  var isAuthenticated = function (req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
+  } else {
+    console.log('not authenticated')
+    res.json('not logged in')
+    //res.redirect('http://localhost:3001/signup')
+  }
+}
 
 var isInArray = function (item, array) {
   return array.indexOf(item) > -1
@@ -133,8 +133,6 @@ var threadQuery = function (field, value) {
   })
 
   router.post('/api/comments/', isAuthenticated, function (req, res, next) {
-    console.log(req.body)
-
     async.waterfall([
       function(callback) {
         if (req.body.parent) {
@@ -160,7 +158,6 @@ var threadQuery = function (field, value) {
         }
 
         comment.save(function(err, comment) {
-          console.log(comment)
         })
         callback(null, comment)
       },
@@ -173,11 +170,9 @@ var threadQuery = function (field, value) {
           thread.comments.push(comment._id)
           thread.save()
         })
-        console.log("SECOND FUNCTION")
         callback(null, null)
       }
     ], function(err, result) {
-          console.log("THIRD FUNCTION")
           res.status(200)
           return next()
        })
@@ -285,7 +280,7 @@ var threadQuery = function (field, value) {
         if (err) {
           console.log(err)
         }
-        var userData = results[0]
+        var userData = results[0].toObject()
 
         // will return either an array or undefined
         var theySaidThreads = results[1]
@@ -318,14 +313,14 @@ var threadQuery = function (field, value) {
          // pseudonym with simply either the username or pseudonym
          // depending on whether the auther chose to remain anonymous
          // or not.
-         userData.feed.forEach(function(thread) {
+         _.each(userData.feed, function(thread) {
           if (thread.anonymous === true) {
 
             // If the user wrote the comment and the thread and posted
             // anonymously, show his pseudonym instead of real name when
             // commenting
-            thread.comments.forEach(function (comment) {
-              if (thread.author[0].real === comment.author.username) {
+            _.each(thread.comments, function(comment) {
+              if (thread.author[0].id.toString() == comment.author._id.toString()) {
                 comment.author.username = thread.author[0].pseudonym
               }
             })
@@ -458,6 +453,7 @@ var threadQuery = function (field, value) {
 
       // Create the new thread document and return it
       req.body.author = {}
+      req.body.author.id = req.user._id
       req.body.author.real = req.user.username
       req.body.author.pseudonym = '_' + getRandomUsername()
 

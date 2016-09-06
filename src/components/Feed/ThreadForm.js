@@ -3,6 +3,8 @@ import React from 'react'
 import Menu from '../Utility/Menu'
 import DropdownBox from '../Utility/Dropdown'
 
+const helpers = require('../../helpers')
+
 var ThreadForm = React.createClass({
   getInitialState: function () {
     return {
