@@ -6,7 +6,7 @@ class FacebookLogin extends Component {
   render() {
     return (
       <div id="loginPanel">
-      <h1 id="title">Shit List</h1>
+      <h1 id="title">Dirty Laundry</h1>
       <h3>Anti-Social Media</h3>
         <a href="http://localhost:3001/api/auth/facebook" >
           <input type="image" 
@@ -104,37 +104,7 @@ export default class Signup extends Component {
   render() {
     return (
       <div>
-        <form className="signupForm" onSubmit={this.handleSubmit}>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={this.state.username}
-            onChange={this.onChange} />
-          <input
-            type="text"
-            name="password1"
-            placeholder="Password"
-            value={this.state.password1}
-            onChange={this.onChange} />
-          <input
-            type="text"
-            name="password2"
-            placeholder="Password again"
-            value={this.state.password2}
-            onChange={this.onChange} />
-          <input
-            type="text"
-            name="friends"
-            placeholder="friends"
-            value={this.state.friends}
-            onChange={this.onChange} />
-          <input type="submit" value="Post" />
-        </form>
-        <label id="error">{this.state.error}</label>
-        <div>
         <FacebookLogin />
-      </div>
       </div>
       )
   }

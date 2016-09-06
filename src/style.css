@@ -157,16 +157,15 @@ a.button {
 }
 
 #loginPanel h3 {
-	font-family: 'Cornerstone';
-	color: #00FF76;
+	font-family: 'Declaration';
+	/*color: #00FF76;*/
 	font-size: 20px;
-
 }
 
 #title {
 	font-weight: 900;
-	font-family: 'Cornerstone';
-	color: #00FF76;
+	font-family: 'Declaration';
+	/*color: #00FF76;*/
 }
 
 #navTitle {
@@ -294,4 +293,19 @@ a.button {
 
 .imagePreview {
 	background: 50% 50% no-repeat;
+}
+
+#Errimg {
+	display: block;
+	margin: 0 auto;
+}
+
+#oops {
+	font-family: Declaration;
+	margin-left: 250px;
+}
+
+#oops_contd {
+	text-align: center;
+	font-weight: 700;
 }

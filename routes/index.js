@@ -41,15 +41,15 @@ module.exports = function (passport) {
 
   // helper functions
 
-  var isAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  } else {
-    console.log('not authenticated')
-    res.json('not logged in')
-    //res.redirect('http://localhost:3001/signup')
-  }
-}
+//   var isAuthenticated = function (req, res, next) {
+//   if (req.isAuthenticated()) {
+//     return next()
+//   } else {
+//     console.log('not authenticated')
+//     res.json('not logged in')
+//     //res.redirect('http://localhost:3001/signup')
+//   }
+// }
 
 var isInArray = function (item, array) {
   return array.indexOf(item) > -1
