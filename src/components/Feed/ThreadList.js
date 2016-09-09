@@ -16,6 +16,7 @@ export default class ThreadList extends Component {
                   comments={ thread.comments }
                   date={ thread.date }
                   author={ thread.author } 
+                  pic={ thread.photoName }
                   included={ thread.included }
                   initialLikes={ thread.likes } 
                   id={ thread._id}

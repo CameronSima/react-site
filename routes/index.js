@@ -521,6 +521,7 @@ var threadQuery = function (field, value) {
         console.log(err)
         return res.end("error uploading file")
       } else {
+        console.log(req.file.filename)
         res.json(req.file.filename)
       }
     })

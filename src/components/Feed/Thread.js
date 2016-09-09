@@ -60,6 +60,11 @@ export default class Thread extends Component {
   }
 
   render() {
+    if (this.props.pic) {
+      console.log(this.props.pic)
+      
+        var photo = <img className="user_photo" src={'src/assets/user_images/' + this.props.pic}/>
+    }
     return (
       <div className="thread">
         <div className="dateOuter">
@@ -78,6 +83,9 @@ export default class Thread extends Component {
 
         </div>
           <hr></hr>
+
+          <div>{photo}</div>
+
           <div className="likeTotal">
             { this.state.likes }
           </div>

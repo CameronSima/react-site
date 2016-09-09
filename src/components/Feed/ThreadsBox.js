@@ -37,7 +37,8 @@ var ThreadsBox = React.createClass({
     xhr.open('POST', '/api/image', true)
     xhr.onload = function() {
       if (xhr.status === 200) {
-        thread.photoName = xhr.responseText
+        // needed to remove double double-quotes e.g. ""photoname""
+        thread.photoName = JSON.parse(xhr.responseText)
 
         // make the thread submit request only when the server
         // has responded with the saved photo name

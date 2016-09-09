@@ -352,15 +352,16 @@ a.button {
 
 .dropzone:hover #photoHelp {
 	display: inline-block;
-		border-width: 2px;
+	border-width: 2px;
 	border-style: dashed;
 	border-color: black;
 	font-style: italic;
 	opacity: 0.7;
 }
 
-.dropzone: hover {
-
+.user_photo {
+	max-width: 400px;
+  height: auto;
 }
 
 

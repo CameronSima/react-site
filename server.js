@@ -18,6 +18,7 @@ app.use(favicon(path.join(__dirname, '/src/assets/favicon.ico')))
 app.set('port', settings.expressPort)
 
 app.use('/', express.static(path.join(__dirname, '/src')))
+app.use('/user_images', express.static(path.join(__dirname, '/src/assets/user_images')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
