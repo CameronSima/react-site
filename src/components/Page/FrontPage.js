@@ -88,7 +88,7 @@ export default class FrontPage extends Component {
 					<FriendsBox data={ this.state.friends } />
 					<ThreadsBox feed={ this.state.feed } 
 											addThread={ this.addThread }
-							 				friends={ this.state.facebookFriends }
+							 				friends={ this.state.friends }
 							 				setFeedType={this.setFeedType } />		
 
 				</div>

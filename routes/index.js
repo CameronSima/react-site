@@ -44,6 +44,7 @@ module.exports = function (passport) {
 
   var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
+    console.log(req.user)
     return next()
   } else {
     res.json('not logged in')
@@ -495,12 +496,12 @@ var threadQuery = function (field, value) {
 
       // Isolate ids
       var includedIds = _.map(req.body.included, function(included) {
-        return included.id
+        return included._id
       })
       // Fan out thread id to included users
-      includedIds.push(req.user.facebookId)
+      includedIds.push(req.user._id)
       User.find({
-        'facebookId': {$in: includedIds}
+        _id: { $in: includedIds }
       }, function(err, users) {
         async.each(users, function(user, callback) {
           user.feed.push(thread._id)
@@ -512,8 +513,8 @@ var threadQuery = function (field, value) {
       // return next()
   })
 
-  // upload user photos and save to filesystem; urls will 
-  // be saved to the thread object.
+  // upload user photos and save to filesystem; respond with imagename
+  // so the client can add it to the thread object before submitting it
   router.post('/api/image', isAuthenticated, function(req, res, next) {
     upload(req, res, function(err) {
       //console.log(req.body)
@@ -538,6 +539,46 @@ var threadQuery = function (field, value) {
     //console.log(users.length)
   })
 })
+
+  // get posts about and by a friend if they've been shared with the user
+  router.get('/api/user/:friend_id', isAuthenticated, function (req, res, next) {
+
+    async.parallel([
+      function(callback) {
+        Thread.find({ 'author.id': req.params.friend_id, 'included.id':  req.user._id })
+        // User.findOne({ _id: req.params.friend_id })
+        // .populate('feed')
+        .exec(function(err, threads) {
+          callback(null, threads)
+        })
+      },
+      function(callback) {
+        Thread.find({ victim: req.params.friend_id })
+        .populate('included')
+        .exec(function(threads) {
+          callback(null, threads)
+        })
+      }
+    ],
+    function(err, results) {
+      if (err) {
+        throw(err)
+      }
+      var by = results[0] || []
+      var about = results[1] || []
+      var threads = by.concat(about)
+      // var data =  _.filter(threads, function(thread) {
+      //   _.each(thread.included, function(included) {
+      //     if (included.id == req.user._id) {
+      //       return true
+      //     }
+      //   })
+      // })
+      res.json(threads)
+    }
+    )
+  })
+
 
   // Voting
 

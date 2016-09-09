@@ -17,7 +17,6 @@ module.exports = {
 
 	// Reorder threads by hotness
 	orderByHot: (threads) => {
-
 		var getScore = (likes, date) => {
 			var order = Math.log(Math.max(Math.abs(likes), 1)) / Math.LN10
 			var age = (Date.now() - Date.parse(date)) / 1000
@@ -52,7 +51,7 @@ module.exports = {
 	suggestItems: (items, clicked) => {
 		return items.filter((item) => {
 			return (
-				item.name.toLowerCase().indexOf(clicked.toLowerCase()) === 0 
+				item.facebookName.toLowerCase().indexOf(clicked.toLowerCase()) === 0 
 				&& clicked.length > 0
 				)
 		})

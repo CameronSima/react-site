@@ -9,6 +9,7 @@ export default class FriendsList extends Component {
 			return (
 					<FriendContainer friend={ friend.facebookName } 
 													 pic={ friend.facebookProfilePic }
+													 id={ friend._id }
 													 key={ friend._id }/>
 				)
 		})
