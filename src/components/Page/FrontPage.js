@@ -55,10 +55,17 @@ export default class FrontPage extends Component {
 
     // Set fake data for now, until the feed response
     // re-populates the feed with processed data
-    var thread = thread
-    thread._id = Date.now()
-    thread.author = '...Me...'.italics()
-		this.setState({ feed: this.state.feed.concat([thread])})
+    var newThread = {
+    	text: thread.text,
+    	included: thread.included,
+    	victim: thread.victim,
+    	anonymous: thread.anonymous,
+    	_id: Date.now(),
+    	author: '...Me...'.italics(),
+    	date: Date.now() + 10000
+
+    }
+		this.setState({ feed: this.state.feed.concat([newThread])})
 	}
 
 	setFeedType(feedType) {

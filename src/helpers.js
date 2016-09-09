@@ -17,20 +17,20 @@ module.exports = {
 
 	// Reorder threads by hotness
 	orderByHot: (threads) => {
-		var getScore = (likes, dislikes, date) => {
-			var score = likes - dislikes
-			var order = Math.log(Math.max(Math.abs(score), 1)) / Math.LN10
+
+		var getScore = (likes, date) => {
+			var order = Math.log(Math.max(Math.abs(likes), 1)) / Math.LN10
 			var age = (Date.now() - Date.parse(date)) / 1000
 			return order - age / 45000 
 		}
 
 		 return threads.sort((a, b) => {
-			if (getScore(a.likes, a.dislikes, a.date) < 
-				  getScore(b.likes, b.dislikes, b.date)) {
+			if (getScore(a.likes, a.date) < 
+				  getScore(b.likes, b.date)) {
 				return 1
 			} 
-			if (getScore(a.likes, a.dislikes, a.date) > 
-				  getScore(b.likes, b.dislikes, b.date)) {
+			if (getScore(a.likes, a.date) > 
+				  getScore(b.likes, b.date)) {
 				return -1
 			}
 			return 0

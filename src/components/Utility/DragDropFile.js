@@ -8,12 +8,6 @@ var DragDropFile = React.createClass({
     }
   },
 
-  // propTypes: {
-  //   onDrop: React.PropTypes.func.isRequired,
-  //   size: React.PropTypes.number,
-  //   style: React.PropTypes.object
-  // },
-
   onDragLeave: function(e) {
     this.setState({
       isDragActive: false
@@ -81,7 +75,7 @@ var DragDropFile = React.createClass({
       <div className={className} onClick={this.onClick} onDragLeave={this.onDragLeave} onDragOver={this.onDragOver} onDrop={this.onDrop}>
         <input style={{display: 'none' }} type='file' multiple ref='fileInput' onChange={this.onDrop} />
         {this.props.children}
-        <div id="photoHelp">Drag photo here...</div>
+        <div id="photoHelp">Click or drop photo here. . .</div>
       </div>
     );
   }

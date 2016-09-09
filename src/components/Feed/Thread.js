@@ -31,7 +31,6 @@ export default class Thread extends Component {
       cache: false,
       //data: {thread_id: thread_id},
       success: (likes) => {
-        console.log(likes)
         this.setState({ likes: likes})
       },
       error: (xhr, status, err) => {
@@ -61,9 +60,9 @@ export default class Thread extends Component {
 
   render() {
     if (this.props.pic) {
-      console.log(this.props.pic)
-      
-        var photo = <img className="user_photo" src={'src/assets/user_images/' + this.props.pic}/>
+        var photo = <img className="user_photo" 
+                         src={'src/assets/user_images/' + this.props.pic}
+                      />
     }
     return (
       <div className="thread">

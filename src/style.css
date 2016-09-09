@@ -347,14 +347,13 @@ a.button {
 
 #photoHelp {
 	display: none;
-
 }
 
 .dropzone:hover #photoHelp {
 	display: inline-block;
 	border-width: 2px;
 	border-style: dashed;
-	border-color: black;
+	border-color: grey;
 	font-style: italic;
 	opacity: 0.7;
 }

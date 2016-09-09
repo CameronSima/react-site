@@ -107,7 +107,7 @@ var ThreadForm = React.createClass({
         <Button>
           <img className='icon-camera' 
                src='src/assets/icon-camera.png' 
-               onClick={()=> {console.log("OK")}} />
+                />
         </Button>
       </DragDropFile>
 
