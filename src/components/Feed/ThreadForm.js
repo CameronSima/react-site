@@ -1,9 +1,13 @@
 import React from 'react'
+import { Button } from 'react-bootstrap'
 
-import Menu from '../Utility/Menu'
 import DropdownBox from '../Utility/Dropdown'
+import DragDropFile from '../Utility/DragDropFile'
+
+const Promise = require('bluebird')
 
 const helpers = require('../../helpers')
+const _config = require('../../../config')
 
 var ThreadForm = React.createClass({
   getInitialState: function () {
@@ -14,21 +18,65 @@ var ThreadForm = React.createClass({
             includedSuggestions: [],
             victim: '',
             ct: '',
-            anonymous: ''
+            anonymous: '',
+            imageUrl: ''
             }
   },
+  showPreview: function(imageUrl) {
+
+  },
+
+  sendPic: function(pic) {
+    var body = new FormData()
+    body.append('userPhoto', pic.file)
+    body.append('text', 'some text')
+    console.log(typeof pic.file)
+  
+        $.ajax({
+      url: _config.apiUrl + 'image',
+      cache: false,
+      processData: false,
+      contentType: false,
+      type: 'POST',
+      data: body,
+      xhrFields: {withCredentials: true},
+      success: function (doc) {
+        //this.props.addThread(thread)
+      }.bind(this),
+      error: function (xhr, status, err) {
+        //this.setState({data: threads})
+        //console.log(this.url, status, err.toString())
+      }.bind(this)
+    })
+
+    // var xhr = new XMLHttpRequest()
+    // xhr.open('POST', '/api/image', true)
+    // xhr.onload = function() {
+    //   if (xhr.status === 200) {
+    //     console.log('upload complete')
+    //   } else {
+    //     console.log('there was an error')
+    //   }
+    // }
+    // xhr.send(body)
+  },
+
   onAddFile: function(res){
     this.setState({imageUrl: res.imageUrl})
+    this.refs.comment.innerHTML = this.state.text + ' ' + res.imageUrl
+    this.showPreview(res.imageUrl)
     console.log(res)
     var newFile = {
       id:res.file.name,
       name:res.file.name,
+      //name: 'photoupload',
       size: res.file.size,
       altText:'',
       caption: '',
       file:res.file,
       url:res.imageUrl
     };
+    this.sendPic(res)
     //this.executeAction(newImageAction, newFile);
   },
   clearState: function (field) {
@@ -59,7 +107,6 @@ var ThreadForm = React.createClass({
     var text = this.state.text.trim()
     var includedArr = this.state.includedArr
     var victim = this.state.victim.trim()
-    console.log(includedArr)
     if (!text || includedArr.length < 1 || !victim) {
       return
     }
@@ -83,12 +130,22 @@ var ThreadForm = React.createClass({
     return (
     <div id="threadInputs">
       <div className="submitActions">
-        <Menu items={ ['TEXT', 'PHOTO'] }
-                  //menuEventFunc={ this.setFeedType } 
-                  />
+      
+      <DragDropFile onDrop={this.onAddFile}>
+        <Button>
+          <img className='icon-camera' 
+               src='src/assets/icon-camera.png' 
+               onClick={()=> {console.log("OK")}} />
+        </Button>
+      </DragDropFile>
+
+
         </div>
       <form className="threadForm" onSubmit={this.handleSubmit}>
-        <textarea
+        <img className='upload_preview' src={this.state.imageUrl} />
+
+        <textarea 
+          ref="comment"
           rows='1'
           cols='48'
           className="textInput"
@@ -96,6 +153,7 @@ var ThreadForm = React.createClass({
           placeholder="Say something..."
           value={this.state.text}
           onChange={this.handleTextChange} />
+
         <input
           className="textInput"
           type="text"

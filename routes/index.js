@@ -4,6 +4,7 @@ var mongoose = require('mongoose')
 var fs = require('fs')
 var path = require('path')
 var moniker = require('moniker')
+var multer = require('multer')
 var async = require('async')
 var asyncEach = require('async-each')
 var _ = require('lodash')
@@ -45,8 +46,8 @@ module.exports = function (passport) {
   if (req.isAuthenticated()) {
     return next()
   } else {
-    console.log('not authenticated')
     res.json('not logged in')
+    return next()
     //res.redirect('http://localhost:3001/signup')
   }
 }
@@ -56,7 +57,7 @@ var isInArray = function (item, array) {
 }
 
 var remove = function (item, array) {
-  return array.filter(function(element) {
+  return _.filter(array, function(element) {
     return element != item
   })
 }
@@ -71,22 +72,39 @@ var threadQuery = function (field, value) {
   })
   return query
 }
+
+  // Configuration for multer image uploading middleware
+  var storage = multer.diskStorage({
+    destination: function(req, file, callback) {
+      callback(null, __dirname + '/../src/assets/user_images/')
+    },
+    filename: function(req, file, callback) {
+      console.log("FILE")
+      console.log(file)
+      callback(null, file.originalname + '-' + Date.now())
+    }
+  })
+
+  var upload = multer({
+    storage: storage
+  }).single('userPhoto')
+
 // routes
 
-  router.post('/api/login', function (req, res, next) {
-    passport.authenticate('login', function (err, user, info) {
-      if (err)
-        return res.json(err)
-      if (!user)
-        return
-      res.json(user)
-    })(req, res, next)
-  })
+  // router.post('/api/login', function (req, res, next) {
+  //   passport.authenticate('login', function (err, user, info) {
+  //     if (err)
+  //       return res.json(err)
+  //     if (!user)
+  //       return
+  //     res.json(user)
+  //   })(req, res, next)
+  // })
 
-  router.get('/api/logout', function (req, res) {
-    req.logout()
-    res.redirect('/')
-  })
+  // router.get('/api/logout', function (req, res) {
+  //   req.logout()
+  //   res.redirect('/')
+  // })
 
   router.post('/api/signup', function (req, res, next) {
     passport.authenticate('signup', function (err, user, info) {
@@ -237,7 +255,7 @@ var threadQuery = function (field, value) {
   // will also have their own endpoint for maximum flexibility.
 
   router.get('/api/frontpage/:feedType*?', isAuthenticated, function (req, res, next) {
-
+    console.time('feed')
     var theySaidThreads, iSaidThreads, tagged
     async.parallel([
       function(callback) {
@@ -286,16 +304,18 @@ var threadQuery = function (field, value) {
         var theySaidThreads = results[1]
 
         if (req.params.feedType === 'isaid') {
+
           // filter out threads not authored by the user
-          iSaidThreads = userData.feed.filter(function (thread) {
+          iSaidThreads = _.filter(userData.feed, function(thread) {
             return thread.author.real = req.user.username
           })
-        }''
+        }
 
         if (req.params.feedType === 'tagged') {
+
           // filter out threads authored by the user
           // (return only those he's tagged in).
-          tagged = userData.feed.filter(function (thread) {
+          tagged = _.filter(userData.feed, function(thread) {
             return thread.author.real != req.user.username
           })
         }
@@ -313,6 +333,7 @@ var threadQuery = function (field, value) {
          // pseudonym with simply either the username or pseudonym
          // depending on whether the auther chose to remain anonymous
          // or not.
+
          _.each(userData.feed, function(thread) {
           if (thread.anonymous === true) {
 
@@ -334,7 +355,7 @@ var threadQuery = function (field, value) {
           userData.feed.push({text: "No threads found!",
                               _id: "no_results"})
         }
-        //console.log(userData.feed)
+        console.timeEnd('feed')
         res.json(userData)
       }
     )
@@ -352,7 +373,7 @@ var threadQuery = function (field, value) {
           if (err) {
             callback(err)
           } else {
-            var ids = user.facebookFriends.map(function(user) {
+            var ids = _.map(user.facebookFriends, function(user) {
               return user.id
             })
             User.find({
@@ -468,11 +489,13 @@ var threadQuery = function (field, value) {
         if (err) {
           console.log(err)
           return next(err)
+        } else {
+          res.json(thread)
         }
       })
 
       // Isolate ids
-      var includedIds = req.body.included.map(function (included) {
+      var includedIds = _.map(req.body.included, function(included) {
         return included.id
       })
       // Fan out thread id to included users
@@ -480,16 +503,30 @@ var threadQuery = function (field, value) {
       User.find({
         'facebookId': {$in: includedIds}
       }, function(err, users) {
-        users.forEach((user) => {
+        async.each(users, function(user, callback) {
           user.feed.push(thread._id)
-          user.save((err, user) => {
-            if (err) {
-              console.log(err)
-            }
-          })
+          user.save()
+          callback()
         })
       })
-      return next()
+      // res.status(200)
+      // return next()
+  })
+
+  // upload user photos and save to filesystem; urls will 
+  // be saved to the thread object.
+  router.post('/api/image', isAuthenticated, function(req, res, next) {
+    upload(req, res, function(err) {
+      //console.log(req.body)
+      console.log(req.file)
+      if (err) {
+        console.log(err)
+        return res.end("error uploading file")
+      } else {
+        res.end('File uploaded')
+      }
+    })
+
   })
 
 

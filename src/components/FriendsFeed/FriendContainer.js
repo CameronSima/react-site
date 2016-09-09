@@ -10,9 +10,9 @@ export default class FriendContainer extends Component {
 			<div className="friend">
 				<div className="profilePic">
 				</div>
-					<img src={this.props.pic} />
+					<img src={this.props.pic } />
 				<p>
-					{ this.props.friend}
+					{ this.props.friend }
 				</p>
 				<hr></hr>
 			</div>

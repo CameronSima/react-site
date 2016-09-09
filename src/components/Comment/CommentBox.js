@@ -57,7 +57,6 @@ var CommentBox = React.createClass({
   },
     onAddFile: function(res){
       this.setState({imageUrl: res.imageUrl})
-      console.log(res)
     var newFile = {
       id:res.file.name,
       name:res.file.name,
@@ -74,7 +73,6 @@ var CommentBox = React.createClass({
     //console.log(this.props.comments)
 
     var threadedComments = this.buildTree(this.props.comments)
-    console.log(threadedComments)
     return (
     <div className="commentBox">
       

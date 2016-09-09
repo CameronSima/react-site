@@ -11,21 +11,18 @@ var helpers = require('../../helpers')
 
 var ThreadsBox = React.createClass({
   handleThreadSubmit: function (thread) {
-    var threads = this.props.feed
-    var newThreads = threads.concat([thread])
-    this.setState({feed: newThreads})
     $.ajax({
       url: config.apiUrl + 'threads',
       dataType: 'json',
       type: 'POST',
       data: thread,
       xhrFields: {withCredentials: true},
-      success: function (data) {
-        // this.setState({feed: feed})
+      success: function (doc) {
+        this.props.addThread(thread)
       }.bind(this),
       error: function (xhr, status, err) {
-        this.setState({data: threads})
-        console.log(this.url, status, err.toString())
+        //this.setState({data: threads})
+        //console.log(this.url, status, err.toString())
       }.bind(this)
     })
   },
@@ -36,7 +33,6 @@ var ThreadsBox = React.createClass({
   },
 
   setFeedType: function(feedType) {
-    //console.log(feedType)
     this.props.setFeedType(feedType)
   },
   componentDidMount: function() {
@@ -45,6 +41,7 @@ var ThreadsBox = React.createClass({
 
   // TODO: replace custom navbuttons with react-bootstrap buttons
   render: function() {
+
     return (
     <div className="threadsBox">
       <ThreadForm friends={this.props.friends}
@@ -54,10 +51,9 @@ var ThreadsBox = React.createClass({
               menuEventFunc={ this.setFeedType }
          />
 
-
         <ButtonGroup>
-          <Button onClick={ () => { this.setState({'sortFunc': helpers.orderByDate}) }}>Home</Button>
-          <Button onClick={ () => { this.setState({'sortFunc': helpers.orderByHot}) }}>Heat</Button>
+          <Button onClick={() => {this.setState({'sortFunc': helpers.orderByDate})}}>Home</Button>
+          <Button onClick={() => {this.setState({'sortFunc': helpers.orderByHot})}}>Heat</Button>
         </ButtonGroup>
       </div>
       <ThreadList data={ this.props.feed }

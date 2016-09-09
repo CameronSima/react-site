@@ -23,6 +23,7 @@ var DragDropFile = React.createClass({
   onDragOver: function(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
+    console.log("DRAGGING")
 
     this.setState({
       isDragActive: true

@@ -15,12 +15,15 @@ export default class FrontPage extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			data: {},
+			friends: [],
+			feed: [],
+			facebookFriends: [],
 			pollInterval: config.pollInterval,
 			feedType: 'ALL'
 		}
 		this.loadDataFromServer = this.loadDataFromServer.bind(this)
 		this.setFeedType = this.setFeedType.bind(this)
+		this.addThread = this.addThread.bind(this)
 	}
 
 	loadDataFromServer() {
@@ -31,9 +34,10 @@ export default class FrontPage extends Component {
 			xhrFields: { withCredentials: true },
 			cache: false,
 			success: (response) => {
-				this.setState({ data: response })
-				console.log(response)
 				this.checkAuth(response)
+				this.setState({ friends: response.friends,
+												feed: response.feed,
+												facebookFriends: response.facebookFriends })
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
@@ -47,8 +51,17 @@ export default class FrontPage extends Component {
 		}
 	}
 
+	addThread(thread) {
+
+    // Set fake data for now, until the feed response
+    // re-populates the feed with processed data
+    var thread = thread
+    thread._id = Date.now()
+    thread.author = '...Me...'.italics()
+		this.setState({ feed: this.state.feed.concat([thread])})
+	}
+
 	setFeedType(feedType) {
-		console.log(feedType)
 		this.setState({ feedType: feedType }, function() {
 			this.loadDataFromServer()
 		}.bind(this))
@@ -65,10 +78,11 @@ export default class FrontPage extends Component {
 			return (
 				<div className="FrontPage">
 					<NavBar />
-					<FriendsBox data={ this.state.data.friends } />
-					<ThreadsBox feed={ this.state.data.feed } 
-							 friends={ this.state.data.facebookFriends }
-							 setFeedType={this.setFeedType } />		
+					<FriendsBox data={ this.state.friends } />
+					<ThreadsBox feed={ this.state.feed } 
+											addThread={ this.addThread }
+							 				friends={ this.state.facebookFriends }
+							 				setFeedType={this.setFeedType } />		
 
 				</div>
 				)

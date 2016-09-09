@@ -52,6 +52,7 @@
     "express-session": "latest",
     "mongoose": "latest",
     "moniker": "latest",
+    "multer": "latest",
     "passport": "latest",
     "passport-facebook": "latest",
     "passport-local": "latest",

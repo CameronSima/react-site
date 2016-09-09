@@ -309,3 +309,15 @@ a.button {
 	text-align: center;
 	font-weight: 700;
 }
+
+.icon-camera {
+	cursor: pointer;
+	width: 25px;
+}
+
+.upload_preview {
+	width: 200px;
+	border-style: dashed;
+	border-width: 3px;
+	
+}
