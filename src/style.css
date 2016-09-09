@@ -317,7 +317,50 @@ a.button {
 
 .upload_preview {
 	width: 200px;
+	height: 200px;
 	border-style: dashed;
 	border-width: 3px;
 	
 }
+
+.upload_preview:hover {
+	opacity: 0.5;
+}
+
+.upload_preview:hover .delete {
+	display: block;
+}
+
+.delete {
+	margin: 5px;
+	position: relative;
+	display: none;
+	width: 20px;
+	left: 0;
+	top: 0;
+}
+
+.delete:hover {
+	cursor: pointer;
+	-webkit-filter: brightness(130%);
+}
+
+#photoHelp {
+	display: none;
+
+}
+
+.dropzone:hover #photoHelp {
+	display: inline-block;
+		border-width: 2px;
+	border-style: dashed;
+	border-color: black;
+	font-style: italic;
+	opacity: 0.7;
+}
+
+.dropzone: hover {
+
+}
+
+

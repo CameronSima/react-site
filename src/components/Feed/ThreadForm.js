@@ -4,10 +4,9 @@ import { Button } from 'react-bootstrap'
 import DropdownBox from '../Utility/Dropdown'
 import DragDropFile from '../Utility/DragDropFile'
 
-const Promise = require('bluebird')
-
 const helpers = require('../../helpers')
 const _config = require('../../../config')
+const async = require('async')
 
 var ThreadForm = React.createClass({
   getInitialState: function () {
@@ -16,68 +15,20 @@ var ThreadForm = React.createClass({
             included: '',
             includedArr: [],
             includedSuggestions: [],
+            showPreview: false,
+            showDelete: false,
             victim: '',
             ct: '',
             anonymous: '',
-            imageUrl: ''
+            imageUrl: '',
+            image: ''
             }
-  },
-  showPreview: function(imageUrl) {
-
-  },
-
-  sendPic: function(pic) {
-    var body = new FormData()
-    body.append('userPhoto', pic.file)
-    body.append('text', 'some text')
-    console.log(typeof pic.file)
-  
-        $.ajax({
-      url: _config.apiUrl + 'image',
-      cache: false,
-      processData: false,
-      contentType: false,
-      type: 'POST',
-      data: body,
-      xhrFields: {withCredentials: true},
-      success: function (doc) {
-        //this.props.addThread(thread)
-      }.bind(this),
-      error: function (xhr, status, err) {
-        //this.setState({data: threads})
-        //console.log(this.url, status, err.toString())
-      }.bind(this)
-    })
-
-    // var xhr = new XMLHttpRequest()
-    // xhr.open('POST', '/api/image', true)
-    // xhr.onload = function() {
-    //   if (xhr.status === 200) {
-    //     console.log('upload complete')
-    //   } else {
-    //     console.log('there was an error')
-    //   }
-    // }
-    // xhr.send(body)
   },
 
   onAddFile: function(res){
-    this.setState({imageUrl: res.imageUrl})
-    this.refs.comment.innerHTML = this.state.text + ' ' + res.imageUrl
-    this.showPreview(res.imageUrl)
-    console.log(res)
-    var newFile = {
-      id:res.file.name,
-      name:res.file.name,
-      //name: 'photoupload',
-      size: res.file.size,
-      altText:'',
-      caption: '',
-      file:res.file,
-      url:res.imageUrl
-    };
-    this.sendPic(res)
-    //this.executeAction(newImageAction, newFile);
+    this.state.showPreview = true
+    this.setState({imageUrl: res.imageUrl,
+                   image: res })
   },
   clearState: function (field) {
     this.setState({[field]: ''})
@@ -103,6 +54,9 @@ var ThreadForm = React.createClass({
   },
   handleSubmit: function (e) {
     e.preventDefault()
+
+    if (this.state.imageUrl != '') {
+    }
     var anonymous = this.state.anonymous
     var text = this.state.text.trim()
     var includedArr = this.state.includedArr
@@ -110,23 +64,41 @@ var ThreadForm = React.createClass({
     if (!text || includedArr.length < 1 || !victim) {
       return
     }
-    this.props.onThreadSubmit({ 
-                                text: text, 
-                                included: includedArr,
-                                victim: victim,
-                                anonymous: anonymous
-                              })
-    this.setState({
-                  text: '', 
-                  included: '',
-                  victim: '',
-                  includedArr: [],
-                  includedSuggestions: [],
-                  anonymous: '',
 
-                  })
+    var thread = { 
+                  text: text, 
+                  included: includedArr,
+                  victim: victim,
+                  anonymous: anonymous,
+                }
+
+    if (this.state.imageUrl != '') {
+    this.props.onFileSubmit(this.state.image, thread)
+    } else {
+      this.props.onThreadSubmit(thread)
+    }
+    this.setState({
+              text: '', 
+              included: '',
+              victim: '',
+              includedArr: [],
+              includedSuggestions: [],
+              anonymous: '',
+
+              }) 
+    this.removePhoto()
   },
+
+  removePhoto: function() {
+    this.state.showPreview = false
+    this.setState({ imageUrl: '' })
+  },
+
   render: function () {
+      var previewStyle = {
+            backgroundImage: 'url(' + this.state.imageUrl + ')'
+        }
+
     return (
     <div id="threadInputs">
       <div className="submitActions">
@@ -139,10 +111,16 @@ var ThreadForm = React.createClass({
         </Button>
       </DragDropFile>
 
-
         </div>
       <form className="threadForm" onSubmit={this.handleSubmit}>
-        <img className='upload_preview' src={this.state.imageUrl} />
+
+        { this.state.showPreview && 
+          <div>
+            <div className='upload_preview' style={previewStyle} >
+              <img className='delete' src='src/assets/minus.png' onClick={()=> this.removePhoto()}/>
+            </div>
+          </div>
+        }
 
         <textarea 
           ref="comment"

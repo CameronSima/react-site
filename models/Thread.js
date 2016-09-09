@@ -2,6 +2,7 @@ var mongoose = require('mongoose')
 
 var ThreadSchema = new mongoose.Schema({
   text: String, 
+  photoName: String,
   date: { type: Date, default: Date.now }, 
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
   proShitters: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', 

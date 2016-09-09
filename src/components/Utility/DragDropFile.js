@@ -23,8 +23,6 @@ var DragDropFile = React.createClass({
   onDragOver: function(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
-    console.log("DRAGGING")
-
     this.setState({
       isDragActive: true
     });
@@ -83,6 +81,7 @@ var DragDropFile = React.createClass({
       <div className={className} onClick={this.onClick} onDragLeave={this.onDragLeave} onDragOver={this.onDragOver} onDrop={this.onDrop}>
         <input style={{display: 'none' }} type='file' multiple ref='fileInput' onChange={this.onDrop} />
         {this.props.children}
+        <div id="photoHelp">Drag photo here...</div>
       </div>
     );
   }

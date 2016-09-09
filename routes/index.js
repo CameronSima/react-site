@@ -79,8 +79,6 @@ var threadQuery = function (field, value) {
       callback(null, __dirname + '/../src/assets/user_images/')
     },
     filename: function(req, file, callback) {
-      console.log("FILE")
-      console.log(file)
       callback(null, file.originalname + '-' + Date.now())
     }
   })
@@ -89,7 +87,7 @@ var threadQuery = function (field, value) {
     storage: storage
   }).single('userPhoto')
 
-// routes
+// Routes
 
   // router.post('/api/login', function (req, res, next) {
   //   passport.authenticate('login', function (err, user, info) {
@@ -459,6 +457,7 @@ var threadQuery = function (field, value) {
 
    // post new thread
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
+    console.log(req.body)
 
         // update user's 'last posted' field
         User.findOneAndUpdate(
@@ -518,12 +517,11 @@ var threadQuery = function (field, value) {
   router.post('/api/image', isAuthenticated, function(req, res, next) {
     upload(req, res, function(err) {
       //console.log(req.body)
-      console.log(req.file)
       if (err) {
         console.log(err)
         return res.end("error uploading file")
       } else {
-        res.end('File uploaded')
+        res.json(req.file.filename)
       }
     })
 

@@ -12,7 +12,7 @@ export default class DropdownBox extends Component {
     this.populate = this.populate.bind(this)
   }
   populate(item) {
-  //   // Prevent duplicates in tagged array
+  // Prevent duplicates in tagged array
     var tagged = this.props.includedArr.filter(function(obj) {
       return obj.id !== item.id
     })
