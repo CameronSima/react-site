@@ -259,7 +259,11 @@ var threadQuery = function (field, value) {
     async.parallel([
       function(callback) {
         User.findOne({ '_id': req.user._id })
-          .populate('friends')
+          .populate({
+            path: 'friends',
+            model: 'User',
+            select: '_id facebookName facebookProfilePic username'
+          })
 
           // populate feed and its subdocuments
           .populate({
@@ -326,7 +330,7 @@ var threadQuery = function (field, value) {
          userData.feed = iSaidThreads || theySaidThreads || userData.feed
 
 
-         // Finally, remove some of the data such as friends' passwords
+         // Finally, remove some of the data
          // that we don't want the client receive. Here, we replace
          // the author user object containing _id, username, and 
          // pseudonym with simply either the username or pseudonym
@@ -541,42 +545,24 @@ var threadQuery = function (field, value) {
 })
 
   // get posts about and by a friend if they've been shared with the user
-  router.get('/api/user/:friend_id', isAuthenticated, function (req, res, next) {
-
-    async.parallel([
-      function(callback) {
-        Thread.find({ 'author.id': req.params.friend_id, 'included.id':  req.user._id })
-        // User.findOne({ _id: req.params.friend_id })
-        // .populate('feed')
-        .exec(function(err, threads) {
-          callback(null, threads)
-        })
-      },
-      function(callback) {
-        Thread.find({ victim: req.params.friend_id })
-        .populate('included')
-        .exec(function(threads) {
-          callback(null, threads)
-        })
-      }
-    ],
-    function(err, results) {
-      if (err) {
-        throw(err)
-      }
-      var by = results[0] || []
-      var about = results[1] || []
-      var threads = by.concat(about)
-      // var data =  _.filter(threads, function(thread) {
-      //   _.each(thread.included, function(included) {
-      //     if (included.id == req.user._id) {
-      //       return true
-      //     }
-      //   })
-      // })
+  router.get('/api/user/by/:friend_id', isAuthenticated, function (req, res, next) {
+    Thread.find({
+      'author.id': req.params.friend_id, 
+      'included.id': req.user._id
+    })
+    .exec(function(err, threads) {
       res.json(threads)
-    }
-    )
+    })
+  })
+
+  router.get('/api/user/about/:friend_id', isAuthenticated, function (req, res, next) {
+    Thread.find({
+      'victim': req.params.friend_id,
+      'included.id': req.user._id
+    })
+    .exec(function(err, threads) {
+      req.json(threads)
+    })
   })
 
 

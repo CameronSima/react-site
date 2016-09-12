@@ -41,6 +41,7 @@ export default class FrontPage extends Component {
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
+				//Router.browserHistory.push('/signup')
 			}
 		})
 	}
