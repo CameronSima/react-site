@@ -44,12 +44,9 @@ module.exports = function (passport) {
 
   var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log(req.user)
     return next()
   } else {
     res.json('not logged in')
-    return next()
-    //res.redirect('http://localhost:3001/signup')
   }
 }
 
@@ -74,19 +71,37 @@ var threadQuery = function (field, value) {
   return query
 }
 
-  // Configuration for multer image uploading middleware
-  var storage = multer.diskStorage({
-    destination: function(req, file, callback) {
-      callback(null, __dirname + '/../src/assets/user_images/')
-    },
-    filename: function(req, file, callback) {
-      callback(null, file.originalname + '-' + Date.now())
+// Configuration for multer image uploading middleware
+var storage = multer.diskStorage({
+  destination: function(req, file, callback) {
+    callback(null, __dirname + '/../src/assets/user_images/')
+  },
+  filename: function(req, file, callback) {
+    callback(null, file.originalname + '-' + Date.now())
+  }
+})
+
+var upload = multer({
+  storage: storage
+}).single('userPhoto')
+
+  // If the user wrote the comment and the thread and posted
+  // anonymously, show his pseudonym instead of real name when
+  // commenting
+var anonymize = function(threads) {
+  _.each(threads, function(thread) {
+    if (thread.anonymous === true) {
+      _.each(thread.comments, function(comments) {
+        if (thread.author[0].id.toString() == comment.author._id.toString()) {
+          comment.author.username = thread.author[0].pseudonym
+        }
+      })
+      thread.author[0] = thread.author[0].pseudonym
+    } else {
+      thread.author[0] = thread.author[0].real
     }
   })
-
-  var upload = multer({
-    storage: storage
-  }).single('userPhoto')
+}
 
 // Routes
 
@@ -272,7 +287,7 @@ var threadQuery = function (field, value) {
                         model: 'Comment',
                         populate: { path: 'author',
                                     model: 'User',
-                                    select: 'username' } }
+                                    select: 'username' }}
           })
           .exec(function (err, userData) {
             if (err) {
@@ -329,31 +344,8 @@ var threadQuery = function (field, value) {
         // threads or an empty array.
          userData.feed = iSaidThreads || theySaidThreads || userData.feed
 
+         anonymize(userData.feed)
 
-         // Finally, remove some of the data
-         // that we don't want the client receive. Here, we replace
-         // the author user object containing _id, username, and 
-         // pseudonym with simply either the username or pseudonym
-         // depending on whether the auther chose to remain anonymous
-         // or not.
-
-         _.each(userData.feed, function(thread) {
-          if (thread.anonymous === true) {
-
-            // If the user wrote the comment and the thread and posted
-            // anonymously, show his pseudonym instead of real name when
-            // commenting
-            _.each(thread.comments, function(comment) {
-              if (thread.author[0].id.toString() == comment.author._id.toString()) {
-                comment.author.username = thread.author[0].pseudonym
-              }
-            })
-            thread.author[0] = thread.author[0].pseudonym
-          } else {
-            thread.author[0] = thread.author[0].real
-          }
-        })
-         //console.log(userData.feed)
         if (userData.feed === []) {
           userData.feed.push({text: "No threads found!",
                               _id: "no_results"})
@@ -477,10 +469,17 @@ var threadQuery = function (field, value) {
         })
 
       // Create the new thread document and return it
-      req.body.author = {}
-      req.body.author.id = req.user._id
-      req.body.author.real = req.user.username
-      req.body.author.pseudonym = '_' + getRandomUsername()
+
+      req.body.author = {
+        id: req.user._id,
+        real: req.user.username,
+        pseudonym: '_' + getRandomUsername(),
+      }
+      // req.body.author = {}
+      // req.body.author.id = req.user._id
+      // req.body.author.real = req.user.username
+      // req.body.author.pseudonym = '_' + getRandomUsername()
+      req.body.included.push(req.user._id)
 
       // turn anonymous entry into boolean
       if (req.body.anonymous === 'anonymous') {
@@ -521,7 +520,6 @@ var threadQuery = function (field, value) {
   // so the client can add it to the thread object before submitting it
   router.post('/api/image', isAuthenticated, function(req, res, next) {
     upload(req, res, function(err) {
-      //console.log(req.body)
       if (err) {
         console.log(err)
         return res.end("error uploading file")
@@ -533,35 +531,96 @@ var threadQuery = function (field, value) {
 
   })
 
-
   // Return all users
   router.get('/api/users', function (req, res, next) {
-  User.find(function (err, users) {
-    if (err) { return next(err) }
-      // res.json(users)
-    //console.log(users)
-    //console.log(users.length)
-  })
-})
-
-  // get posts about and by a friend if they've been shared with the user
-  router.get('/api/user/by/:friend_id', isAuthenticated, function (req, res, next) {
-    Thread.find({
-      'author.id': req.params.friend_id, 
-      'included.id': req.user._id
+    User.find(function (err, users) {
+      if (err) { return next(err) }
+        // res.json(users)
+      //console.log(users)
+      //console.log(users.length)
     })
+  })
+
+  // get posts about or and by a friend if they've been shared with the user.
+  // Exclude threads marked anonymous. Return 25 results if no limit has
+  // been supplied.
+  router.get('/api/user/by/:friend_id/:limit*?', isAuthenticated, function (req, res, next) {
+    console.log('BY' + req.params.friend_id)
+    var numThreads = ~~req.params.limit || 25
+    Thread.find({
+      $and: [
+        { 'author.id': req.params.friend_id },
+        { 'included.id': req.user._id },
+        { 'anonymous': false }
+      ]
+    })
+    .populate({
+      path: 'comments',
+      populate: { path: 'author',
+                  model: 'User',
+                  select: 'username' }
+
+    })
+    .limit(numThreads)
     .exec(function(err, threads) {
+      if (err) {
+        console.log(err)
+      } else {
+        anonymize(threads)
       res.json(threads)
+      }
     })
   })
 
-  router.get('/api/user/about/:friend_id', isAuthenticated, function (req, res, next) {
+  router.get('/api/user/about/:friend_id/:limit*?', isAuthenticated, function (req, res, next) {
+    var numThreads = ~~req.params.limit || 25
     Thread.find({
-      'victim': req.params.friend_id,
-      'included.id': req.user._id
+      $and: [
+        { 'victim': req.params.friend_id },
+        { 'included.id': req.user._id }
+      ]
+    })
+    .limit(numThreads)
+    .exec(function(err, threads) {
+      if (err) {
+        throw(err)
+      } else {
+        anonymize(threads)
+      res.json(threads)
+      }
+    })
+  })
+
+  // return threads the specified user has commented on
+  router.get('/api/user/talked/:friend_id/:limit*?', isAuthenticated, function (req, res, next) {
+    var numThreads = ~~req.params.limit || 25
+    Thread.find({
+      $and: [
+        { 'included.id': req.params.friend_id },
+        { 'included.id': req.user._id },
+        { 'anonymous': false }
+      ]
+    })
+    .limit(numThreads)
+    .populate({
+      path: 'comments',
+      model: 'Comment',
+      select: 'author'
     })
     .exec(function(err, threads) {
-      req.json(threads)
+      if (err) {
+        throw(err)
+      } else {
+        
+        // filter out threads the user hasn't commented on
+        var response = _.filter(threads, function(thread) {
+          _.each(thread.comments, function(comment) {
+            return comment.author == req.params.friend_id
+          })
+        })
+      }
+      anonymize(response)
+      res.json(response)
     })
   })
 
@@ -623,7 +682,6 @@ var threadQuery = function (field, value) {
         }
         comment.likes = comment.getLikesCount()
         comment.save(function (err, comment) {
-          console.log(comment)
           res.json(comment.likes)
         })
       }
@@ -643,7 +701,6 @@ var threadQuery = function (field, value) {
         }
         comment.likes = comment.getLikesCount()
         comment.save(function (err, comment) {
-          console.log(comment)
           res.json(comment.likes)
         })
       }

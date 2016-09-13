@@ -78,7 +78,7 @@ export default class Thread extends Component {
         <p className="salutation">signed,</p>
         <div>
           {this.props.author} and 
-          <a onClick={ this.toggleModal }> { this.props.included.length } others. </a>
+          <a onClick={ this.toggleModal }> { this.props.included.length - 1 } others. </a>
 
         </div>
           <hr></hr>

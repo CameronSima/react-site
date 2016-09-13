@@ -18,7 +18,6 @@ var ThreadSchema = new mongoose.Schema({
   // included: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   // author: String,
 
-  // TODO: make an object, not an array containing one object.
   author: [{
     id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     real: String,
@@ -27,7 +26,7 @@ var ThreadSchema = new mongoose.Schema({
   anonymous: Boolean,
   victim: String,
   included: [{
-    id: String,
+    id: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     name: String
   }]
 })
@@ -37,9 +36,6 @@ ThreadSchema.methods.getLikesCount = function() {
 
 }
 
-ThreadSchema.methods.getThreaded = function() {
-    var nodeMap = {}
-     return this.comments
-  }
+
 
 module.exports = mongoose.model('Thread', ThreadSchema)

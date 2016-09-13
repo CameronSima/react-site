@@ -29,7 +29,7 @@ export default class FrontPage extends Component {
 	loadDataFromServer() {
 		var feedType = this.state.feedType.split(' ').join('').toLowerCase()
 		$.ajax({ 
-			 url: config.apiUrl + 'frontpage/' + feedType,
+			url: config.apiUrl + 'frontpage/' + feedType,
 			dataType: 'json',
 			xhrFields: { withCredentials: true },
 			cache: false,
@@ -62,7 +62,7 @@ export default class FrontPage extends Component {
     	victim: thread.victim,
     	anonymous: thread.anonymous,
     	_id: Date.now(),
-    	author: '...Me...'.italics(),
+    	author: '...',
     	date: Date.now() + 10000
 
     }

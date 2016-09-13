@@ -26,9 +26,10 @@ module.exports = function (passport) {
 
   // facebook sends back token and profile
   function (token, refreshToken, profile, done) {
-    // async
-    process.nextTick(function () {
-      User.findOne({ 'facebookId': profile.id }, function (err, user) {
+    setImmediate(function () {
+      User.findOne(
+        { 'facebookId': profile.id }, 
+      function (err, user) {
         if (err) {
           return done(err);
         }

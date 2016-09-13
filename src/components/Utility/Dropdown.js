@@ -38,7 +38,7 @@ export default class DropdownBox extends Component {
           )
       })
     }
-              console.log(this.props.includedArr)
+              
     return (
       <div id="suggestions">
         <div id="suggestionsList">

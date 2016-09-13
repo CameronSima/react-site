@@ -8,7 +8,7 @@ export default class ThreadList extends Component {
     if (this.props.data) {
 
       // sort feed list before rendering components
-      var sortedFeed = this.props.sortFunc(this.props.data)
+      var sortedFeed = this.props.sortFunc(this.props.data) || this.props.data
       
       var threadNodes = sortedFeed.map(function (thread) {
         return (

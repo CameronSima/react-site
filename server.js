@@ -3,21 +3,21 @@ var cpus = require('os').cpus()
 
 // set up cluster module for multi-cpu machines. 
 // Only start workers if there are more than one
-// cpu present in the first place.
-
-if (cluster.isMaster && cpus.length > 1) {
+// cpu present.
+if (process.env.NODE_ENV === 'production' && cluster.isMaster && cpus.length > 1) {
   cpus.forEach(function(cpu) {
-    // create a worker on each cpu
     cluster.fork()
   })
 
+  // Replace dead workers
+  cluster.on('exit', function(worker) {
+    console.log('Worker %d died', worker.id)
+    cluster.fork()
+  })
 } else {
-
-  var settings = require('./config')
-
+  
   // Express server handling requests on port 3001
   var path = require('path')
-
   var express = require('express')
   var bodyParser = require('body-parser')
   var cookieParser = require('cookie-parser')
@@ -27,17 +27,16 @@ if (cluster.isMaster && cpus.length > 1) {
   var bluebird = require('bluebird')
   var mongoStore = require('connect-mongo')(session)
   var favicon = require('serve-favicon');
+
+  var settings = require('./config')
+
   var app = express()
-
   app.use(favicon(path.join(__dirname, '/src/assets/favicon.ico')))
-
   app.set('port', settings.expressPort)
-
   app.use('/', express.static(path.join(__dirname, '/src')))
   app.use('/user_images', express.static(path.join(__dirname, '/src/assets/user_images')))
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({extended: true}))
-
   app.use(cookieParser())
 
   //app.use(session({secret: 'fart', resave: true, saveUninitialized: true}))
@@ -77,6 +76,7 @@ if (cluster.isMaster && cpus.length > 1) {
 
   app.listen(app.get('port'), function () {
     console.log('Express server started at http://localhost:' + settings.expressPort + '/')
+    console.log('in ' + process.env.NODE_ENV + ' mode')
   })
 
   var webpack = require('webpack');

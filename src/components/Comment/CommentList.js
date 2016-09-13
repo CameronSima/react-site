@@ -6,7 +6,8 @@ var helpers = require('../../helpers')
 var config = require('../../../config')
 
 // Comment component combined with CommentList to prevent
-// circular import
+// circular import because they instantiate each other
+// recursively
 
 var Comment = React.createClass({
   getInitialState: function() {
@@ -35,7 +36,7 @@ var Comment = React.createClass({
   render: function () {
 
     return (
-    <div className="comment" style={this.props.style}>
+    <div className="comment" style={ this.props.style }>
       <span>
         <a className="commentAuthor">{ this.props.author.username }</a>
          { ' ' + this.props.text }

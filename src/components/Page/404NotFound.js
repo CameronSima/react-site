@@ -10,7 +10,6 @@ export default class NotFound extends Component {
 					<img id="Errimg"  src='/src/assets/dl_logoLessOpaque.png' />
 				</a>
 				<h3 id='oops_contd'>| Nothing found at { url }. |</h3>
-
 			</div>
 			)
 	}

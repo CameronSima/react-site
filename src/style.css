@@ -71,7 +71,7 @@ hr {
 }
 
 .friendList {
-	width: 500px;
+	width: 300px;
 	display: inline-block;
 	overflow-y: scroll;
   overflow-x: hidden;
@@ -84,7 +84,7 @@ hr {
 	display: inline-block;
 	width: 500px;
 	float: right;
-  margin: 100px 8px 8px 8px;
+  margin: 0px 8px 8px 8px;
   max-height: 500px;
 }
 
@@ -97,9 +97,9 @@ hr {
 }
 
 #friendsBox {
-	width: 400px;
+	width: 300px;
 	display: inline-block;
-	margin: 100px 8px 8px 8px
+	margin: 0px 8px 8px 8px
 }
 
 .threadList {
@@ -261,11 +261,13 @@ a.button {
 	width: 451px;
 }
 
-.commentActions {
+.commentActions, friendActions {
 	opacity: .7;
 }
 
-.replyLink, .likeLink, .dislikeLink, .closeLink, .commentAuthor {
+.replyLink, .likeLink, .dislikeLink, .closeLink, 
+.commentAuthor, .byLink, .aboutLink, .talkedLink,
+.talkLink, .moreThreadsLink {
 	margin: 5px;
 	cursor: pointer;
 	display: inline;
@@ -361,6 +363,10 @@ a.button {
 .user_photo {
 	max-width: 400px;
   height: auto;
+}
+
+.moreThreadsLink {
+	text-align: center;
 }
 
 
