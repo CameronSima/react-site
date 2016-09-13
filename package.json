@@ -62,6 +62,7 @@
     "react-dom": "15.3.1",
     "react-router": "2.7.0",
     "request": "latest",
-    "serve-favicon": "latest"
+    "serve-favicon": "latest",
+    "socket.io": "latest"
   }
 }

@@ -4,6 +4,7 @@
 import React, { Component } from 'react'
 import ThreadsBox from '../Feed/ThreadsBox'
 import FriendsBox from '../FriendsFeed/FriendsBox'
+import StatusWindow from '../Status/StatusWindow'
 import NavBar from '../Utility/NavBar'
 
 var Router = require('react-router')
@@ -19,7 +20,8 @@ export default class FrontPage extends Component {
 			feed: [],
 			facebookFriends: [],
 			pollInterval: config.pollInterval,
-			feedType: 'ALL'
+			feedType: 'ALL',
+			pic: ''
 		}
 		this.loadDataFromServer = this.loadDataFromServer.bind(this)
 		this.setFeedType = this.setFeedType.bind(this)
@@ -37,7 +39,8 @@ export default class FrontPage extends Component {
 				this.checkAuth(response)
 				this.setState({ friends: response.friends,
 												feed: response.feed,
-												facebookFriends: response.facebookFriends })
+												facebookFriends: response.facebookFriends,
+												fbId: response.facebookId })
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
@@ -86,7 +89,11 @@ export default class FrontPage extends Component {
 			return (
 				<div className="FrontPage">
 					<NavBar />
-					<FriendsBox data={ this.state.friends } />
+					<div id="left_column">
+						<StatusWindow fbId={ this.state.fbId }
+													setFeedType={ this.setFeedType } />
+						<FriendsBox data={ this.state.friends } />
+					</div>
 					<ThreadsBox feed={ this.state.feed } 
 											addThread={ this.addThread }
 							 				friends={ this.state.friends }

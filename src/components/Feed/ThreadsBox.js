@@ -49,7 +49,7 @@ var ThreadsBox = React.createClass({
     }
     xhr.send(body)
   },
-  
+
   // Feed nav buttons default to order by date;
   // Feed type defaults to all
   getInitialState: function () {
@@ -82,6 +82,7 @@ var ThreadsBox = React.createClass({
         </ButtonGroup>
       </div>
       <ThreadList data={ this.props.feed }
+                  removeThread={ this.props.removeThread }
                   sortFunc={ this.state.sortFunc } />
     </div>
     )

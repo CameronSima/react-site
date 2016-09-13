@@ -51,12 +51,10 @@ export default class DropdownBox extends Component {
         items and just displays data.
         */}
         { 
-
           this.props.title && 
             <TaggedModal  
                           tagged={ this.props.includedArr }
                           title={ this.props.title } />
-
         }
       </div>
       )

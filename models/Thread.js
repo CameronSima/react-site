@@ -4,6 +4,7 @@ var ThreadSchema = new mongoose.Schema({
   text: String, 
   photoName: String,
   date: { type: Date, default: Date.now }, 
+  deleted: { type: Boolean, default: false },
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
   proShitters: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', 
                   unique: true,  dropDups: true 

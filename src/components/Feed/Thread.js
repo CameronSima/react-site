@@ -10,6 +10,7 @@ export default class Thread extends Component {
   constructor(props) {
     super(props)
     this.state = { vote: '', likes: this.props.initialLikes }
+    this.deleteThread = this.deleteThread.bind(this)
     this.sendLikeToServer = this.sendLikeToServer.bind(this)
     this.setRelativeDate = this.setRelativeDate.bind(this)
     this.setObjectiveDate = this.setObjectiveDate.bind(this)
@@ -19,6 +20,20 @@ export default class Thread extends Component {
     return {__html: rawMarkup }
   }
 
+  deleteThread(id) {
+    $.ajax({
+      url: config.apiUrl + 'threads/delete/' + id,
+      type: 'POST',
+      xhrFields: { withCredentials: true },
+      success: function(doc) {
+
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.log(err)
+      }.bind(this)
+    })
+  }
+  
   sendLikeToServer(thread_id, vote) {
     if (this.state.vote === vote) {
       return
@@ -39,19 +54,8 @@ export default class Thread extends Component {
     })
   }
 
-  toggleModal() {
-    <Modal isOpen={this.state.modalIsOpen} onCancel={this.toggleModal} backdropClosesModal>
-  <ModalHeader text="Lots of text to show scroll behavior" showCloseButton onClose={this.toggleModal} />
-  <ModalBody>[...]</ModalBody>
-  <ModalFooter>
-    <Button type="primary" onClick={this.toggleModal}>Close modal</Button>
-    <Button type="link-cancel" onClick={this.toggleModal}>Also closes modal</Button>
-  </ModalFooter>
-</Modal>
-  }
-
   setObjectiveDate(e) {
-    e.target.innerHTML = helpers.formatDate(this.props.date).objective.italics().bold()
+    e.target.innerHTML = helpers.formatDate(this.props.date).objective.italics()
   }
 
   setRelativeDate(e) {
@@ -78,7 +82,7 @@ export default class Thread extends Component {
         <p className="salutation">signed,</p>
         <div>
           {this.props.author} and 
-          <a onClick={ this.toggleModal }> { this.props.included.length - 1 } others. </a>
+          <a > { this.props.included.length - 1 } others. </a>
 
         </div>
           <hr></hr>
@@ -93,6 +97,15 @@ export default class Thread extends Component {
           <Button onClick={() => {this.sendLikeToServer(this.props.id, "upvote")}}>Like</Button>
           <Button onClick={() => {this.sendLikeToServer(this.props.id, "downvote")}}>Dislike</Button>
         </ButtonGroup>
+        
+          { 
+            this.props.byMe && 
+              <div className="deleteLink"
+                   onClick={()=> {this.deleteThread(this.props.id)}}>
+                <a >Delete</a>
+              </div>
+          }
+        
         <hr></hr>         
 
         <div>

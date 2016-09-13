@@ -85,13 +85,20 @@ var upload = multer({
   storage: storage
 }).single('userPhoto')
 
-  // If the user wrote the comment and the thread and posted
+  // If the user wrote the comment and/or the thread and posted
   // anonymously, show his pseudonym instead of real name when
-  // commenting
-var anonymize = function(threads) {
+  // commenting. Also, add a 'byMe' field if the user is the
+  // author to allow delete and edit actions.
+var anonymize = function(threads, user_id) {
   _.each(threads, function(thread) {
+    if (thread.author[0].id.toString() == user_id) {
+      thread.byMe = true
+    }
     if (thread.anonymous === true) {
-      _.each(thread.comments, function(comments) {
+      _.each(thread.comments, function(comment) {
+        if (comment.author._id.toString() == user_id) {
+          comment.byMe = true
+        }
         if (thread.author[0].id.toString() == comment.author._id.toString()) {
           comment.author.username = thread.author[0].pseudonym
         }
@@ -344,7 +351,7 @@ var anonymize = function(threads) {
         // threads or an empty array.
          userData.feed = iSaidThreads || theySaidThreads || userData.feed
 
-         anonymize(userData.feed)
+         anonymize(userData.feed, req.user._id)
 
         if (userData.feed === []) {
           userData.feed.push({text: "No threads found!",
@@ -499,10 +506,12 @@ var anonymize = function(threads) {
 
       // Isolate ids
       var includedIds = _.map(req.body.included, function(included) {
-        return included._id
+        return included.id
       })
+      
       // Fan out thread id to included users
       includedIds.push(req.user._id)
+      console.log(includedIds)
       User.find({
         _id: { $in: includedIds }
       }, function(err, users) {
@@ -515,6 +524,25 @@ var anonymize = function(threads) {
       // res.status(200)
       // return next()
   })
+
+  router.post('/api/threads/delete/:id', isAuthenticated, function(req, res, next) {
+    Thread.findOneAndUpdate({
+      $and: [
+        { _id: req.params.id },
+        { 'author.id': req.user._id }]
+    },
+      { deleted: true }
+    )
+    .exec(function(err, thread) {
+      if (err) { 
+        console.log(err) 
+      } else {
+        console.log(thread)
+        res.sendStatus(200)
+      }  
+    })
+  })
+
 
   // upload user photos and save to filesystem; respond with imagename
   // so the client can add it to the thread object before submitting it
@@ -566,7 +594,7 @@ var anonymize = function(threads) {
       if (err) {
         console.log(err)
       } else {
-        anonymize(threads)
+        anonymize(threads, req.user._id)
       res.json(threads)
       }
     })
@@ -585,7 +613,7 @@ var anonymize = function(threads) {
       if (err) {
         throw(err)
       } else {
-        anonymize(threads)
+        anonymize(threads, req.user._id)
       res.json(threads)
       }
     })
@@ -619,7 +647,7 @@ var anonymize = function(threads) {
           })
         })
       }
-      anonymize(response)
+      anonymize(response, req.user._id)
       res.json(response)
     })
   })

@@ -5,17 +5,18 @@ import Thread from './Thread'
 export default class ThreadList extends Component {
   render() {
     var threadNodes, sortedFeed
+    var self = this
     if (this.props.data) {
 
       // sort feed list before rendering components
       var sortedFeed = this.props.sortFunc(this.props.data) || this.props.data
-      
       var threadNodes = sortedFeed.map(function (thread) {
         return (
           <Thread victim={ thread.victim } 
                   comments={ thread.comments }
                   date={ thread.date }
                   author={ thread.author } 
+                  byMe={ thread.byMe }
                   pic={ thread.photoName }
                   included={ thread.included }
                   initialLikes={ thread.likes } 

@@ -128,20 +128,20 @@ var ThreadForm = React.createClass({
           cols='48'
           className="textInput"
           type="text"
-          placeholder="Say something..."
+          placeholder="Write:"
           value={this.state.text}
           onChange={this.handleTextChange} />
 
         <input
           className="textInput"
           type="text"
-          placeholder="Name your victim"
+          placeholder="To:"
           value={this.state.victim}
           onChange={this.handleVictimChange} />
         <input
           className="textInput"
           type="text"
-          placeholder="Who can see?"
+          placeholder="Tag:"
           value={this.state.included}
           onChange={this.handleIncludedChange} />
         <br></br>
