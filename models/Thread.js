@@ -27,14 +27,22 @@ var ThreadSchema = new mongoose.Schema({
   anonymous: Boolean,
   victim: String,
   included: [{
-    id: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     name: String
   }]
 })
 
 ThreadSchema.methods.getLikesCount = function() {
   return this.proShitters.length - this.proShittees.length
+}
 
+ThreadSchema.methods.getDisplayName = function() {
+  console.log(this)
+  if (this.anonymous) {
+    return this.author[0].pseudonym
+  } else {
+    return this.author[0].real
+  }
 }
 
 

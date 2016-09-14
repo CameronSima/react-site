@@ -1,4 +1,11 @@
-var socket = require('socket.io-client')('http://localhost')
-socket.on('connect', function() {
-	console.log('connected')
-})
+
+module.exports = function(io) {
+  io.on('connection', function(socket) {
+    socket.emit('server event', {
+      foo: 'bar'
+    })
+    socket.on('client event', function(data) {
+      console.log(data)
+    })
+  })
+}

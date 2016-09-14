@@ -13,7 +13,15 @@ var Comment = mongoose.model('Comment')
 var Thread = mongoose.model('Thread')
 var User = mongoose.model('User')
 
-module.exports = function (passport) {
+
+module.exports = function (passport, io) {
+
+  // when a user connects, join him to a room
+  io.sockets.on('connection', function(socket) {
+    socket.on('join', function(data) {
+      socket.join(data.user_id)
+    })
+  })
 
   // Additional middleware which will set headers that we need on each request.
   router.use(function (req, res, next) {
@@ -43,72 +51,72 @@ module.exports = function (passport) {
   // helper functions
 
   var isAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  } else {
-    res.json('not logged in')
-  }
-}
-
-var isInArray = function (item, array) {
-  return array.indexOf(item) > -1
-}
-
-var remove = function (item, array) {
-  return _.filter(array, function(element) {
-    return element != item
-  })
-}
-
-var getRandomUsername = function () {
-  return moniker.choose().split('-').join(' ')
-}
-
-var threadQuery = function (field, value) {
-  var query = Thread.find({
-    field: value 
-  })
-  return query
-}
-
-// Configuration for multer image uploading middleware
-var storage = multer.diskStorage({
-  destination: function(req, file, callback) {
-    callback(null, __dirname + '/../src/assets/user_images/')
-  },
-  filename: function(req, file, callback) {
-    callback(null, file.originalname + '-' + Date.now())
-  }
-})
-
-var upload = multer({
-  storage: storage
-}).single('userPhoto')
-
-  // If the user wrote the comment and/or the thread and posted
-  // anonymously, show his pseudonym instead of real name when
-  // commenting. Also, add a 'byMe' field if the user is the
-  // author to allow delete and edit actions.
-var anonymize = function(threads, user_id) {
-  _.each(threads, function(thread) {
-    if (thread.author[0].id.toString() == user_id) {
-      thread.byMe = true
-    }
-    if (thread.anonymous === true) {
-      _.each(thread.comments, function(comment) {
-        if (comment.author._id.toString() == user_id) {
-          comment.byMe = true
-        }
-        if (thread.author[0].id.toString() == comment.author._id.toString()) {
-          comment.author.username = thread.author[0].pseudonym
-        }
-      })
-      thread.author[0] = thread.author[0].pseudonym
+    if (req.isAuthenticated()) {
+      return next()
     } else {
-      thread.author[0] = thread.author[0].real
+      res.json('not logged in')
+    }
+  }
+
+  var isInArray = function (item, array) {
+    return array.indexOf(item) > -1
+  }
+
+  var remove = function (item, array) {
+    return _.filter(array, function(element) {
+      return element != item
+    })
+  }
+
+  var getRandomUsername = function () {
+    return moniker.choose().split('-').join(' ')
+  }
+
+  var threadQuery = function (field, value) {
+    var query = Thread.find({
+      field: value 
+    })
+    return query
+  }
+
+  // Configuration for multer image uploading middleware
+  var storage = multer.diskStorage({
+    destination: function(req, file, callback) {
+      callback(null, __dirname + '/../src/assets/user_images/')
+    },
+    filename: function(req, file, callback) {
+      callback(null, file.originalname + '-' + Date.now())
     }
   })
-}
+
+  var upload = multer({
+    storage: storage
+  }).single('userPhoto')
+
+    // If the user wrote the comment and/or the thread and posted
+    // anonymously, show his pseudonym instead of real name when
+    // commenting. Also, add a 'byMe' field if the user is the
+    // author to allow delete and edit actions.
+  var anonymize = function(threads, user_id) {
+    _.each(threads, function(thread) {
+      if (thread.author[0].id.toString() == user_id) {
+        thread.byMe = true
+      }
+      if (thread.anonymous === true) {
+        _.each(thread.comments, function(comment) {
+          if (comment.author._id.toString() == user_id) {
+            comment.byMe = true
+          }
+          if (thread.author[0].id.toString() == comment.author._id.toString()) {
+            comment.author.username = thread.author[0].pseudonym
+          }
+        })
+        thread.author[0] = thread.author[0].pseudonym
+      } else {
+        thread.author[0] = thread.author[0].real
+      }
+    })
+  }
 
 // Routes
 
@@ -233,6 +241,31 @@ var anonymize = function(threads, user_id) {
     })
   })
 
+  // get a group of particular threads from a supplied array.
+  router.get('/api/threads/:ids', isAuthenticated, function (req, res, next) {
+    console.log(req.params.ids)
+    console.log(req.params.ids.split('&'))
+    var ids = req.params.ids.split('&')
+
+    Thread.find({
+      $and: [
+        { _id: { $in: ids} },
+        { 'included.id': req.user._id }
+      ]
+    })
+    .populate({
+      path: 'comments',
+      model: 'Comment',
+      populate: { path: 'author',
+                  model: 'User',
+                  select: 'username' }
+    })
+    .exec(function(err, threads) {
+      anonymize(threads, req.user._id)
+      res.json(threads)
+    })
+  })
+
   // return all threads the user is tagged in; (already supplied by frontpage route) 
   router.get('/api/tagged', isAuthenticated, function (req, res, next) {
     threadQuery('included', req.user.Id)
@@ -269,16 +302,29 @@ var anonymize = function(threads, user_id) {
     })
   })
 
-
-  // Get logged-in user Object, populate feed and friends arrays, and build
-  // json response. This route is designed to flexibly accomodate a url
-  // parameter for feed type (authored, subject, tagged, all). Each of these parameters
-  // will also have their own endpoint for maximum flexibility.
-
-  router.get('/api/frontpage/:feedType*?', isAuthenticated, function (req, res, next) {
+  router.get('/api/frontpage/:feedType/:limit*?', isAuthenticated, function (req, res, next) {
     console.time('feed')
+    var numThreads = req.params.limit || 25
     var theySaidThreads, iSaidThreads, tagged
     async.parallel([
+      function(callback) {
+        Thread.find({
+          'included.id': req.user._id 
+        })
+        .sort({ 'date': -1 })
+        .limit(numThreads)
+        .populate({
+          path: 'comments',
+          model: 'Comment',
+          populate: { path: 'author',
+                      model: 'User',
+                      select: 'username' }
+        })
+        .exec(function(err, feed) {
+          anonymize(feed, req.user._id)
+          callback(null, feed)
+        })
+      },
       function(callback) {
         User.findOne({ '_id': req.user._id })
           .populate({
@@ -286,23 +332,10 @@ var anonymize = function(threads, user_id) {
             model: 'User',
             select: '_id facebookName facebookProfilePic username'
           })
+          .exec(function(err, friends) {
+            callback(null, friends)
+          })
 
-          // populate feed and its subdocuments
-          .populate({
-            path: 'feed',
-            populate: { path: 'comments',
-                        model: 'Comment',
-                        populate: { path: 'author',
-                                    model: 'User',
-                                    select: 'username' }}
-          })
-          .exec(function (err, userData) {
-            if (err) {
-              callback(err)
-            } else {
-            callback(null, userData)
-            }
-          })
       },
       function(callback) {
         if (req.params.feedType === 'theysaid') {
@@ -319,49 +352,140 @@ var anonymize = function(threads, user_id) {
         }
       },
     ],
-      function(err, results) {
-        if (err) {
-          console.log(err)
-        }
-        var userData = results[0].toObject()
+    function(err, results) {
+      var feed = results[0]
+      var user = results[1]
 
-        // will return either an array or undefined
-        var theySaidThreads = results[1]
+      // will return either an array or undefined
+      var theySaidThreads = results[2]
 
-        if (req.params.feedType === 'isaid') {
+      if (req.params.feedType === 'isaid') {
 
-          // filter out threads not authored by the user
-          iSaidThreads = _.filter(userData.feed, function(thread) {
-            return thread.author.real = req.user.username
-          })
-        }
-
-        if (req.params.feedType === 'tagged') {
-
-          // filter out threads authored by the user
-          // (return only those he's tagged in).
-          tagged = _.filter(userData.feed, function(thread) {
-            return thread.author.real != req.user.username
-          })
-        }
-        // if 'isaid' or 'theysaid' were supplied, set those threads
-        // as the user's feed; else, use the users' default feed
-        // (all threads he authored or was tagged in). iSaidThreads
-        // and theySaidThreads will return either an array of
-        // threads or an empty array.
-         userData.feed = iSaidThreads || theySaidThreads || userData.feed
-
-         anonymize(userData.feed, req.user._id)
-
-        if (userData.feed === []) {
-          userData.feed.push({text: "No threads found!",
-                              _id: "no_results"})
-        }
-        console.timeEnd('feed')
-        res.json(userData)
+        // filter out threads not authored by the user
+        iSaidThreads = _.filter(feed, function(thread) {
+          return thread.author.real = req.user.username
+        })
       }
-    )
+
+      if (req.params.feedType === 'tagged') {
+
+        // filter out threads authored by the user
+        // (return only those he's tagged in).
+        tagged = _.filter(feed, function(thread) {
+          return thread.author.real != req.user.username
+        })
+      }
+      // if 'isaid' or 'theysaid' were supplied, set those threads
+      // as the user's feed; else, use the users' default feed
+      // (all threads he authored or was tagged in). iSaidThreads
+      // and theySaidThreads will return either an array of
+      // threads or an empty array.
+       feed = iSaidThreads || theySaidThreads || feed
+
+       user.feed = feed
+
+      if (feed === []) {
+        feed.push({text: "No threads found!",
+                            _id: "no_results"})
+      }
+      console.timeEnd('feed')
+      res.json(user)
+    })
   })
+
+  // Get logged-in user Object, populate feed and friends arrays, and build
+  // json response. This route is designed to flexibly accomodate a url
+  // parameter for feed type (authored, subject, tagged, all). Each of these parameters
+  // will also have their own endpoint for maximum flexibility.
+
+  // router.get('/api/frontpage/:feedType*?/:limit*?', isAuthenticated, function (req, res, next) {
+  //   var numThreads
+  //   console.time('feed')
+  //   var theySaidThreads, iSaidThreads, tagged
+  //   async.parallel([
+  //     function(callback) {
+  //       User.findOne({ '_id': req.user._id })
+  //         .populate({
+  //           path: 'friends',
+  //           model: 'User',
+  //           select: '_id facebookName facebookProfilePic username'
+  //         })
+
+  //         // populate feed and its subdocuments
+  //         .populate({
+  //           path: 'feed',
+  //           populate: { path: 'comments',
+  //                       model: 'Comment',
+  //                       populate: { path: 'author',
+  //                                   model: 'User',
+  //                                   select: 'username' }}
+  //         })
+  //         .exec(function (err, userData) {
+  //           if (err) {
+  //             callback(err)
+  //           } else {
+  //           callback(null, userData)
+  //           }
+  //         })
+  //     },
+  //     function(callback) {
+  //       if (req.params.feedType === 'theysaid') {
+  //         threadQuery('victim', req.user.username)
+  //         .exec(function (err, theySaidThreads) {
+  //           if (err) {
+  //             callback(err)
+  //           } else {
+  //             callback(null, theySaidThreads)
+  //           }
+  //         })
+  //       } else {
+  //         callback(null, null)
+  //       }
+  //     },
+  //   ],
+  //     function(err, results) {
+  //       if (err) {
+  //         console.log(err)
+  //       }
+  //       var userData = results[0].toObject()
+
+  //       // will return either an array or undefined
+  //       var theySaidThreads = results[1]
+
+  //       if (req.params.feedType === 'isaid') {
+
+  //         // filter out threads not authored by the user
+  //         iSaidThreads = _.filter(userData.feed, function(thread) {
+  //           return thread.author.real = req.user.username
+  //         })
+  //       }
+
+  //       if (req.params.feedType === 'tagged') {
+
+  //         // filter out threads authored by the user
+  //         // (return only those he's tagged in).
+  //         tagged = _.filter(userData.feed, function(thread) {
+  //           return thread.author.real != req.user.username
+  //         })
+  //       }
+  //       // if 'isaid' or 'theysaid' were supplied, set those threads
+  //       // as the user's feed; else, use the users' default feed
+  //       // (all threads he authored or was tagged in). iSaidThreads
+  //       // and theySaidThreads will return either an array of
+  //       // threads or an empty array.
+  //        userData.feed = iSaidThreads || theySaidThreads || userData.feed
+
+  //        anonymize(userData.feed, req.user._id)
+
+  //       if (userData.feed === []) {
+  //         userData.feed.push({text: "No threads found!",
+  //                             _id: "no_results"})
+  //       }
+  //       console.timeEnd('feed')
+  //       res.json(userData)
+  //     }
+  //   )
+  // })
 
   // return object of facebook friends and already added friends.
   // Both are needed to compare on client side to know if friend
@@ -471,8 +595,6 @@ var anonymize = function(threads, user_id) {
             if (err) {
               console.log(err)
             }
-              console.log(user.lastPosted)
-
         })
 
       // Create the new thread document and return it
@@ -482,10 +604,7 @@ var anonymize = function(threads, user_id) {
         real: req.user.username,
         pseudonym: '_' + getRandomUsername(),
       }
-      // req.body.author = {}
-      // req.body.author.id = req.user._id
-      // req.body.author.real = req.user.username
-      // req.body.author.pseudonym = '_' + getRandomUsername()
+
       req.body.included.push(req.user._id)
 
       // turn anonymous entry into boolean
@@ -500,29 +619,42 @@ var anonymize = function(threads, user_id) {
           console.log(err)
           return next(err)
         } else {
-          res.json(thread)
+          // emit 'Tagged' notification
+          // for testing, push to user
+          req.body.included.push({id: req.user._id, name: 'Cameron Sima'})
+          setTimeout(function() {
+            async.each(req.body.included, function(user) {
+              io.sockets.in(user.id).emit('notification', 
+                { type: 'tagged',
+                  message: thread.getDisplayName() + ' tagged you in a thread.',
+                  id: thread._id })
+            })
+          })
+
+          res.sendStatus(200)
         }
       })
 
       // Isolate ids
-      var includedIds = _.map(req.body.included, function(included) {
-        return included.id
-      })
+      // var includedIds = _.map(req.body.included, function(included) {
+      //   return included.id
+      // })
       
       // Fan out thread id to included users
-      includedIds.push(req.user._id)
-      console.log(includedIds)
-      User.find({
-        _id: { $in: includedIds }
-      }, function(err, users) {
-        async.each(users, function(user, callback) {
-          user.feed.push(thread._id)
-          user.save()
-          callback()
-        })
-      })
-      // res.status(200)
-      // return next()
+      // TODO: Remove, just get feed by querying threads
+      // by included. Fan out notifications instead, as below.
+      // includedIds.push(req.user._id)
+      // req.body.included.push({id: req.user._id, name: ''})
+      // console.log(includedIds)
+      // User.find({
+      //   _id: { $in: includedIds }
+      // }, function(err, users) {
+      //   async.each(users, function(user, callback) {
+      //     user.feed.push(thread._id)
+      //     user.save()
+      //     callback()
+      //   })
+      // })
   })
 
   router.post('/api/threads/delete/:id', isAuthenticated, function(req, res, next) {
@@ -650,6 +782,11 @@ var anonymize = function(threads, user_id) {
       anonymize(response, req.user._id)
       res.json(response)
     })
+  })
+
+  // Notification: let client check if the user has any new notifications.
+  router.get('/api/notifications/', isAuthenticated, function (req, res, next) {
+
   })
 
 

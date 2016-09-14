@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
+import ReactDom from 'react-dom'
 
 import Thread from './Thread'
 
 export default class ThreadList extends Component {
+
   render() {
     var threadNodes, sortedFeed
     var self = this
@@ -20,7 +22,7 @@ export default class ThreadList extends Component {
                   pic={ thread.photoName }
                   included={ thread.included }
                   initialLikes={ thread.likes } 
-                  id={ thread._id}
+                  id={ thread._id }
                   key={ thread._id }>
             { thread.text }
           </Thread>

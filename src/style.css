@@ -111,9 +111,9 @@ hr {
 }
 
 .threadList {
-	overflow-y: scroll;
+/*	overflow-y: scroll;
 	overflow-x: hidden;
-	height: 500px;
+	height: 500px;*/
 	border: 1px solid #efefef;
 }
 
@@ -331,6 +331,7 @@ a.button {
 	height: 200px;
 	border-style: dashed;
 	border-width: 3px;
+	background-size: cover;
 	
 }
 
@@ -388,7 +389,7 @@ a.button {
 	margin: 0 auto; width: 66%;
 }
 
-#status_box{
+#status_box {
 	width: 316px;
 	height: 300px;
 	display: inline-block;
@@ -397,7 +398,7 @@ a.button {
 #status_actions {
 	height: 40px;
 	display: inline-block;
-	margin-left: 26px;
+	margin-left: 44px;
 	margin-top:20px;
 }
 
@@ -414,6 +415,12 @@ a.button {
 #left_column {
 	width: 316px;
   display: inline-block;
+}
 
+#status_icon {
+	font-family: 'Declaration';
+	font-size: 15px;
+	font-weight: 900;
+	letter-spacing: 1.6px;
 }
 

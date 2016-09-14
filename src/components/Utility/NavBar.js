@@ -34,9 +34,6 @@ export default class NavBar extends Component {
         </div>
         <div className="navbar-collapse collapse" id="navbar-main">
           <ul className="nav navbar-nav">
-            <li><a href="http://builtwithbootstrap.com/" target="_blank">I SAID</a></li>
-            <li><a href="http://builtwithbootstrap.com/" target="_blank">THEY SAID</a></li>          
-            <li><a href="http://builtwithbootstrap.com/" target="_blank">I TAGGED</a></li>
             <li>
               <Link to="/addFriends">ADD OR REMOVE</Link>
             </li>

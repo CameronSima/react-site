@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ReactDom from 'react-dom'
 import { Button, ButtonGroup } from 'react-bootstrap'
 
 import CommentBox from '../Comment/CommentBox'
@@ -69,7 +70,7 @@ export default class Thread extends Component {
                       />
     }
     return (
-      <div className="thread">
+      <div className="thread" ref={this.props.id}>
         <div className="dateOuter">
           <div className="date" onMouseOver={ this.setObjectiveDate } 
                                 onMouseLeave={this.setRelativeDate } >

@@ -70,15 +70,16 @@ if (process.env.NODE_ENV === 'production' && cluster.isMaster && cpus.length > 1
   require('./models/Thread')
   require('./models/Comment')
   require('./models/User')
-
-  var routes = require('./routes/index')(passport)
-
-  app.use('/', routes)
-
-var server = app.listen(app.get('port'), function () {
+  
+  var server = app.listen(app.get('port'), function () {
     console.log('Express server started at http://localhost:' + settings.expressPort + '/')
     console.log('in ' + process.env.NODE_ENV + ' mode')
   })
+
+  var io = require('socket.io')(server)
+  var routes = require('./routes/index')(passport, io)
+
+  app.use('/', routes)
 
   var webpack = require('webpack');
   var WebpackDevServer = require('webpack-dev-server');
@@ -104,14 +105,7 @@ var server = app.listen(app.get('port'), function () {
     console.log('Webpack dev react server listening at http://localhost:' + settings.webpackServerPort +  '/');
   });
 
-  var io = require('socket.io')(server)
-  io.on('connection', function(socket) {
-    socket.emit('server event', {
-      foo: 'bar'
-    })
-    socket.on('client event', function(data) {
-      console.log(data)
-    })
-  })
+  //var socket = require('./routes/socket')(io)
+
 }
 
