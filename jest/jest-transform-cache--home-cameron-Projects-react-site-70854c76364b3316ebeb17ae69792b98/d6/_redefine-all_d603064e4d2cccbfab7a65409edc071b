@@ -1,0 +1,5 @@
+/*istanbul ignore next*/'use strict';var redefine = require('./_redefine');
+module.exports = function (target, src, safe) {
+  for (var key in src) /*istanbul ignore next*/{redefine(target, key, src[key], safe);}
+  return target;
+};

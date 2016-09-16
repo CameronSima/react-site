@@ -1,0 +1,40 @@
+'use strict';
+
+
+
+
+jest.unmock('request');var base_url = 'http://localhost:3001/api/';var request = require('request');
+
+describe('routes tests', function () {
+	describe('GET /api/comments', function () {
+		it('returns status code 200', function (done) {
+			request.get(base_url + 'comments', function (err, res, body) {
+				if (err) {
+					console.log(err);
+					throw err;
+				}
+				expect(res.statusCode).toBe(200);
+				done();
+			});
+
+		});
+		it('returns some comments', function (done) {
+			request.get(base_url + 'comments', function (err, res, body) {
+				if (err) {
+					console.log(err);
+				}
+
+
+			});
+			done();
+		});
+	});
+	describe('POST /api/signup', function () {
+		it('creates a new user', function (done) {
+			request.post({ url: base_url + 'signup', form: { username: 'Testy McTestface', password: '123' } }, function (err, res, body) {
+				console.log(res);
+			});
+			done();
+		});
+	});
+});

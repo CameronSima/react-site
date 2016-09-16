@@ -97,12 +97,18 @@ module.exports = function (passport, io) {
     // anonymously, show his pseudonym instead of real name when
     // commenting. Also, add a 'byMe' field if the user is the
     // author to allow delete and edit actions.
+
+
   var anonymize = function(threads, user_id) {
     _.each(threads, function(thread) {
       if (thread.author[0].id.toString() == user_id) {
+
         thread.byMe = true
+      } else {
+        thread.byMe = false
       }
       if (thread.anonymous === true) {
+
         _.each(thread.comments, function(comment) {
           if (comment.author._id.toString() == user_id) {
             comment.byMe = true
@@ -110,6 +116,7 @@ module.exports = function (passport, io) {
           if (thread.author[0].id.toString() == comment.author._id.toString()) {
             comment.author.username = thread.author[0].pseudonym
           }
+          console.log(comment.byMe)
         })
         thread.author[0] = thread.author[0].pseudonym
       } else {
@@ -203,6 +210,7 @@ module.exports = function (passport, io) {
         } else {
           comment.parent = 0
         }
+        console.log(comment)
 
         comment.save(function(err, comment) {
         })
@@ -217,11 +225,11 @@ module.exports = function (passport, io) {
           thread.comments.push(comment._id)
           thread.save()
         })
-        callback(null, null)
+        callback(null, comment)
       }
     ], function(err, result) {
-          res.status(200)
-          return next()
+          res.json(result)
+          
        })
   })
 
@@ -249,7 +257,7 @@ module.exports = function (passport, io) {
 
     Thread.find({
       $and: [
-        { _id: { $in: ids} },
+        { _id: { $in: ids } },
         { 'included.id': req.user._id }
       ]
     })
@@ -321,7 +329,7 @@ module.exports = function (passport, io) {
                       select: 'username' }
         })
         .exec(function(err, feed) {
-          anonymize(feed, req.user._id)
+          //anonymize(feed, req.user._id)
           callback(null, feed)
         })
       },
@@ -382,14 +390,18 @@ module.exports = function (passport, io) {
       // threads or an empty array.
        feed = iSaidThreads || theySaidThreads || feed
 
+      
        user.feed = feed
+       userObj = user.toObject()
+       anonymize(userObj.feed, req.user._id)
+       console.log(userObj.feed)
 
       if (feed === []) {
         feed.push({text: "No threads found!",
                             _id: "no_results"})
       }
       console.timeEnd('feed')
-      res.json(user)
+      res.json(userObj)
     })
   })
 
@@ -398,8 +410,8 @@ module.exports = function (passport, io) {
   // parameter for feed type (authored, subject, tagged, all). Each of these parameters
   // will also have their own endpoint for maximum flexibility.
 
-  // router.get('/api/frontpage/:feedType*?/:limit*?', isAuthenticated, function (req, res, next) {
-  //   var numThreads
+  // router.get('/api/frontpage/:feedType/:limit*?', isAuthenticated, function (req, res, next) {
+    
   //   console.time('feed')
   //   var theySaidThreads, iSaidThreads, tagged
   //   async.parallel([
@@ -414,6 +426,7 @@ module.exports = function (passport, io) {
   //         // populate feed and its subdocuments
   //         .populate({
   //           path: 'feed',
+  //           model: 'Thread',
   //           populate: { path: 'comments',
   //                       model: 'Comment',
   //                       populate: { path: 'author',
@@ -424,6 +437,7 @@ module.exports = function (passport, io) {
   //           if (err) {
   //             callback(err)
   //           } else {
+  //             console.log(userData)
   //           callback(null, userData)
   //           }
   //         })

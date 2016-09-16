@@ -9,7 +9,7 @@ var _ = require('lodash')
 
 var CommentBox = React.createClass({
 
-    // turn flat array of comments into threaded comment array
+    //turn flat array of comments into threaded comment array
     buildTree: function(array, parent, tree) {
       var self = this
       tree = typeof parent !== 'undefined' ? tree : []
@@ -33,9 +33,6 @@ var CommentBox = React.createClass({
   },
 
   handleCommentSubmit: function (comment) {
-    var comments = this.props.comments
-    var newComments = comments.concat([comment])
-    this.setState({data: newComments})
     $.ajax({
       url: config.apiUrl + 'comments/',
       dataType: 'json',
@@ -44,6 +41,7 @@ var CommentBox = React.createClass({
       xhrFields: { withCredentials: true },
       success: function (data) {
         this.setState({data: data})
+        console.log(data)
         
       }.bind(this),
       error: function (xhr, status, err) {

@@ -1,0 +1,2 @@
+/*istanbul ignore next*/'use strict';module.exports = '\t\n\u000b\f\r   ᠎    ' +
+'         　\u2028\u2029﻿';

@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for react-site/src/components/Comment/CommentList.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../../prettify.css" />
+    <link rel="stylesheet" href="../../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../../index.html">All files</a> / <a href="index.html">react-site/src/components/Comment</a> CommentList.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">44% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>11/25</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">50% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>5/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">20% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>2/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">44% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>11/25</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react'
+&nbsp;
+import ReplyModal from '../Modal/ReplyModal'
+&nbsp;
+var helpers = require('../../helpers')
+var config = require('../../../config')
+&nbsp;
+// Comment component combined with CommentList to prevent
+// circular import because they instantiate each other
+// recursively
+&nbsp;
+var Comment = React.createClass({
+  getInitialState: function() {<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    return { vote: '', likesCount: 0 }</span>
+  },
+  sendLikeToServer: function(thread_id, vote) {<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    if (this.state.vote === vote) {</span>
+<span class="cstat-no" title="statement not covered" >      return</span>
+    }
+<span class="cstat-no" title="statement not covered" >    $.ajax({</span>
+      url: config.apiUrl + vote + '/comment/' + thread_id,
+      xhrFields: { withCredentials: true },
+      type: 'POST',
+      dataType: 'json',
+      cache: false,
+      //data: {thread_id: thread_id},
+      success: (data) =&gt; {<span class="fstat-no" title="function not covered" ></span>
+        this.setState({likesCount: data})
+      },
+      error: (xhr, status, err) =&gt; {<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        console.log(this.url, status, err.toString())</span>
+      }
+    })
+  },
+&nbsp;
+  render: function () {<span class="fstat-no" title="function not covered" ></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return (</span>
+    &lt;div className="comment" style={ this.props.style }&gt;
+      &lt;span&gt;
+        &lt;a className="commentAuthor"&gt;{ this.props.author.username }&lt;/a&gt;
+         { ' ' + this.props.text }
+      &lt;/span&gt;
+      &lt;br&gt;&lt;/br&gt;
+      &lt;div className="commentActions"&gt;
+        { this.props.likes }
+        &lt;a className="dislikeLink" 
+           onClick={() =&gt; { this.sendLikeToServer(this.p<span class="fstat-no" title="function not covered" >rops.id,</span> 'downvote')}}&gt;Dislike&lt;/a&gt;
+&nbsp;
+        &lt;a className="likeLink" 
+           onClick={() =&gt; { this.sendLikeToServer(this.p<span class="fstat-no" title="function not covered" >rops.id,</span> 'upvote')}}&gt;Like&lt;/a&gt;
+&nbsp;
+        &lt;ReplyModal OP={ this.props.author.username } 
+                    thread={ this.props.threadId }
+                    parent={ this.props.id }
+                    onCommentSubmit={ this.props.onCommentSubmit } /&gt;
+&nbsp;
+        &lt;span className="timestamp"&gt;{ helpers.formatDate(this.props.date).relative }&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div className="replies"&gt;
+        &lt;CommentList comments={ this.props.replies } 
+                     threadId={ this.props.threadId }
+                     onCommentSubmit={ this.props.onCommentSubmit } /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    )
+  }
+})
+&nbsp;
+&nbsp;
+var CommentList = React.createClass({
+  render: function () {
+    var threadId = this.props.threadId
+    var onCommentSubmit = this.props.onCommentSubmit
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (this.props.comments) {     
+      var commentNodes = this.props.comments.map(<span class="fstat-no" title="function not covered" >fu</span>nction (comment) {
+        var depth = <span class="cstat-no" title="statement not covered" >comment.ancestors.split('#').length - 2 </span>
+        var even = <span class="cstat-no" title="statement not covered" >depth % 2</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (even) {</span>
+          var color = <span class="cstat-no" title="statement not covered" >'white'</span>
+        } else {
+          var color = <span class="cstat-no" title="statement not covered" >'#F1F1F1'</span>
+        }
+&nbsp;
+        var style = <span class="cstat-no" title="statement not covered" >{</span>
+          backgroundColor: color
+        }
+<span class="cstat-no" title="statement not covered" >        return (</span>
+        &lt;Comment threadId={ threadId }
+                 style={ style }
+                 author={ comment.author } 
+                 text={ comment.text } 
+                 likes={ comment.likes }
+                 date={ comment.date }
+                 id={ comment._id }
+                 replies={ comment.replies }
+                 key={ comment._id}
+                 onCommentSubmit={ onCommentSubmit } &gt;
+          
+            { comment.text }
+&nbsp;
+        &lt;/Comment&gt;
+        )
+      })
+      return (
+      &lt;div className="commentList"&gt;
+        { commentNodes }
+      &lt;/div&gt;
+      )
+    } else {
+<span class="cstat-no" title="statement not covered" >      return (</span>
+        &lt;div&gt;&lt;/div&gt; 
+      )
+    }
+  } 
+})
+&nbsp;
+module.exports = CommentList</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Sep 16 2016 12:34:29 GMT-0400 (EDT)
+</div>
+</div>
+<script src="../../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../../sorter.js"></script>
+</body>
+</html>

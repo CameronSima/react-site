@@ -1,0 +1,116 @@
+'use strict';
+
+var /*istanbul ignore next*/_react = require('react'); /*istanbul ignore next*/var _react2 = _interopRequireDefault(_react);
+var /*istanbul ignore next*/_CommentBox = require('../src/components/Comment/CommentBox'); /*istanbul ignore next*/var _CommentBox2 = _interopRequireDefault(_CommentBox);
+var /*istanbul ignore next*/_reactTestRenderer = require('react-test-renderer'); /*istanbul ignore next*/var _reactTestRenderer2 = _interopRequireDefault(_reactTestRenderer);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+jest.mock('react-dom');
+jest.mock('dom-helpers/util/inDOM.js', function () /*istanbul ignore next*/{return false;});
+jest.mock('react/lib/ReactDefaultInjection');
+
+var commentArr = [
+{ "name": "root2",
+   "_id": "root2_id" },
+{
+   "name": "root",
+   "_id": "root_id" },
+
+{
+   "name": "a1",
+   "parent": {
+      "id": "root_id" },
+
+   "_id": "a1_id" },
+
+{
+   "name": "a2",
+   "parent": {
+      "id": "a1_id" },
+
+   "_id": "a2_id" },
+
+{
+   "name": "a3",
+   "parent": {
+      "id": "a2_id" },
+
+   "_id": "a3_id" },
+
+{
+   "name": "b1",
+   "parent": {
+      "id": "root_id" },
+
+   "_id": "b1_id" },
+
+{
+   "name": "b2",
+   "parent": {
+      "id": "b1_id" },
+
+   "_id": "b2_id" },
+
+{
+   "name": "b3",
+   "parent": {
+      "id": "b1_id" },
+
+   "_id": "b3_id" }];
+
+
+
+var commentNested = [
+{
+   "name": "root2",
+   "_id": "root2_id",
+   "children": [] },
+
+{
+   "name": "root",
+   "_id": "root_id",
+   "children": [
+   {
+      "name": "a1",
+      "_id": "a1_id",
+      "children": [
+      {
+         "name": "a2",
+         "_id": "a2_id",
+         "children": [
+         {
+            "name": "a3",
+            "_id": "a3_id",
+            "children": [] }] }] },
+
+
+
+
+
+   {
+      "name": "b1",
+      "_id": "b1_id",
+      "children": [
+      {
+         "name": "b2",
+         "_id": "b2_id",
+         "children": [] },
+
+      {
+         "name": "b3",
+         "_id": "b3_id",
+         "children": [] }] }] }];
+
+
+
+
+
+
+
+it('renders component', function () {
+   var box = /*istanbul ignore next*/_reactTestRenderer2.default.create(
+   /*istanbul ignore next*/_react2.default.createElement( /*istanbul ignore next*/_CommentBox2.default, /*istanbul ignore next*/{ comments: commentArr }));
+
+
+   var tree = box.toJSON();
+   expect(tree).toMatchSnapshot();
+});

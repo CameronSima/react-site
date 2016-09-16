@@ -1,0 +1,7 @@
+/*istanbul ignore next*/'use strict'; // 20.1.2.4 Number.isNaN(number)
+var $export = require('./_export');
+
+$export($export.S, 'Number', {
+  isNaN: function isNaN(number) {
+    return number != number;
+  } });

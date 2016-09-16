@@ -1,0 +1,13 @@
+/*istanbul ignore next*/'use strict'; /* istanbul ignore next */var __cov_RjNCMUk16qCZQ1OHbQf6nndckUE = function () {var path = '/home/cameron/Projects/react-site/config.js',hash = '7a90ff4b840d533e3f8548028721774a69c4e5a6',global = new Function('return this')(),gcv = '__coverage__',coverageData = { path: '/home/cameron/Projects/react-site/config.js', statementMap: { '1': { start: { line: 1, column: 37 }, end: { line: 13, column: 76 } } }, fnMap: {}, branchMap: {}, s: { '1': 0 }, f: {}, b: {} },coverage = global[gcv] || (global[gcv] = {});if (coverage[path] && coverage[path].hash === hash) {return coverage[path];}coverageData.hash = hash;return coverage[path] = coverageData;}();++__cov_RjNCMUk16qCZQ1OHbQf6nndckUE.s['1'];module.exports = {
+  apiUrl: 'http://localhost:3001/api/',
+  pollInterval: 5000,
+  friendsListPollInterval: 5000,
+  expressPort: 3001,
+  webpackServerPort: 3000,
+  testdb: 'testdb',
+
+  auth: {
+    facebookAuth: {
+      clientID: '285831851754236',
+      clientSecret: 'c7796427869d0fec3de6f19cd2e7b490',
+      callbackURL: 'http://localhost:3001/api/auth/facebook/callback' } } };

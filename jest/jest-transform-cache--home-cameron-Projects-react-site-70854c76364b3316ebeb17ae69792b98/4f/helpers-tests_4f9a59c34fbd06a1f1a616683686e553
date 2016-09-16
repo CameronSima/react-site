@@ -1,0 +1,133 @@
+'use strict';
+
+jest.unmock('../src/helpers');
+var helpers = require('../helpers');
+
+var commentArr = [
+{ "name": "root2",
+   "_id": "root2_id" },
+{
+   "name": "root",
+   "_id": "root_id" },
+
+{
+   "name": "a1",
+   "parent": {
+      "id": "root_id" },
+
+   "_id": "a1_id" },
+
+{
+   "name": "a2",
+   "parent": {
+      "id": "a1_id" },
+
+   "_id": "a2_id" },
+
+{
+   "name": "a3",
+   "parent": {
+      "id": "a2_id" },
+
+   "_id": "a3_id" },
+
+{
+   "name": "b1",
+   "parent": {
+      "id": "root_id" },
+
+   "_id": "b1_id" },
+
+{
+   "name": "b2",
+   "parent": {
+      "id": "b1_id" },
+
+   "_id": "b2_id" },
+
+{
+   "name": "b3",
+   "parent": {
+      "id": "b1_id" },
+
+   "_id": "b3_id" }];
+
+
+
+var commentNested = [
+{
+   "name": "root2",
+   "_id": "root2_id",
+   "children": [] },
+
+{
+   "name": "root",
+   "_id": "root_id",
+   "children": [
+   {
+      "name": "a1",
+      "_id": "a1_id",
+      "children": [
+      {
+         "name": "a2",
+         "_id": "a2_id",
+         "children": [
+         {
+            "name": "a3",
+            "_id": "a3_id",
+            "children": [] }] }] },
+
+
+
+
+
+   {
+      "name": "b1",
+      "_id": "b1_id",
+      "children": [
+      {
+         "name": "b2",
+         "_id": "b2_id",
+         "children": [] },
+
+      {
+         "name": "b3",
+         "_id": "b3_id",
+         "children": [] }] }] }];
+
+
+
+
+
+
+
+var testFeed = [{ "_id": "57b3bd10d6ffb02b1e26d960", "text": "this is a test", "victim": "penis", "anonymous": true, "dislikes": 0, "likes": 0, "__v": 0, "included": [{ "id": "121448511636207", "name": "Ronnie Sima", "_id": "57b3bd10d6ffb02b1e26d962" }], "author": ["_abaft flag"], "proShittees": [], "proShitters": [], "comments": [], "date": "2016-08-17T01:25:36.291Z" }, { "_id": "57b3bd3bd6ffb02b1e26d963", "text": "testt", "victim": "ppp", "anonymous": false, "dislikes": 1, "likes": 0, "__v": 4, "included": [{ "id": "121448511636207", "name": "Ronnie Sima", "_id": "57b3bd3bd6ffb02b1e26d965" }], "author": ["cameron sima"], "proShittees": ["579923a55869b00f41aa403d"], "proShitters": ["579923a55869b00f41aa403d"], "comments": [{ "_id": "57bb4d8481a782b6627c35ad", "parent": null, "author": { "_id": "579923a55869b00f41aa403d", "username": "cameron sima" }, "text": "Here's a test of a longer comment. I wonder what will happen when it takes up multiple lines? Let's find out. Also, working with Reactjs is fun! So is Nodejs! HeehEWee!!!!!!!! Fun", "thread": "57b3bd3bd6ffb02b1e26d963", "children": [], "__v": 346, "likes": 0, "proShittees": [], "proShitters": [], "date": "2016-08-22T19:07:48.031Z" }], "date": "2016-08-17T01:26:19.575Z" }, { "_id": "57bb14a8463dbf304da13bec", "text": "testing", "victim": "george", "anonymous": true, "dislikes": 0, "likes": 5, "__v": 2, "included": [{ "id": "121448511636207", "name": "Ronnie Sima", "_id": "57bb14a8463dbf304da13bee" }], "author": ["_testy religion"], "proShittees": ["579923a55869b00f41aa403d"], "proShitters": [], "comments": [{ "_id": "57bb3a247e0d3d165e5b14b5", "parent": null, "author": { "_id": "579923a55869b00f41aa403d", "username": "cameron sima" }, "text": "testing george", "thread": "57bb14a8463dbf304da13bec", "children": [], "__v": 352, "likes": 0, "proShittees": [], "proShitters": [], "date": "2016-08-22T17:45:08.712Z" }, { "_id": "57bb3a4032654c3c5ebdb11b", "parent": null, "author": { "_id": "579923a55869b00f41aa403d", "username": "cameron sima" }, "text": "testing george", "thread": "57bb14a8463dbf304da13bec", "children": [], "__v": 346, "likes": 1, "proShittees": [], "proShitters": ["579923a55869b00f41aa403d"], "date": "2016-08-22T17:45:36.495Z" }] }];
+
+describe('helpers-tests', function () {
+   describe('comment array to threaded comments', function () {
+      it('should turn test data "commentArr" into a nested Comment array', function (done) {
+         expect(helpers.buildTree(commentArr)).toEqual(commentNested);
+         done();
+      });
+   });
+   describe('is in array function', function () {
+      it('should return true if an element is in an array, and false if it is not', function (done) {
+         expect(helpers.isInArray(1, [1, 2, 3])).toEqual(true);
+         expect(helpers.isInArray(4, [1, 2, 3])).toEqual(false);
+         done();
+      });
+   });
+   describe('suggest friends function', function () {
+      var items = [
+      { name: 'cameron' },
+      { name: 'justin' },
+      { name: 'chris' }];
+
+      it('should return item from array', function (done) {
+         expect(helpers.suggestItems(items, 'cameron')).
+         toEqual([{ name: 'cameron' }]);
+         done();
+      });
+   });
+
+});

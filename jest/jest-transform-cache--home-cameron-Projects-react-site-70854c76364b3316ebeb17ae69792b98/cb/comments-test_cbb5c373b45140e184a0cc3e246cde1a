@@ -1,0 +1,121 @@
+'use strict';
+
+var /*istanbul ignore next*/_react = require('react'); /*istanbul ignore next*/var _react2 = _interopRequireDefault(_react);
+var /*istanbul ignore next*/_reactDom = require('react-dom'); /*istanbul ignore next*/var _reactDom2 = _interopRequireDefault(_reactDom);
+var /*istanbul ignore next*/_reactAddonsTestUtils = require('react-addons-test-utils'); /*istanbul ignore next*/var _reactAddonsTestUtils2 = _interopRequireDefault(_reactAddonsTestUtils);
+var /*istanbul ignore next*/_CommentBox = require('../src/components/Comment/CommentBox'); /*istanbul ignore next*/var _CommentBox2 = _interopRequireDefault(_CommentBox);
+
+
+var /*istanbul ignore next*/_Modal = require('../node_modules/react-overlays/lib/Modal.js'); /*istanbul ignore next*/var _Modal2 = _interopRequireDefault(_Modal);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}jest.mock('../node_modules/react-overlays/lib/Modal.js');
+
+
+
+
+var commentArr = [
+{ "name": "root2",
+   "_id": "root2_id" },
+{
+   "name": "root",
+   "_id": "root_id" },
+
+{
+   "name": "a1",
+   "parent": {
+      "id": "root_id" },
+
+   "_id": "a1_id" },
+
+{
+   "name": "a2",
+   "parent": {
+      "id": "a1_id" },
+
+   "_id": "a2_id" },
+
+{
+   "name": "a3",
+   "parent": {
+      "id": "a2_id" },
+
+   "_id": "a3_id" },
+
+{
+   "name": "b1",
+   "parent": {
+      "id": "root_id" },
+
+   "_id": "b1_id" },
+
+{
+   "name": "b2",
+   "parent": {
+      "id": "b1_id" },
+
+   "_id": "b2_id" },
+
+{
+   "name": "b3",
+   "parent": {
+      "id": "b1_id" },
+
+   "_id": "b3_id" }];
+
+
+
+var commentNested = [
+{
+   "name": "root2",
+   "_id": "root2_id",
+   "children": [] },
+
+{
+   "name": "root",
+   "_id": "root_id",
+   "children": [
+   {
+      "name": "a1",
+      "_id": "a1_id",
+      "children": [
+      {
+         "name": "a2",
+         "_id": "a2_id",
+         "children": [
+         {
+            "name": "a3",
+            "_id": "a3_id",
+            "children": [] }] }] },
+
+
+
+
+
+   {
+      "name": "b1",
+      "_id": "b1_id",
+      "children": [
+      {
+         "name": "b2",
+         "_id": "b2_id",
+         "children": [] },
+
+      {
+         "name": "b3",
+         "_id": "b3_id",
+         "children": [] }] }] }];
+
+
+
+
+
+
+
+it('renders component', function () {
+   var box = /*istanbul ignore next*/_reactAddonsTestUtils2.default.renderIntoDocument(
+   /*istanbul ignore next*/_react2.default.createElement( /*istanbul ignore next*/_CommentBox2.default, /*istanbul ignore next*/{ comments: commentArr }));
+
+
+   var commentNode = /*istanbul ignore next*/_reactDom2.default.findDOMNode(box);
+   commentNode.buildTree = jest.genMockFunction();
+
+   expect(commentNode.buildTree(commentArr)).toEqual(commentNested);
+});

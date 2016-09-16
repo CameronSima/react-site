@@ -1,0 +1,16 @@
+'use strict';
+
+jest.dontMock('../src/components/Comment/CommentBox');
+
+describe('CommentsBox', function () {
+	var React = require('react');
+	var TestUtils = require('react-addons-test-utils');
+
+	var Comment = require('../src/components/Comment/CommentBox.js');
+
+	it('should exist', function () {
+		var commentBox = TestUtils.renderIntoDocument( /*istanbul ignore next*/React.createElement(CommentsBox, /*istanbul ignore next*/null));
+		expect(TestUtils.isCompositeComponent(commentBox)).toBeTruthy();
+	});
+
+});

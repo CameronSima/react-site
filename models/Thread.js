@@ -46,5 +46,4 @@ ThreadSchema.methods.getDisplayName = function() {
 }
 
 
-
 module.exports = mongoose.model('Thread', ThreadSchema)
