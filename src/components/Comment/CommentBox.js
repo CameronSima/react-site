@@ -51,9 +51,9 @@ var CommentBox = React.createClass({
     })
   },
   getInitialState: function () {
-    return {data: [] }
+    return {data: [], numComments: 1 }
   },
-    onAddFile: function(res){
+  onAddFile: function(res){
       this.setState({imageUrl: res.imageUrl})
     var newFile = {
       id:res.file.name,
@@ -66,17 +66,27 @@ var CommentBox = React.createClass({
     };
     //this.executeAction(newImageAction, newFile);
   },
-
+  moreComments: function() {
+    var newCount = this.state.numComments += 10
+    this.setState({ numComments: newCount })
+    console.log(this.state.numComments)
+  },
   render: function () {
-    //console.log(this.props.comments)
-
     var threadedComments = this.buildTree(this.props.comments)
+    var topComments = threadedComments.slice(0, this.state.numComments)
+    console.log(topComments.length)
     return (
     <div className="commentBox">
       
       <CommentList threadId={ this.props.threadId } 
-                   comments={ threadedComments }
+                   comments={ topComments }
                    onCommentSubmit={ this.handleCommentSubmit } />
+
+      {
+         topComments.length > 0 && topComments.length < threadedComments.length &&
+        <a className="moreLink"
+           onClick={()=>{ this.moreComments() }}>More</a>
+      }
 
       <CommentForm threadId={ this.props.threadId } 
                    onCommentSubmit={ this.handleCommentSubmit } />

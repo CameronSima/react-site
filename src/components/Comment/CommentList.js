@@ -11,7 +11,7 @@ var config = require('../../../config')
 
 var Comment = React.createClass({
   getInitialState: function() {
-    return { vote: '', likesCount: 0 }
+    return { vote: '', likesCount: 0, numComments: 1 }
   },
   sendLikeToServer: function(thread_id, vote) {
     if (this.state.vote === vote) {
@@ -32,9 +32,15 @@ var Comment = React.createClass({
       }
     })
   },
-
+  moreComments: function() {
+    var newCount = this.state.numComments += 10
+    this.setState({ numComments: newCount })
+  },
   render: function () {
-
+    if (this.props.replies) {
+      var allComments = this.props.replies
+      var lessComments = allComments.slice(0, this.state.numComments)
+    }
     return (
     <div className="comment" style={ this.props.style }>
       <span>
@@ -58,9 +64,16 @@ var Comment = React.createClass({
         <span className="timestamp">{ helpers.formatDate(this.props.date).relative }</span>
       </div>
       <div className="replies">
-        <CommentList comments={ this.props.replies } 
+        <CommentList comments={ lessComments } 
                      threadId={ this.props.threadId }
                      onCommentSubmit={ this.props.onCommentSubmit } />
+
+        {
+          lessComments && lessComments.length > 0 && lessComments.length < allComments.length &&
+          <a className="moreLink"
+             onClick={()=> {this.moreComments()}}>More</a>
+        }
+        
       </div>
     </div>
     )

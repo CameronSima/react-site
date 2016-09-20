@@ -274,9 +274,14 @@ a.button {
 	opacity: .7;
 }
 
+.threadActions {
+	font-size: 13px;
+}
+
 .replyLink, .likeLink, .dislikeLink, .closeLink, 
 .commentAuthor, .byLink, .aboutLink, .talkedLink,
-.talkLink, .moreThreadsLink, .deleteLink {
+.talkLink, .moreThreadsLink, .deleteLink, .tagLink,
+.moreLink {
 	margin: 5px;
 	cursor: pointer;
 	display: inline;

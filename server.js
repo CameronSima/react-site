@@ -2,7 +2,7 @@ var cluster = require('cluster')
 var cpus = require('os').cpus()
 
 // set up cluster module for multi-cpu machines. 
-// Only start workers if there are more than one
+// Only start workers if there is more than one
 // cpu present.
 if (process.env.NODE_ENV === 'production' && cluster.isMaster && cpus.length > 1) {
   cpus.forEach(function(cpu) {
@@ -70,14 +70,14 @@ if (process.env.NODE_ENV === 'production' && cluster.isMaster && cpus.length > 1
   require('./models/Thread')
   require('./models/Comment')
   require('./models/User')
+  require('./models/Notification')
   
-  var server = app.listen(app.get('port'), function () {
+app.listen(app.get('port'), function () {
     console.log('Express server started at http://localhost:' + settings.expressPort + '/')
     console.log('in ' + process.env.NODE_ENV + ' mode')
   })
 
-  var io = require('socket.io')(server)
-  var routes = require('./routes/index')(passport, io)
+  var routes = require('./routes/index')(passport)
 
   app.use('/', routes)
 
@@ -104,8 +104,5 @@ if (process.env.NODE_ENV === 'production' && cluster.isMaster && cpus.length > 1
 
     console.log('Webpack dev react server listening at http://localhost:' + settings.webpackServerPort +  '/');
   });
-
-  //var socket = require('./routes/socket')(io)
-
 }
 

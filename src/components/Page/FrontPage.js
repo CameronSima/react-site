@@ -17,6 +17,7 @@ export default class FrontPage extends Component {
 		super(props)
 		this.state = {
 			friends: [],
+			notifications: [],
 			feed: [],
 			facebookFriends: [],
 			pollInterval: config.pollInterval,
@@ -24,15 +25,29 @@ export default class FrontPage extends Component {
 			pic: ''
 		}
 		this.loadDataFromServer = this.loadDataFromServer.bind(this)
-		this.loadThreads = this.loadThreads.bind(this)
+		this.loadNotifications = this.loadNotifications.bind(this)
+		//this.loadThreads = this.loadThreads.bind(this)
 		this.setFeedType = this.setFeedType.bind(this)
 		this.addThread = this.addThread.bind(this)
 	}
 
-	// StatusWindow will return an array of all notification ids
-	// as well as the id of the one that was clicked.
+
+	loadNotifications() {
+		$.ajax({
+			url: config.apiUrl + 'notifications',
+			dataType: 'json',
+			xhrFields: { withCredentials: true },
+			cache: false,
+			success: (response) => {
+				this.setState({ notifications: response })
+			},
+			error: (xhr, status, err) => {
+				console.log(this.url, status, err.toString())
+			}
+		})
+	}
+
 	loadThreads(idsArr, id) {
-		console.log(idsArr)
 		$.ajax({
 			url: config.apiUrl + 'threads/' + idsArr,
 
@@ -53,7 +68,6 @@ export default class FrontPage extends Component {
 						return a != id
 					})
 				}
-				console.log(feed)
 				this.setState({ feed: feed,
 												feedType: 'readingNotifications' })
 			},
@@ -65,10 +79,8 @@ export default class FrontPage extends Component {
 
 	loadDataFromServer() {
 		if (this.state.feedType === 'readingNotifications') {
-			console.log("TRUE")
 			return
 		}
-		else { console.log('FALSE')}
 		var feedType = this.state.feedType.split(' ').join('').toLowerCase()
 		$.ajax({ 
 			url: config.apiUrl + 'frontpage/' + feedType,
@@ -121,7 +133,8 @@ export default class FrontPage extends Component {
 
 	componentDidMount() {
 		this.loadDataFromServer()
-		setInterval(this.loadDataFromServer, this.state.pollInterval)
+		this.loadNotifications()
+		setInterval(this.loadNotifications, this.state.pollInterval)
 	}
 
 	componentWillUnmount() {
@@ -136,6 +149,7 @@ export default class FrontPage extends Component {
 					<div id="left_column">
 						<StatusWindow fbId={ this.state.fbId }
 													getNotifications={ this.loadThreads }
+													notifications={ this.state.notifications }
 													setFeedType={ this.setFeedType }
 													user_id={ this.state.user_id } />
 

@@ -2,9 +2,6 @@ import React, { Component } from 'react'
 import ReactDom from 'react-dom'
 import { Popover, OverlayTrigger } from 'react-bootstrap'
 
-import io from 'socket.io-client'
-let socket = io('http://localhost:3001')
-
 
 export default class StatusWindow extends Component {
 	constructor(props) {
@@ -17,10 +14,6 @@ export default class StatusWindow extends Component {
 									 activeId: '',
 									 statusStyle: { color: 'black'} }
 
-		var self = this
-		socket.on('notification', function(data) {
-			self.handleNotification(data)
-		})
 	}
 
 	handleNotification(notification) {
@@ -41,20 +34,24 @@ export default class StatusWindow extends Component {
 
 	render() {
 		var self = this
-		var notifIds = this.state.notifications.map(function(notif) {
-			return notif.id
+		var notifIds = this.props.notifications.map(function(notif) {
+			return notif.threadId
 		}).join('&')
-		console.log(notifIds)
-		var messages = this.state.notifications.map(function(notification) {
+		//console.log(notifIds)
+		var messages = this.props.notifications.map(function(notification) {
+			var style
+			if (notification.new) {
+				style = { 'background-color': '#f7f7f7' }
+			}
 			return (
-				<div>
-					<div key={ notification.id }
-							 onClick={()=>{self.props.getNotifications(notifIds, notification.id),
+				<div style={ style }>
+					<div key={ notification._id }
+							 onClick={()=>{self.props.getNotifications(notifIds, notification._id),
 							 							 self.setState({ statusStyle: {color: 'black'},
 							 															 newTaggedIn: 0,
 							 															 newTheySaid: 0 })}}
 
-							 	>{ notification.message }</div>
+							 	>{ notification.text }</div>
 					<hr></hr>
 				</div>
 			)
@@ -66,11 +63,6 @@ export default class StatusWindow extends Component {
 					{ messages.reverse() }
 				</Popover>
 			)
-
-		// emit the user_id so the connection can be stored on the server
-		socket.emit('join', {
-		user_id: this.props.user_id
-	})
 
 		// Get large facebook image
 		var url = 'https://graph.facebook.com/' + this.props.fbId + '/picture?type=large'

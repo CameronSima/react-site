@@ -10,7 +10,9 @@ var config = require('../../../config')
 export default class Thread extends Component {
   constructor(props) {
     super(props)
-    this.state = { vote: '', likes: this.props.initialLikes }
+    this.state = { vote: '', 
+                   likes: this.props.initialLikes }
+
     this.deleteThread = this.deleteThread.bind(this)
     this.sendLikeToServer = this.sendLikeToServer.bind(this)
     this.setRelativeDate = this.setRelativeDate.bind(this)
@@ -82,7 +84,9 @@ export default class Thread extends Component {
         <span dangerouslySetInnerHTML={this.rawMarkup()} />
         <p className="salutation">signed,</p>
         <div>
-          {this.props.author} and 
+          { this.props.byMe  && this.props.author.toString().charAt(0) === '_' && '*' }
+          { this.props.author } and 
+          
           <a > { this.props.included.length - 1 } others. </a>
 
         </div>
@@ -90,25 +94,30 @@ export default class Thread extends Component {
 
           <div>{photo}</div>
 
+        <div className="threadActions">
           <div className="likeTotal">
             { this.state.likes }
           </div>
+             |
+          <a className="likeLink"
+             onClick={() => {this.sendLikeToServer(this.props.id, "upvote")}}>Like</a>
+             |
+          <a className="dislikeLink"
+             onClick={() => {this.sendLikeToServer(this.props.id, "downvote")}}>Dislike</a>
 
-        <ButtonGroup>
-          <Button onClick={() => {this.sendLikeToServer(this.props.id, "upvote")}}>Like</Button>
-          <Button onClick={() => {this.sendLikeToServer(this.props.id, "downvote")}}>Dislike</Button>
-        </ButtonGroup>
+             |
+          <a className="tagLink">Tag</a>
+             |
         
-          { 
-            this.props.byMe && 
-              <div className="deleteLink"
-                   onClick={()=> {this.deleteThread(this.props.id)}}>
-                <a >Delete</a>
-              </div>
-          }
-        
+            { 
+              this.props.byMe && 
+                <div className="deleteLink"
+                     onClick={()=> {this.deleteThread(this.props.id)}}>
+                  <a >Delete</a>
+                </div>
+            }
+          </div>
         <hr></hr>         
-
         <div>
           <CommentBox threadId={ this.props.id }
                       comments={ this.props.comments }

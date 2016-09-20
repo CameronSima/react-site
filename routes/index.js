@@ -12,16 +12,11 @@ var _ = require('lodash')
 var Comment = mongoose.model('Comment')
 var Thread = mongoose.model('Thread')
 var User = mongoose.model('User')
+var Notification = mongoose.model('Notification')
 
 
-module.exports = function (passport, io) {
+module.exports = function (passport) {
 
-  // when a user connects, join him to a room
-  io.sockets.on('connection', function(socket) {
-    socket.on('join', function(data) {
-      socket.join(data.user_id)
-    })
-  })
 
   // Additional middleware which will set headers that we need on each request.
   router.use(function (req, res, next) {
@@ -116,7 +111,6 @@ module.exports = function (passport, io) {
           if (thread.author[0].id.toString() == comment.author._id.toString()) {
             comment.author.username = thread.author[0].pseudonym
           }
-          console.log(comment.byMe)
         })
         thread.author[0] = thread.author[0].pseudonym
       } else {
@@ -310,14 +304,26 @@ module.exports = function (passport, io) {
     })
   })
 
+  router.get('/api/notifications', isAuthenticated, function(req, res, next) {
+    Notification.find({
+      user: req.user._id
+    })
+    .exec(function(err, notifications) {
+      console.log(notifications)
+      res.json(notifications)
+    })
+  })
+
   router.get('/api/frontpage/:feedType/:limit*?', isAuthenticated, function (req, res, next) {
     console.time('feed')
     var numThreads = req.params.limit || 25
     var theySaidThreads, iSaidThreads, tagged
     async.parallel([
       function(callback) {
-        Thread.find({
-          'included.id': req.user._id 
+        Thread.find({ 
+          $and: [
+            { 'included.id': req.user._id },
+            { 'deleted': false }]
         })
         .sort({ 'date': -1 })
         .limit(numThreads)
@@ -394,7 +400,7 @@ module.exports = function (passport, io) {
        user.feed = feed
        userObj = user.toObject()
        anonymize(userObj.feed, req.user._id)
-       console.log(userObj.feed)
+
 
       if (feed === []) {
         feed.push({text: "No threads found!",
@@ -543,14 +549,14 @@ module.exports = function (passport, io) {
         })
       }
     ],
-      function(err, results) {
-        if (err) {
-          console.log(err)
-        }
-        var data = { fbFriends: results[0], friends: results[1] }
-        //console.log(data)
-        return res.jsonp(data)
+    function(err, results) {
+      if (err) {
+        console.log(err)
       }
+      var data = { fbFriends: results[0], friends: results[1] }
+      //console.log(data)
+      return res.jsonp(data)
+    }
       )
   })
 
@@ -599,20 +605,18 @@ module.exports = function (passport, io) {
 
    // post new thread
   router.post('/api/threads', isAuthenticated, function (req, res, next) {
-    console.log(req.body)
 
-        // update user's 'last posted' field
-        User.findOneAndUpdate(
-          req.user._id,
-          { 'lastPosted': Date.now() }, 
-          function (err, user) {
-            if (err) {
-              console.log(err)
-            }
-        })
+      // update user's 'last posted' field
+      User.findOneAndUpdate(
+        req.user._id,
+        { 'lastPosted': Date.now() }, 
+        function (err, user) {
+          if (err) {
+            console.log(err)
+          }
+      })
 
       // Create the new thread document and return it
-
       req.body.author = {
         id: req.user._id,
         real: req.user.username,
@@ -633,42 +637,21 @@ module.exports = function (passport, io) {
           console.log(err)
           return next(err)
         } else {
-          // emit 'Tagged' notification
+          // save 'Tagged' notification
           // for testing, push to user
-          req.body.included.push({id: req.user._id, name: 'Cameron Sima'})
-          setTimeout(function() {
-            async.each(req.body.included, function(user) {
-              io.sockets.in(user.id).emit('notification', 
-                { type: 'tagged',
-                  message: thread.getDisplayName() + ' tagged you in a thread.',
-                  id: thread._id })
+          req.body.included.push({ id: req.user._id, name: 'Cameron Sima' })
+          async.each(req.body.included, function(user) {
+            var notification = new Notification()
+            notification.user = user.id
+            notification.threadId = thread._id
+            notification.getText(req.body.author.real)
+            notification.save(function(err, not) {
+              console.log(not)
             })
           })
-
-          res.sendStatus(200)
         }
       })
-
-      // Isolate ids
-      // var includedIds = _.map(req.body.included, function(included) {
-      //   return included.id
-      // })
-      
-      // Fan out thread id to included users
-      // TODO: Remove, just get feed by querying threads
-      // by included. Fan out notifications instead, as below.
-      // includedIds.push(req.user._id)
-      // req.body.included.push({id: req.user._id, name: ''})
-      // console.log(includedIds)
-      // User.find({
-      //   _id: { $in: includedIds }
-      // }, function(err, users) {
-      //   async.each(users, function(user, callback) {
-      //     user.feed.push(thread._id)
-      //     user.save()
-      //     callback()
-      //   })
-      // })
+    res.sendStatus(200)
   })
 
   router.post('/api/threads/delete/:id', isAuthenticated, function(req, res, next) {
@@ -789,7 +772,7 @@ module.exports = function (passport, io) {
         // filter out threads the user hasn't commented on
         var response = _.filter(threads, function(thread) {
           _.each(thread.comments, function(comment) {
-            return comment.author == req.params.friend_id
+            return comment.author.toString() == req.params.friend_id
           })
         })
       }
