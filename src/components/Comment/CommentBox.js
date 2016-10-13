@@ -41,7 +41,7 @@ var CommentBox = React.createClass({
       xhrFields: { withCredentials: true },
       success: function (data) {
         this.setState({data: data})
-        console.log(data)
+        //console.log(data)
         
       }.bind(this),
       error: function (xhr, status, err) {
@@ -69,12 +69,12 @@ var CommentBox = React.createClass({
   moreComments: function() {
     var newCount = this.state.numComments += 10
     this.setState({ numComments: newCount })
-    console.log(this.state.numComments)
+    //console.log(this.state.numComments)
   },
   render: function () {
     var threadedComments = this.buildTree(this.props.comments)
     var topComments = threadedComments.slice(0, this.state.numComments)
-    console.log(topComments.length)
+    //console.log(topComments.length)
     return (
     <div className="commentBox">
       

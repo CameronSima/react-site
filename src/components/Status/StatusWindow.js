@@ -41,12 +41,13 @@ export default class StatusWindow extends Component {
 		var messages = this.props.notifications.map(function(notification) {
 			var style
 			if (notification.new) {
-				style = { 'background-color': '#f7f7f7' }
+				style = { 'backgroundColor': '#f7f7f7', 'fontWeight': 500 }
 			}
 			return (
 				<div style={ style }>
 					<div key={ notification._id }
-							 onClick={()=>{self.props.getNotifications(notifIds, notification._id),
+							 className="notificationLink"
+							 onClick={()=>{self.props.getNotifications(notification._id),
 							 							 self.setState({ statusStyle: {color: 'black'},
 							 															 newTaggedIn: 0,
 							 															 newTheySaid: 0 })}}
@@ -57,10 +58,10 @@ export default class StatusWindow extends Component {
 			)
 		})
 		var notification = (
-
 				<Popover id="popover-trigger-click-root-close"
 								 title="Notifications:">
 					{ messages.reverse() }
+					<a className="moreLink">More</a>
 				</Popover>
 			)
 
@@ -78,7 +79,7 @@ export default class StatusWindow extends Component {
 													placement="right"
 													overlay={notification}>
 						<div id="status_icon" style={this.state.statusStyle}>
-						dl
+							dl
 						</div>
 					</OverlayTrigger>
 					<h6 onClick={()=> {this.props.setFeedType('ALL')}}>

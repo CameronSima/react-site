@@ -17,8 +17,8 @@ module.exports = function(passport) {
         if (!isValidPassword(user, password)) {
           console.log('Password ' + password + 'is invalid')
           return done(null, false)
-        return done(null, user)
         }
+        return done(null, user)
       })
   }))
   var isValidPassword = function (user, password) {

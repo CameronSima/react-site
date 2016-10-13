@@ -136,17 +136,17 @@ module.exports = function (passport) {
   //   res.redirect('/')
   // })
 
-  router.post('/api/signup', function (req, res, next) {
-    passport.authenticate('signup', function (err, user, info) {
-      if (err) {
-        return res.json(err)
-      }
-      if (!user) {
-        return
-      }
-      res.json(user)
-    })(req, res, next)
-  })
+  // router.post('/api/signup', function (req, res, next) {
+  //   passport.authenticate('signup', function (err, user, info) {
+  //     if (err) {
+  //       return res.json(err)
+  //     }
+  //     if (!user) {
+  //       return
+  //     }
+  //     res.json(user)
+  //   })(req, res, next)
+  // })
 
   router.get(
     '/api/auth/facebook',
@@ -204,7 +204,7 @@ module.exports = function (passport) {
         } else {
           comment.parent = 0
         }
-        console.log(comment)
+        //console.log(comment)
 
         comment.save(function(err, comment) {
         })
@@ -236,7 +236,7 @@ module.exports = function (passport) {
       if (err) {
         console.log(err)
       } else {
-        console.log(thread)
+        //console.log(thread)
         res.json(thread)
       }
       return next()
@@ -245,8 +245,8 @@ module.exports = function (passport) {
 
   // get a group of particular threads from a supplied array.
   router.get('/api/threads/:ids', isAuthenticated, function (req, res, next) {
-    console.log(req.params.ids)
-    console.log(req.params.ids.split('&'))
+    //console.log(req.params.ids)
+    //console.log(req.params.ids.split('&'))
     var ids = req.params.ids.split('&')
 
     Thread.find({
@@ -309,7 +309,7 @@ module.exports = function (passport) {
       user: req.user._id
     })
     .exec(function(err, notifications) {
-      console.log(notifications)
+      //console.log(notifications)
       res.json(notifications)
     })
   })
@@ -632,7 +632,7 @@ module.exports = function (passport) {
         req.body.anonymous = false
       }
       var thread = new Thread(req.body)
-      thread.save(function (err, thread) {
+      thread.save(function (err, doc) {
         if (err) {
           console.log(err)
           return next(err)
@@ -646,12 +646,13 @@ module.exports = function (passport) {
             notification.threadId = thread._id
             notification.getText(req.body.author.real)
             notification.save(function(err, not) {
-              console.log(not)
+              //console.log(not)
             })
           })
         }
+        anonymize([doc], req.user._id)
+        res.json(doc)
       })
-    res.sendStatus(200)
   })
 
   router.post('/api/threads/delete/:id', isAuthenticated, function(req, res, next) {
@@ -666,7 +667,7 @@ module.exports = function (passport) {
       if (err) { 
         console.log(err) 
       } else {
-        console.log(thread)
+        //console.log(thread)
         res.sendStatus(200)
       }  
     })
@@ -681,7 +682,7 @@ module.exports = function (passport) {
         console.log(err)
         return res.end("error uploading file")
       } else {
-        console.log(req.file.filename)
+        //console.log(req.file.filename)
         res.json(req.file.filename)
       }
     })

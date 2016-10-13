@@ -11,7 +11,7 @@ var helpers = require('../../helpers')
 
 var ThreadsBox = React.createClass({
   handleThreadSubmit: function (thread) {
-    this.props.addThread(thread)
+    //this.props.addThread(thread)
     $.ajax({
       url: config.apiUrl + 'threads',
       dataType: 'json',
@@ -19,6 +19,7 @@ var ThreadsBox = React.createClass({
       data: thread,
       xhrFields: {withCredentials: true},
       success: function (doc) {
+        this.props.addThread(doc)
       }.bind(this),
       error: function (xhr, status, err) {
         //this.setState({data: threads})

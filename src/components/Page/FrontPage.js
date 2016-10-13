@@ -26,11 +26,10 @@ export default class FrontPage extends Component {
 		}
 		this.loadDataFromServer = this.loadDataFromServer.bind(this)
 		this.loadNotifications = this.loadNotifications.bind(this)
-		//this.loadThreads = this.loadThreads.bind(this)
+		this.loadThreads = this.loadThreads.bind(this)
 		this.setFeedType = this.setFeedType.bind(this)
 		this.addThread = this.addThread.bind(this)
 	}
-
 
 	loadNotifications() {
 		$.ajax({
@@ -48,9 +47,9 @@ export default class FrontPage extends Component {
 	}
 
 	loadThreads(idsArr, id) {
+		var self = this
 		$.ajax({
 			url: config.apiUrl + 'threads/' + idsArr,
-
 			dataType: 'json',
 			contentType: 'json',
 			type: 'GET',
@@ -58,7 +57,6 @@ export default class FrontPage extends Component {
 			xhrFields: { withCredentials: true },
 			cache: false,
 			success: (response) => {
-				this.s
 				var feed = response
 
 				//make the clicked id appear at the top if it was
@@ -109,20 +107,8 @@ export default class FrontPage extends Component {
 	}
 
 	addThread(thread) {
-
-    // Set fake data for now, until the feed response
-    // re-populates the feed with processed data
-    var newThread = {
-    	text: thread.text,
-    	included: thread.included,
-    	victim: thread.victim,
-    	anonymous: thread.anonymous,
-    	_id: Date.now(),
-    	author: '...',
-    	date: Date.now()
-
-    }
-		this.setState({ feed: this.state.feed.concat([newThread])})
+		console.log(thread)
+		this.setState({ feed: this.state.feed.concat([thread])})
 	}
 
 	setFeedType(feedType) {

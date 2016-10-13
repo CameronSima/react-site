@@ -281,7 +281,7 @@ a.button {
 .replyLink, .likeLink, .dislikeLink, .closeLink, 
 .commentAuthor, .byLink, .aboutLink, .talkedLink,
 .talkLink, .moreThreadsLink, .deleteLink, .tagLink,
-.moreLink {
+.moreLink, .notificationLink {
 	margin: 5px;
 	cursor: pointer;
 	display: inline;
