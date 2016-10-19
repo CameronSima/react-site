@@ -4,6 +4,7 @@ const async = require('async')
 const User = mongoose.model('User', require('../models/User'))
 const Thread = mongoose.model('Thread', require('../models/Thread'))
 const Comment = mongoose.model('Comment', require('../models/Comment'))
+const Notification = mongoose.model('Notification', require('../models/Notification'))
 
 
 
@@ -26,6 +27,12 @@ Comment.find((err, comments) => {
 Thread.find((err, threads) => {
 	async.each(threads, (thread) => {
 		thread.remove()
+	})
+})
+
+Notification.find((err, notifs) => {
+	async.each(notifs, (notif) => {
+		notif.remove()
 	})
 })
 

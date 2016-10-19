@@ -9,10 +9,12 @@ export default class StatusWindow extends Component {
 		super(props)
 		this.handleNotifications = this.handleNotifications.bind(this)
 		this.loadNotifications = this.loadNotifications.bind(this)
+		this.getMoreNotifs = this.getMoreNotifs.bind(this)
 
 		this.state = { newTheySaid: 0, 
 									 newTaggedIn: 0, 
 									 notifications: [],
+									 numNotifs: 10,
 									 activeId: '',
 									 statusStyle: { color: 'black'} }
 
@@ -20,7 +22,7 @@ export default class StatusWindow extends Component {
 
 	loadNotifications() {
 		$.ajax({
-			url: config.apiUrl + 'notifications',
+			url: config.apiUrl + 'notifications' + '/' + this.state.numNotifs,
 			dataType: 'json',
 			xhrFields: { withCredentials: true },
 			cache: false,
@@ -43,10 +45,10 @@ export default class StatusWindow extends Component {
 		var tsct = 0
 		var tct = 0
 		this.state.notifications.forEach(function(notif) {
-			if (notif.type === 'theySaid') {
+			if (notif.type === 'theySaid' && notif.new) {
 				tsct += 1
 			}
-			if (notif.type === 'tagged') {
+			if (notif.type === 'tagged' && notif.new) {
 				tct += 1
 			}
 		})
@@ -55,32 +57,21 @@ export default class StatusWindow extends Component {
 			newTaggedIn: tct
 		})
 		if (tsct > 0 || tct > 0) {
-			var alertStyle = { color: 'red' }
+			var alertStyle = {color: 'red'}
 			this.setState({ statusStyle: alertStyle })	
+		} else {
+			var alertStyle = {color: 'black'}
+			this.setState({statusStyle: alertStyle})
 		}
 	}
 
-	handleNotification(notification) {
-		if (notification.type === 'tagged') {
-			var count = this.state.newTaggedIn += 1
-			this.setState({newTaggedIn: count})
-		}
-		if (notification.type === 'about') {
-			this.state.newTheySaid += 1
-		}
-
-		var newNotifs = this.state.notifications.concat([notification])
-		var alertStyle = { color: 'red' }
-		this.setState({ notifications: newNotifs,
-										statusStyle: alertStyle })	
+	getMoreNotifs() {
+		this.state.numNotifs += 10
+		this.loadNotifications()
 	}
 
 	render() {
 		var self = this
-		var notifIds = this.state.notifications.map(function(notif) {
-			return notif.threadId
-		}).join('&')
-		//console.log(notifIds)
 		var messages = this.state.notifications.map(function(notification) {
 			var style
 			if (notification.new) {
@@ -104,7 +95,8 @@ export default class StatusWindow extends Component {
 				<Popover id="popover-trigger-click-root-close"
 								 title="Notifications:">
 					{ messages.reverse() }
-					<a className="moreLink">More</a>
+					<a className="moreLink"
+					   onClick={()=>{this.getMoreNotifs()}}>More</a>
 				</Popover>
 			)
 

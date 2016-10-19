@@ -243,14 +243,14 @@ module.exports = function (passport) {
     })
   })
 
-  // get a group of particular threads from a supplied array. Also
+  // get a particular thread from a supplied array. Also
   // update notification
   router.get('/api/threads/:id/:notifId', isAuthenticated, function (req, res, next) {
-    var id = mongoose.Types.ObjectId(req.params.id)
-
+    var id = mongoose.Types.ObjectId(req.params.notifId)
+    console.log('get threads endpoint called')
     Notification.findOne({
       $and: [
-        { _id: req.params.notifId },
+        { _id: id },
         { 'user': req.user._id }
       ]
     })
@@ -323,14 +323,13 @@ module.exports = function (passport) {
     })
   })
 
-  router.get('/api/notifications', isAuthenticated, function(req, res, next) {
+  // get user's notifications
+  router.get('/api/notifications/:numNotifs*?', isAuthenticated, function(req, res, next) {
+    var limit = req.params.numNotifs || 15
     Notification.find({
-      $and: 
-      [ 
-        { user: req.user._id },
-        { new: true }
-    ]
+      user: req.user._id
     })
+    .limit(limit)
     .exec(function(err, notifications) {
       //console.log(notifications)
       res.json(notifications)
@@ -646,6 +645,10 @@ module.exports = function (passport) {
         pseudonym: '_' + getRandomUsername(),
       }
 
+      // add user's id before saving the thread so it's added
+      // to his feed (looks like a duplicate of line 667 below
+      // which adds it for testing purposes so user gets notifications
+      // of his own submission)
       req.body.included.push(req.user._id)
 
       // turn anonymous entry into boolean
@@ -662,14 +665,20 @@ module.exports = function (passport) {
         } else {
           // save 'Tagged' notification.
           // for testing, push to user
-          req.body.included.push({ id: req.user._id, name: 'Cameron Sima' })
+          //req.body.included.push({ id: req.user._id, name: 'Cameron Sima' })
+
+          var notification = new Notification()
+          console.log(req.body.included)
+
           async.each(req.body.included, function(user) {
+            var authored = doc.author.id == user.id
             var notification = new Notification()
             notification.user = user.id
             notification.threadId = thread._id
-            notification.getTextandType(req.body.author.real)
+            notification.getTextandType(req.body.author.real, authored)
             notification.save(function(err, not) {
-              //console.log(not)
+              console.log('notification saved')
+              console.log(not)
             })
           })
         }
@@ -678,6 +687,7 @@ module.exports = function (passport) {
       })
   })
 
+  // mark a thread deleted
   router.post('/api/threads/delete/:id', isAuthenticated, function(req, res, next) {
     Thread.findOneAndUpdate({
       $and: [
@@ -804,12 +814,6 @@ module.exports = function (passport) {
       res.json(response)
     })
   })
-
-  // Notification: let client check if the user has any new notifications.
-  router.get('/api/notifications/', isAuthenticated, function (req, res, next) {
-
-  })
-
 
 
   // Voting
