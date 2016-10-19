@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import ReactDom from 'react-dom'
 import { Popover, OverlayTrigger } from 'react-bootstrap'
 
+var config = require('../../../config')
 
 export default class StatusWindow extends Component {
 	constructor(props) {
 		super(props)
-		this.handleNotification = this.handleNotification.bind(this)
+		this.handleNotifications = this.handleNotifications.bind(this)
+		this.loadNotifications = this.loadNotifications.bind(this)
 
 		this.state = { newTheySaid: 0, 
 									 newTaggedIn: 0, 
@@ -16,11 +18,52 @@ export default class StatusWindow extends Component {
 
 	}
 
+	loadNotifications() {
+		$.ajax({
+			url: config.apiUrl + 'notifications',
+			dataType: 'json',
+			xhrFields: { withCredentials: true },
+			cache: false,
+			success: (response) => {
+				this.setState({ notifications: response })
+				this.handleNotifications()
+			},
+			error: (xhr, status, err) => {
+				console.log(this.url, status, err.toString())
+			}
+		})
+	}
+
+	componentDidMount() {
+		this.loadNotifications()
+		setInterval(this.loadNotifications, config.pollInterval)
+	}
+
+	handleNotifications() {
+		var tsct = 0
+		var tct = 0
+		this.state.notifications.forEach(function(notif) {
+			if (notif.type === 'theySaid') {
+				tsct += 1
+			}
+			if (notif.type === 'tagged') {
+				tct += 1
+			}
+		})
+		this.setState({
+			newTheySaid: tsct,
+			newTaggedIn: tct
+		})
+		if (tsct > 0 || tct > 0) {
+			var alertStyle = { color: 'red' }
+			this.setState({ statusStyle: alertStyle })	
+		}
+	}
+
 	handleNotification(notification) {
-		console.log(notification)
 		if (notification.type === 'tagged') {
 			var count = this.state.newTaggedIn += 1
-			this.setState({newTaggedIn: count })
+			this.setState({newTaggedIn: count})
 		}
 		if (notification.type === 'about') {
 			this.state.newTheySaid += 1
@@ -34,24 +77,24 @@ export default class StatusWindow extends Component {
 
 	render() {
 		var self = this
-		var notifIds = this.props.notifications.map(function(notif) {
+		var notifIds = this.state.notifications.map(function(notif) {
 			return notif.threadId
 		}).join('&')
 		//console.log(notifIds)
-		var messages = this.props.notifications.map(function(notification) {
+		var messages = this.state.notifications.map(function(notification) {
 			var style
 			if (notification.new) {
 				style = { 'backgroundColor': '#f7f7f7', 'fontWeight': 500 }
 			}
 			return (
-				<div style={ style }>
+				<div style={ style }
+						 key={ notification._id }>
 					<div key={ notification._id }
 							 className="notificationLink"
-							 onClick={()=>{self.props.getNotifications(notification._id),
+							 onClick={()=>{self.props.loadThreads(notification.threadId, notification._id),
 							 							 self.setState({ statusStyle: {color: 'black'},
 							 															 newTaggedIn: 0,
 							 															 newTheySaid: 0 })}}
-
 							 	>{ notification.text }</div>
 					<hr></hr>
 				</div>

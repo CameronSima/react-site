@@ -25,47 +25,24 @@ export default class FrontPage extends Component {
 			pic: ''
 		}
 		this.loadDataFromServer = this.loadDataFromServer.bind(this)
-		this.loadNotifications = this.loadNotifications.bind(this)
 		this.loadThreads = this.loadThreads.bind(this)
 		this.setFeedType = this.setFeedType.bind(this)
 		this.addThread = this.addThread.bind(this)
 	}
 
-	loadNotifications() {
-		$.ajax({
-			url: config.apiUrl + 'notifications',
-			dataType: 'json',
-			xhrFields: { withCredentials: true },
-			cache: false,
-			success: (response) => {
-				this.setState({ notifications: response })
-			},
-			error: (xhr, status, err) => {
-				console.log(this.url, status, err.toString())
-			}
-		})
-	}
-
-	loadThreads(idsArr, id) {
+	loadThreads(idsArr, notificationId) {
 		var self = this
 		$.ajax({
-			url: config.apiUrl + 'threads/' + idsArr,
+			url: config.apiUrl + 'threads/' + idsArr + '/' + notificationId,
 			dataType: 'json',
 			contentType: 'json',
 			type: 'GET',
-			params: { ids: idsArr },
+			data: { ids: idsArr, notificationId: notificationId },
 			xhrFields: { withCredentials: true },
 			cache: false,
 			success: (response) => {
 				var feed = response
 
-				//make the clicked id appear at the top if it was
-				// supplied.
-				if (id) {
-					feed.sort(function(a, b) {
-						return a != id
-					})
-				}
 				this.setState({ feed: feed,
 												feedType: 'readingNotifications' })
 			},
@@ -119,8 +96,6 @@ export default class FrontPage extends Component {
 
 	componentDidMount() {
 		this.loadDataFromServer()
-		this.loadNotifications()
-		setInterval(this.loadNotifications, this.state.pollInterval)
 	}
 
 	componentWillUnmount() {
@@ -129,24 +104,22 @@ export default class FrontPage extends Component {
 		render() {
 			return (
 				<div>
-				<NavBar />
-				<div className="FrontPage">
-					
-					<div id="left_column">
-						<StatusWindow fbId={ this.state.fbId }
-													getNotifications={ this.loadThreads }
-													notifications={ this.state.notifications }
-													setFeedType={ this.setFeedType }
-													user_id={ this.state.user_id } />
+					<NavBar />
+					<div className="FrontPage">
+						<div id="left_column">
+							<StatusWindow fbId={ this.state.fbId }
+														loadThreads={ this.loadThreads }
+														setFeedType={ this.setFeedType }
+														user_id={ this.state.user_id } />
 
-						<FriendsBox data={ this.state.friends } />
+							<FriendsBox data={ this.state.friends } />
+						</div>
+						<ThreadsBox feed={ this.state.feed } 
+												addThread={ this.addThread }
+								 				friends={ this.state.friends }
+								 				setFeedType={this.setFeedType } />		
+
 					</div>
-					<ThreadsBox feed={ this.state.feed } 
-											addThread={ this.addThread }
-							 				friends={ this.state.friends }
-							 				setFeedType={this.setFeedType } />		
-
-				</div>
 				</div>
 				)
 		}

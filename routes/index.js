@@ -243,15 +243,34 @@ module.exports = function (passport) {
     })
   })
 
-  // get a group of particular threads from a supplied array.
-  router.get('/api/threads/:ids', isAuthenticated, function (req, res, next) {
-    //console.log(req.params.ids)
-    //console.log(req.params.ids.split('&'))
-    var ids = req.params.ids.split('&')
+  // get a group of particular threads from a supplied array. Also
+  // update notification
+  router.get('/api/threads/:id/:notifId', isAuthenticated, function (req, res, next) {
+    var id = mongoose.Types.ObjectId(req.params.id)
+
+    Notification.findOne({
+      $and: [
+        { _id: req.params.notifId },
+        { 'user': req.user._id }
+      ]
+    })
+    .exec(function(err, notification) {
+      if (err) {
+        console.log(err)
+      }
+      console.log(notification)
+      notification.new = false
+      notification.save(function(err, notif) {
+        if (err) {
+          console.log(err)
+        }
+        console.log(notif)
+      })
+     })
 
     Thread.find({
       $and: [
-        { _id: { $in: ids } },
+        { _id: { $in: req.params.id } },
         { 'included.id': req.user._id }
       ]
     })
@@ -306,7 +325,11 @@ module.exports = function (passport) {
 
   router.get('/api/notifications', isAuthenticated, function(req, res, next) {
     Notification.find({
-      user: req.user._id
+      $and: 
+      [ 
+        { user: req.user._id },
+        { new: true }
+    ]
     })
     .exec(function(err, notifications) {
       //console.log(notifications)
@@ -637,14 +660,14 @@ module.exports = function (passport) {
           console.log(err)
           return next(err)
         } else {
-          // save 'Tagged' notification
+          // save 'Tagged' notification.
           // for testing, push to user
           req.body.included.push({ id: req.user._id, name: 'Cameron Sima' })
           async.each(req.body.included, function(user) {
             var notification = new Notification()
             notification.user = user.id
             notification.threadId = thread._id
-            notification.getText(req.body.author.real)
+            notification.getTextandType(req.body.author.real)
             notification.save(function(err, not) {
               //console.log(not)
             })
@@ -786,6 +809,7 @@ module.exports = function (passport) {
   router.get('/api/notifications/', isAuthenticated, function (req, res, next) {
 
   })
+
 
 
   // Voting
