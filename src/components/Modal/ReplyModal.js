@@ -69,7 +69,7 @@ export default class ReplyModal extends Component {
 				<Modal show={ this.state.showModal } onHide={ this.close }>
 					<Modal.Dialog>
 						<Modal.Header>
-							<p> Reply to { this.props.OP }'s comment </p>
+							<p className='modalTitle'> Reply to { this.props.OP }'s comment: </p>
 						</Modal.Header>
 
 						<Modal.Body>

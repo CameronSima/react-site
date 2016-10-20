@@ -52,6 +52,14 @@ var ThreadForm = React.createClass({
   handleTagged: function (tagged) {
     this.setState({includedArr: tagged})
   },
+  handleUntagged: function (unTagged) {
+    var newTagged = _.filter(this.state.includedArr, function(friend) {
+      console.log(friend)
+      console.log(unTagged)
+      return friend != unTagged
+    })
+    this.setState({includedArr: newTagged})
+  },
   handleSubmit: function (e) {
     e.preventDefault()
 
@@ -147,7 +155,9 @@ var ThreadForm = React.createClass({
         <br></br>
         <DropdownBox data={this.state.includedSuggestions}
                      includedArr={this.state.includedArr} 
-                     handleTagged={this.handleTagged} 
+                     allFriendsArr={this.props.friends}
+                     handleTagged={this.handleTagged}
+                     handleUntagged={this.handleUntagged} 
                      title={ 'TAGGED' }
                      clearState={this.clearState} />
         

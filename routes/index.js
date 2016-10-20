@@ -180,6 +180,7 @@ module.exports = function (passport) {
     })
   })
 
+  // post new comment
   router.post('/api/comments/', isAuthenticated, function (req, res, next) {
     async.waterfall([
       function(callback) {
@@ -215,13 +216,34 @@ module.exports = function (passport) {
         Thread.findOne({ _id: comment.thread })
         .exec(function(err, thread) {
         })
+        // push comment to thread object, save the thread, then
+        // return, populate and send it back to client to add to
+        // feed.
         .then(function (thread) {
           thread.comments.push(comment._id)
-          thread.save()
+          thread.save(function(err, updated) {
+            if (err) {
+              console.log(err)
+            } else {
+              updated.populate({
+                path: 'comments',
+                model: 'Comment',
+                populate: { path: 'author',
+                            model: 'User',
+                            select: 'username' }
+              }, function(err, populated) {
+                if (err) {
+                  console.log(err)
+                } else {
+                  callback(null, updated)
+                }
+              })
+            }
+          })
         })
-        callback(null, comment)
       }
     ], function(err, result) {
+        anonymize([result], req.user._id)
           res.json(result)
           
        })

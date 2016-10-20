@@ -9,6 +9,8 @@ import NavBar from '../Utility/NavBar'
 
 var Router = require('react-router')
 
+var _ = require('lodash')
+
 var config = require('../../../config')
 var helpers = ('../../helpers')
 
@@ -28,6 +30,7 @@ export default class FrontPage extends Component {
 		this.loadThreads = this.loadThreads.bind(this)
 		this.setFeedType = this.setFeedType.bind(this)
 		this.addThread = this.addThread.bind(this)
+		this.replaceThread = this.replaceThread.bind(this)
 	}
 
 	loadThreads(idsArr, notificationId) {
@@ -83,8 +86,17 @@ export default class FrontPage extends Component {
 		}
 	}
 
+	// used to update threads that have be commented on --
+	// replace old thread object with updated one
+	replaceThread(updatedThread) {
+		var updatedFeed = _.filter(this.state.feed, function(thread) {
+			return thread._id != updatedThread._id
+		})
+		this.setState({feed: updatedFeed.concat([updatedThread])})
+	}
+
+	// add newly submitted thread response from server to feed
 	addThread(thread) {
-		console.log(thread)
 		this.setState({ feed: this.state.feed.concat([thread])})
 	}
 
@@ -107,18 +119,18 @@ export default class FrontPage extends Component {
 					<NavBar />
 					<div className="FrontPage">
 						<div id="left_column">
-							<StatusWindow fbId={ this.state.fbId }
-														loadThreads={ this.loadThreads }
-														setFeedType={ this.setFeedType }
-														user_id={ this.state.user_id } />
+							<StatusWindow fbId={this.state.fbId}
+														loadThreads={this.loadThreads}
+														setFeedType={this.setFeedType}
+														user_id={this.state.user_id} />
 
-							<FriendsBox data={ this.state.friends } />
+							<FriendsBox data={this.state.friends} />
 						</div>
-						<ThreadsBox feed={ this.state.feed } 
-												addThread={ this.addThread }
-								 				friends={ this.state.friends }
-								 				setFeedType={this.setFeedType } />		
-
+						<ThreadsBox feed={this.state.feed} 
+												addThread={this.addThread}
+												replaceThread={this.replaceThread}
+								 				friends={this.state.friends}
+								 				setFeedType={this.setFeedType} />		
 					</div>
 				</div>
 				)

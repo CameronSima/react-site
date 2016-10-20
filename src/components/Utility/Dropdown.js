@@ -28,7 +28,11 @@ export default class DropdownBox extends Component {
     var suggestions
     if (this.props.data) {
       suggestions = this.props.data.map((friend) => {
-        var itemObj = {'id': friend._id, 'name': friend.facebookName}
+        var itemObj = {
+                        'id': friend._id, 
+                        'name': friend.facebookName,
+                        'facebookProfilePic': friend.facebookProfilePic
+                      }
         return (
             <div className="suggestedItem" onClick={ this.populate.bind(this, itemObj) } 
                                            key={ friend._id }>
@@ -54,6 +58,9 @@ export default class DropdownBox extends Component {
           this.props.title && 
             <TaggedModal  
                           tagged={ this.props.includedArr }
+                          allFriends={ this.props.allFriendsArr }
+                          handleTagged={this.props.handleTagged}
+                          handleUntagged={this.props.handleUntagged}
                           title={ this.props.title } />
         }
       </div>

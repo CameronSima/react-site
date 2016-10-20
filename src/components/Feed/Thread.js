@@ -119,9 +119,11 @@ export default class Thread extends Component {
           </div>
         <hr></hr>         
         <div>
-          <CommentBox threadId={ this.props.id }
-                      comments={ this.props.comments }
+          <CommentBox threadId={this.props.id}
+                      comments={this.props.comments}
+                      replaceThread={this.props.replaceThread}
                         />
+                      }
         </div>
         <hr></hr>
       </div>

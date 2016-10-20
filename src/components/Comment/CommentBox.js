@@ -6,7 +6,6 @@ var config = require('../../../config')
 
 var _ = require('lodash')
 
-
 var CommentBox = React.createClass({
 
     //turn flat array of comments into threaded comment array
@@ -39,10 +38,9 @@ var CommentBox = React.createClass({
       type: 'POST',
       data: comment,
       xhrFields: { withCredentials: true },
-      success: function (data) {
-        this.setState({data: data})
-        //console.log(data)
-        
+      success: function (response) {
+        this.props.replaceThread(response)
+      
       }.bind(this),
       error: function (xhr, status, err) {
 

@@ -13,8 +13,7 @@ export default class FriendContainer extends Component {
 	render() {
 		return (
 			<div className="friend">
-				<div className="profilePic">
-				</div>
+				
 					<img src={this.props.pic } />
 				<p>
 					{ this.props.friend }

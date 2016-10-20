@@ -98,7 +98,7 @@ export default class FriendThreadsModal extends Component {
 				<Modal show={ this.state.showModal } onHide={ this.close }>
 					<Modal.Dialog>
 						<Modal.Header>
-							<h5> { this.state.headerText } </h5>
+							<p className="modalTitle"> { this.state.headerText } </p>
 						</Modal.Header>
 
 						<Modal.Body>

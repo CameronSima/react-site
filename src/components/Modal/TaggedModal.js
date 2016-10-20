@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import { Modal } from 'react-bootstrap'
+var _ = require('lodash')
+
+import AddRemoveFriendBox from '../Utility/AddRemoveFriendBox'
 
 var config = require('../../../config')
 
@@ -30,27 +33,49 @@ export default class TaggedModal extends Component {
 		this.setState({ showModal: true })
 	}
 	render() {
+		// build array of tagged and untagged, removing duplicates
+		var self = this
+		var unTagged = _.filter(this.props.allFriends, function(friend) {
+			_.each(self.props.tagged, function(tagged) {
+				return friend._id !== tagged._id
+			})
+		})
 
-		var tagged = this.props.tagged.map(function(friend) {
-			return friend.name
+		var friendArr = this.props.tagged.concat(unTagged)
+		var friendsComponents = _.map(friendArr, function(friend) {
+			var clickedFunc
+			// friends not tagged will have their facebook profile name
+			// attached to their user object, tagged ones won't
+			if (friend.facebookName) {
+				clickedFunc = self.props.handleTagged
+			} else {
+				clickedFunc = self.props.handleUntagged
+			}
+			return (
+				<AddRemoveFriendBox friend={friend}
+														tagged={friend.facebookName}
+														clickedFunc={clickedFunc}
+														key={friend._id} />
+				)
 		})
 
 		return (
 			<div className="taggedModal">
 				<div onClick={ this.open }>
 					<TaggedButton title={ this.props.title }
-								  tagged={this.props.tagged } />
+								  			tagged={this.props.tagged }
+								  																/>
 				</div>
 
 				<Modal show={ this.state.showModal } onHide={ this.close }>
 					<Modal.Dialog>
 						<Modal.Header>
-							<p> Tagged: </p>
+							<p className="modalTitle"> Tagged: </p>
 						</Modal.Header>
 
 						<Modal.Body>
 							
-							{tagged}
+							{friendsComponents}
 
 						</Modal.Body>
 						<Modal.Footer>

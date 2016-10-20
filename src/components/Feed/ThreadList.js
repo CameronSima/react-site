@@ -14,7 +14,8 @@ export default class ThreadList extends Component {
       var sortedFeed = this.props.sortFunc(this.props.data) || this.props.data
       var threadNodes = sortedFeed.map(function (thread) {
         return (
-          <Thread victim={ thread.victim } 
+          <Thread replaceThread={self.props.replaceThread}
+                  victim={ thread.victim } 
                   comments={ thread.comments }
                   date={ thread.date }
                   author={ thread.author } 

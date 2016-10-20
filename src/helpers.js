@@ -49,7 +49,7 @@ module.exports = {
 
 	// Predictive friend selection
 	suggestItems: (items, clicked) => {
-		return items.filter((item) => {
+		return _.filter(items, (item) => {
 			return (
 				item.facebookName.toLowerCase().indexOf(clicked.toLowerCase()) === 0 
 				&& clicked.length > 0

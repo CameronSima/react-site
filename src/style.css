@@ -429,3 +429,26 @@ a.button {
 	letter-spacing: 1.6px;
 }
 
+.friendName {
+	display: inline-block;
+	font-size: larger;
+	margin-left: 25px;
+}
+
+.friendBoxOuter {
+	border: 1px solid #efefef;
+}
+
+.friendBoxInner {
+	padding: 18px;
+}
+
+.addRemoveButton {
+	float: right;
+}
+
+p.modalTitle {
+	font-size: 16px;
+	font-weight: 700;
+}
+

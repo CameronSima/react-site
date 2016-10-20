@@ -10,8 +10,9 @@ var helpers = require('../../helpers')
 
 
 var ThreadsBox = React.createClass({
+
+  //Submit new thread to server, add response to list of threads.
   handleThreadSubmit: function (thread) {
-    //this.props.addThread(thread)
     $.ajax({
       url: config.apiUrl + 'threads',
       dataType: 'json',
@@ -82,9 +83,10 @@ var ThreadsBox = React.createClass({
           <Button onClick={() => {this.setState({'sortFunc': helpers.orderByHot})}}>Heat</Button>
         </ButtonGroup>
       </div>
-      <ThreadList data={ this.props.feed }
-                  removeThread={ this.props.removeThread }
-                  sortFunc={ this.state.sortFunc } />
+      <ThreadList data={this.props.feed}
+                  replaceThread={this.props.replaceThread}
+                  removeThread={ this.props.removeThread}
+                  sortFunc={this.state.sortFunc} />
     </div>
     )
   }
