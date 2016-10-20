@@ -66,8 +66,11 @@ var CommentBox = React.createClass({
   },
   moreComments: function() {
     var newCount = this.state.numComments += 10
-    this.setState({ numComments: newCount })
+    this.setState({numComments: newCount})
     //console.log(this.state.numComments)
+  },
+  showLessComments: function() {
+    this.setState({numComments: 1})
   },
   render: function () {
     var threadedComments = this.buildTree(this.props.comments)
@@ -83,7 +86,13 @@ var CommentBox = React.createClass({
       {
          topComments.length > 0 && topComments.length < threadedComments.length &&
         <a className="moreLink"
-           onClick={()=>{ this.moreComments() }}>More</a>
+           onClick={()=>{ this.moreComments() }}>&darr; More</a>
+      }
+
+      {
+        topComments && topComments.length > 1 &&
+        <a className="moreLink"
+           onClick={()=>{ this.showLessComments() }}>&uarr; Less</a>        
       }
 
       <CommentForm threadId={ this.props.threadId } 

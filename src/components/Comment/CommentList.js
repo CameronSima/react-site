@@ -34,7 +34,10 @@ var Comment = React.createClass({
   },
   moreComments: function() {
     var newCount = this.state.numComments += 10
-    this.setState({ numComments: newCount })
+    this.setState({numComments: newCount})
+  },
+  showLessComments: function() {
+    this.setState({numComments: 1})
   },
   render: function () {
     if (this.props.replies) {
@@ -71,7 +74,12 @@ var Comment = React.createClass({
         {
           lessComments && lessComments.length > 0 && lessComments.length < allComments.length &&
           <a className="moreLink"
-             onClick={()=> {this.moreComments()}}>More</a>
+             onClick={()=> {this.moreComments()}}>&darr; More</a>
+        }
+        {
+          lessComments && lessComments.length > 1 &&
+          <a className="moreLink"
+             onClick={()=> {this.showLessComments()}}>&uarr; Less</a>
         }
         
       </div>
