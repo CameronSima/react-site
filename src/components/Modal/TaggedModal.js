@@ -55,7 +55,7 @@ export default class TaggedModal extends Component {
 				<AddRemoveFriendBox friend={friend}
 														tagged={friend.facebookName}
 														clickedFunc={clickedFunc}
-														key={friend._id} />
+														key={friend.id} />
 				)
 		})
 

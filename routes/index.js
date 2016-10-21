@@ -351,6 +351,7 @@ module.exports = function (passport) {
     Notification.find({
       user: req.user._id
     })
+    .sort({'date': -1})
     .limit(limit)
     .exec(function(err, notifications) {
       //console.log(notifications)

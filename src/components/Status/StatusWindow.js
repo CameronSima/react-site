@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import ReactDom from 'react-dom'
 import { Popover, OverlayTrigger } from 'react-bootstrap'
 
+var _ = require('lodash')
+
 var config = require('../../../config')
+var helpers = require('../../helpers')
 
 export default class StatusWindow extends Component {
 	constructor(props) {
@@ -14,7 +17,7 @@ export default class StatusWindow extends Component {
 		this.state = { newTheySaid: 0, 
 									 newTaggedIn: 0, 
 									 notifications: [],
-									 numNotifs: 10,
+									 numNotifs: 5,
 									 activeId: '',
 									 statusStyle: { color: 'black'} }
 
@@ -66,7 +69,7 @@ export default class StatusWindow extends Component {
 	}
 
 	getMoreNotifs() {
-		this.state.numNotifs += 10
+		this.state.numNotifs += 5
 		this.loadNotifications()
 	}
 
@@ -94,7 +97,7 @@ export default class StatusWindow extends Component {
 		var notification = (
 				<Popover id="popover-trigger-click-root-close"
 								 title="Notifications:">
-					{ messages.reverse() }
+					{ messages }
 					<a className="moreLink"
 					   onClick={()=>{this.getMoreNotifs()}}>More</a>
 				</Popover>
