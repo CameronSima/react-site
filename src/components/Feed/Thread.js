@@ -123,7 +123,6 @@ export default class Thread extends Component {
                       comments={this.props.comments}
                       replaceThread={this.props.replaceThread}
                         />
-                      }
         </div>
         <hr></hr>
       </div>

@@ -360,7 +360,7 @@ module.exports = function (passport) {
 
   router.get('/api/frontpage/:feedType/:limit*?', isAuthenticated, function (req, res, next) {
     console.time('feed')
-    var numThreads = req.params.limit || 25
+    var numThreads = req.params.limit || 5
     var theySaidThreads, iSaidThreads, tagged
     async.parallel([
       function(callback) {
@@ -440,17 +440,14 @@ module.exports = function (passport) {
       // threads or an empty array.
        feed = iSaidThreads || theySaidThreads || feed
 
-      
        user.feed = feed
        userObj = user.toObject()
        anonymize(userObj.feed, req.user._id)
-
 
       if (feed === []) {
         feed.push({text: "No threads found!",
                             _id: "no_results"})
       }
-      console.timeEnd('feed')
       res.json(userObj)
     })
   })

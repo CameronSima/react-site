@@ -9,7 +9,7 @@ module.exports = {
 	// format date to show either time in hours ago, or, if dateTime was
 	// 24 hours ago or more, show the date
 
-	 formatDate(dateTime) {
+	formatDate(dateTime) {
 	    var relativeTime = moment(dateTime).fromNow()
 	    var objectiveTime = moment(dateTime).format('MMMM Do [at] h:mm a')
 	    return { relative: relativeTime, objective: objectiveTime }

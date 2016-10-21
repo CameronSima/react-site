@@ -24,6 +24,7 @@ export default class FrontPage extends Component {
 			facebookFriends: [],
 			pollInterval: config.pollInterval,
 			feedType: 'ALL',
+			numThreads: 1,
 			pic: ''
 		}
 		this.loadDataFromServer = this.loadDataFromServer.bind(this)
@@ -31,6 +32,12 @@ export default class FrontPage extends Component {
 		this.setFeedType = this.setFeedType.bind(this)
 		this.addThread = this.addThread.bind(this)
 		this.replaceThread = this.replaceThread.bind(this)
+		this.moreThreads = this.moreThreads.bind(this)
+	}
+
+	moreThreads() {
+		this.state.numThreads += 5
+		this.loadDataFromServer()
 	}
 
 	loadThreads(idsArr, notificationId) {
@@ -45,9 +52,9 @@ export default class FrontPage extends Component {
 			cache: false,
 			success: (response) => {
 				var feed = response
-
 				this.setState({ feed: feed,
-												feedType: 'readingNotifications' })
+												feedType: 'readingNotifications',
+												numThreads: 15 })
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
@@ -55,13 +62,13 @@ export default class FrontPage extends Component {
 		})
 	}
 
-	loadDataFromServer() {
+	loadDataFromServer() { 
 		if (this.state.feedType === 'readingNotifications') {
 			return
 		}
 		var feedType = this.state.feedType.split(' ').join('').toLowerCase()
 		$.ajax({ 
-			url: config.apiUrl + 'frontpage/' + feedType,
+			url: config.apiUrl + 'frontpage/' + feedType + '/' + this.state.numThreads,
 			dataType: 'json',
 			xhrFields: { withCredentials: true },
 			cache: false,
@@ -72,10 +79,13 @@ export default class FrontPage extends Component {
 												feed: response.feed,
 												facebookFriends: response.facebookFriends,
 												fbId: response.facebookId })
+								if (this.state.feed.length < response.feed.length) {
+					console.log("DONE")
+				}
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
-				//Router.browserHistory.push('/signup')
+				Router.browserHistory.push('/signup')
 			}
 		})
 	}
@@ -107,7 +117,7 @@ export default class FrontPage extends Component {
 	}
 
 	componentDidMount() {
-		this.loadDataFromServer()
+		//this.loadDataFromServer()
 	}
 
 	componentWillUnmount() {
@@ -127,6 +137,8 @@ export default class FrontPage extends Component {
 							<FriendsBox data={this.state.friends} />
 						</div>
 						<ThreadsBox feed={this.state.feed} 
+												moreThreads={this.moreThreads}
+												numThreads={this.state.numThreads}
 												addThread={this.addThread}
 												replaceThread={this.replaceThread}
 								 				friends={this.state.friends}

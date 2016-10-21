@@ -58,6 +58,7 @@
     "passport-facebook": "latest",
     "passport-local": "latest",
     "react": "15.2.1",
+    "react-infinite-scroller": "1.0.1",
     "react-native": "0.31.0",
     "react-bootstrap": "latest",
     "react-dom": "15.3.1",

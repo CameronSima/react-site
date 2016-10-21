@@ -8,7 +8,6 @@ import Menu from '../Utility/Menu'
 var config = require('../../../config')
 var helpers = require('../../helpers')
 
-
 var ThreadsBox = React.createClass({
 
   //Submit new thread to server, add response to list of threads.
@@ -67,7 +66,6 @@ var ThreadsBox = React.createClass({
 
   // TODO: replace custom navbuttons with react-bootstrap buttons
   render: function() {
-
     return (
     <div className="threadsBox">
       <ThreadForm friends={this.props.friends}
@@ -84,6 +82,8 @@ var ThreadsBox = React.createClass({
         </ButtonGroup>
       </div>
       <ThreadList data={this.props.feed}
+                  moreThreads={this.props.moreThreads}
+                  numThreads={this.props.numThreads}
                   replaceThread={this.props.replaceThread}
                   removeThread={ this.props.removeThread}
                   sortFunc={this.state.sortFunc} />
