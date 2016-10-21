@@ -11,6 +11,7 @@ export default class StatusWindow extends Component {
 	constructor(props) {
 		super(props)
 		this.handleNotifications = this.handleNotifications.bind(this)
+		this.handleMoreNotifications = this.handleMoreNotifications.bind(this)
 		this.loadNotifications = this.loadNotifications.bind(this)
 		this.getMoreNotifs = this.getMoreNotifs.bind(this)
 
@@ -73,6 +74,11 @@ export default class StatusWindow extends Component {
 		this.loadNotifications()
 	}
 
+	handleMoreNotifications(thread, notification) {
+		this.props.loadThreads(thread, notification)
+		this.refs.overlay.hide()
+	}
+
 	render() {
 		var self = this
 		var messages = this.state.notifications.map(function(notification) {
@@ -85,7 +91,7 @@ export default class StatusWindow extends Component {
 						 key={ notification._id }>
 					<div key={ notification._id }
 							 className="notificationLink"
-							 onClick={()=>{self.props.loadThreads(notification.threadId, notification._id),
+							 onClick={()=>{self.handleMoreNotifications(notification.threadId, notification._id),
 							 							 self.setState({ statusStyle: {color: 'black'},
 							 															 newTaggedIn: 0,
 							 															 newTheySaid: 0 })}}
@@ -95,7 +101,7 @@ export default class StatusWindow extends Component {
 			)
 		})
 		var notification = (
-				<Popover id="popover-trigger-click-root-close"
+				<Popover id="popover-trigger-focus"
 								 title="Notifications:">
 					{ messages }
 					<a className="moreLink"
@@ -115,7 +121,9 @@ export default class StatusWindow extends Component {
 					<OverlayTrigger trigger="click" 
 													rootClose
 													placement="right"
+													ref="overlay"
 													overlay={notification}>
+
 						<div id="status_icon" style={this.state.statusStyle}>
 							dl
 						</div>
