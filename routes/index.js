@@ -97,7 +97,6 @@ module.exports = function (passport) {
   var anonymize = function(threads, user_id) {
     _.each(threads, function(thread) {
       if (thread.author[0].id.toString() == user_id) {
-
         thread.byMe = true
       } else {
         thread.byMe = false
@@ -272,7 +271,7 @@ module.exports = function (passport) {
     console.log('get threads endpoint called')
     Notification.findOne({
       $and: [
-        { _id: id },
+        { _id: req.params.notifId },
         { 'user': req.user._id }
       ]
     })
@@ -280,13 +279,13 @@ module.exports = function (passport) {
       if (err) {
         console.log(err)
       }
-      console.log(notification)
+      //console.log(notification)
       notification.new = false
       notification.save(function(err, notif) {
         if (err) {
           console.log(err)
         }
-        console.log(notif)
+        //console.log(notif)
       })
      })
 
@@ -303,9 +302,19 @@ module.exports = function (passport) {
                   model: 'User',
                   select: 'username' }
     })
-    .exec(function(err, threads) {
-      anonymize(threads, req.user._id)
-      res.json(threads)
+    
+    //Returns the document as an object instead of a model instance,
+    // needed to allow anonymize() to add object properties i.e. .byMe
+    .lean()
+    .exec(function(err, thread) {
+      console.log(thread)
+      anonymize(thread, req.user._id)
+      console.log(thread)
+      
+      if (thread.deleted) {
+        thread.text = "This thread has been deleted by its author."
+      }
+      res.json(thread)
     })
   })
 
@@ -688,7 +697,7 @@ module.exports = function (passport) {
           //req.body.included.push({ id: req.user._id, name: 'Cameron Sima' })
 
           var notification = new Notification()
-          console.log(req.body.included)
+          //console.log(req.body.included)
 
           async.each(req.body.included, function(user) {
             var authored = doc.author.id == user.id
@@ -697,12 +706,16 @@ module.exports = function (passport) {
             notification.threadId = thread._id
             notification.getTextandType(req.body.author.real, authored)
             notification.save(function(err, not) {
-              console.log('notification saved')
-              console.log(not)
+              //console.log('notification saved')
+              //console.log(not)
             })
           })
         }
+        console.log(doc)
         anonymize([doc], req.user._id)
+        console.log("kiiii")
+        console.log(doc)
+
         res.json(doc)
       })
   })

@@ -42,14 +42,14 @@ export default class FrontPage extends Component {
 		this.loadDataFromServer()
 	}
 
-	loadThreads(idsArr, notificationId) {
+	loadThreads(id, notificationId) {
 		var self = this
 		$.ajax({
-			url: config.apiUrl + 'threads/' + idsArr + '/' + notificationId,
+			url: config.apiUrl + 'threads/' + id + '/' + notificationId,
 			dataType: 'json',
 			contentType: 'json',
 			type: 'GET',
-			data: { ids: idsArr, notificationId: notificationId },
+			//data: { ids: idsArr, notificationId: notificationId },
 			xhrFields: { withCredentials: true },
 			cache: false,
 			success: (response) => {
@@ -116,6 +116,7 @@ export default class FrontPage extends Component {
 
 	// add newly submitted thread response from server to feed
 	addThread(thread) {
+		console.log(thread)
 		this.setState({feed: this.state.feed.concat([thread])})
 	}
 

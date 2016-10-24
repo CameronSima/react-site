@@ -39,7 +39,7 @@ export default class ThreadList extends Component {
         threshold={50}
         loadMore={this.props.moreThreads}
         hasMore={!(this.props.data.length < this.props.numThreads && this.props.data.length > 1)}
-        loader={<div className="loader">Loading. . .</div>}>
+        >
         <div className="threadList">
           { threadNodes }
         </div> 
