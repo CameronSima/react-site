@@ -281,7 +281,7 @@ a.button {
 .replyLink, .likeLink, .dislikeLink, .closeLink, 
 .commentAuthor, .byLink, .aboutLink, .talkedLink,
 .talkLink, .moreThreadsLink, .deleteLink, .tagLink,
-.moreLink, .notificationLink {
+.moreLink, .notificationLink, .yesLink, .noLink {
 	margin: 5px;
 	cursor: pointer;
 	display: inline;
@@ -454,5 +454,11 @@ p.modalTitle {
 
 .moreDiv {
 	text-align: center;
+}
+
+.deleteCheck {
+	margin-bottom: 0px;
+	text-align: center;
+	color: red;
 }
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ReactDom from 'react-dom'
-import { Button, ButtonGroup } from 'react-bootstrap'
+import { Button, ButtonGroup, Popover, OverlayTrigger } from 'react-bootstrap'
+
 
 import CommentBox from '../Comment/CommentBox'
 
@@ -14,6 +15,7 @@ export default class Thread extends Component {
                    likes: this.props.initialLikes }
 
     this.deleteThread = this.deleteThread.bind(this)
+    this.dontDelete = this.dontDelete.bind(this)
     this.sendLikeToServer = this.sendLikeToServer.bind(this)
     this.setRelativeDate = this.setRelativeDate.bind(this)
     this.setObjectiveDate = this.setObjectiveDate.bind(this)
@@ -21,20 +23,6 @@ export default class Thread extends Component {
   rawMarkup() {
     var rawMarkup = marked(this.props.children.toString(), { sanitize: true })
     return {__html: rawMarkup }
-  }
-
-  deleteThread(id) {
-    $.ajax({
-      url: config.apiUrl + 'threads/delete/' + id,
-      type: 'POST',
-      xhrFields: { withCredentials: true },
-      success: function(doc) {
-
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.log(err)
-      }.bind(this)
-    })
   }
   
   sendLikeToServer(thread_id, vote) {
@@ -57,6 +45,25 @@ export default class Thread extends Component {
     })
   }
 
+  dontDelete() {
+    this.refs.overlay.hide()
+  }
+
+  deleteThread(id) {
+    $.ajax({
+      url: config.apiUrl + 'threads/delete/' + id,
+      type: 'POST',
+      xhrFields: { withCredentials: true },
+      success: function(doc) {
+        this.props.removeThread(id)
+        this.refs.overlay.hide()
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.log(err)
+      }.bind(this)
+    })
+  }
+
   setObjectiveDate(e) {
     e.target.innerHTML = helpers.formatDate(this.props.date).objective.italics()
   }
@@ -66,6 +73,17 @@ export default class Thread extends Component {
   }
 
   render() {
+    var deleteConfirm = (
+      <Popover id="popover-trigger-focus"
+               >
+        <p className="deleteCheck">sure?</p>
+        <a className="yesLink"
+           onClick={()=>{this.deleteThread(this.props.id)}}>yes</a>
+        /
+        <a className="noLink"
+           onClick={()=>{this.dontDelete()}}>no</a>
+      </Popover>
+      )
     if (this.props.pic) {
         var photo = <img className="user_photo" 
                          src={'src/assets/user_images/' + this.props.pic}
@@ -111,10 +129,16 @@ export default class Thread extends Component {
         
             { 
               this.props.byMe && 
-                <div className="deleteLink"
-                     onClick={()=> {this.deleteThread(this.props.id)}}>
-                  <a >Delete</a>
-                </div>
+                <OverlayTrigger trigger="click" 
+                                rootClose
+                                placement="top"
+                                ref="overlay"
+                                overlay={deleteConfirm}>
+
+                  <div className="deleteLink">
+                    <a >Delete</a>
+                  </div>
+                </OverlayTrigger>
             }
           </div>
         <hr></hr>         

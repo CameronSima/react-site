@@ -85,7 +85,7 @@ var ThreadsBox = React.createClass({
                   moreThreads={this.props.moreThreads}
                   numThreads={this.props.numThreads}
                   replaceThread={this.props.replaceThread}
-                  removeThread={ this.props.removeThread}
+                  removeThread={this.props.removeThread}
                   sortFunc={this.state.sortFunc} />
     </div>
     )

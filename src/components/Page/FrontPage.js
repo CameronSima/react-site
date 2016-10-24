@@ -32,6 +32,8 @@ export default class FrontPage extends Component {
 		this.setFeedType = this.setFeedType.bind(this)
 		this.addThread = this.addThread.bind(this)
 		this.replaceThread = this.replaceThread.bind(this)
+		this.removeThread = this.removeThread.bind(this)
+		this.removeFromFeed = this.removeFromFeed.bind(this)
 		this.moreThreads = this.moreThreads.bind(this)
 	}
 
@@ -62,6 +64,7 @@ export default class FrontPage extends Component {
 		})
 	}
 
+	// load all initial data
 	loadDataFromServer() { 
 		if (this.state.feedType === 'readingNotifications') {
 			return
@@ -79,9 +82,7 @@ export default class FrontPage extends Component {
 												feed: response.feed,
 												facebookFriends: response.facebookFriends,
 												fbId: response.facebookId })
-								if (this.state.feed.length < response.feed.length) {
-					console.log("DONE")
-				}
+				
 			},
 			error: (xhr, status, err) => {
 				console.log(this.url, status, err.toString())
@@ -96,18 +97,32 @@ export default class FrontPage extends Component {
 		}
 	}
 
+	removeFromFeed(updatedThread) {
+		var updatedFeed = _.filter(this.state.feed, function(thread) {
+			if (thread._id == updatedThread._id) {
+				console.log('FOUND IT')
+			}
+			return thread._id != updatedThread._id
+		})
+		return updatedFeed
+	}
+
 	// used to update threads that have be commented on --
 	// replace old thread object with updated one
 	replaceThread(updatedThread) {
-		var updatedFeed = _.filter(this.state.feed, function(thread) {
-			return thread._id != updatedThread._id
-		})
+		var updatedFeed = this.removeThread(updatedThread)
 		this.setState({feed: updatedFeed.concat([updatedThread])})
 	}
 
 	// add newly submitted thread response from server to feed
 	addThread(thread) {
-		this.setState({ feed: this.state.feed.concat([thread])})
+		this.setState({feed: this.state.feed.concat([thread])})
+	}
+
+	// remove thread from feed
+	removeThread(thread) {
+		var updatedFeed = this.removeFromFeed(thread)
+		this.setState({feed: updatedFeed})
 	}
 
 	setFeedType(feedType) {
@@ -141,6 +156,7 @@ export default class FrontPage extends Component {
 												numThreads={this.state.numThreads}
 												addThread={this.addThread}
 												replaceThread={this.replaceThread}
+												removeThread={this.removeThread}
 								 				friends={this.state.friends}
 								 				setFeedType={this.setFeedType} />		
 					</div>
