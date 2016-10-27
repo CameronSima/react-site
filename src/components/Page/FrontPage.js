@@ -150,7 +150,7 @@ export default class FrontPage extends Component {
 														setFeedType={this.setFeedType}
 														user_id={this.state.user_id} />
 
-							<FriendsBox data={this.state.friends} />
+							<FriendsBox friends={this.state.friends} />
 						</div>
 						<ThreadsBox feed={this.state.feed} 
 												moreThreads={this.moreThreads}

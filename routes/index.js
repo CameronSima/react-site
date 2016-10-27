@@ -292,7 +292,8 @@ module.exports = function (passport) {
     Thread.find({
       $and: [
         { _id: { $in: req.params.id } },
-        { 'included.id': req.user._id }
+        { 'included.id': req.user._id },
+        { 'deleted': false }
       ]
     })
     .populate({
@@ -302,15 +303,12 @@ module.exports = function (passport) {
                   model: 'User',
                   select: 'username' }
     })
-    
+
     //Returns the document as an object instead of a model instance,
     // needed to allow anonymize() to add object properties i.e. .byMe
     .lean()
     .exec(function(err, thread) {
-      console.log(thread)
-      anonymize(thread, req.user._id)
-      console.log(thread)
-      
+      anonymize(thread, req.user._id)     
       if (thread.deleted) {
         thread.text = "This thread has been deleted by its author."
       }
@@ -358,7 +356,10 @@ module.exports = function (passport) {
   router.get('/api/notifications/:numNotifs*?', isAuthenticated, function(req, res, next) {
     var limit = req.params.numNotifs || 15
     Notification.find({
-      user: req.user._id
+      $and: [
+        { user: req.user._id },
+        { deleted: false }
+      ]
     })
     .sort({'date': -1})
     .limit(limit)
@@ -722,6 +723,14 @@ module.exports = function (passport) {
 
   // mark a thread deleted
   router.post('/api/threads/delete/:id', isAuthenticated, function(req, res, next) {
+    Notification.findOneAndUpdate({
+      $and: [
+        { user: req.user._id },
+        { threadId: req.params.id}]
+    },
+      {deleted: true }
+    )
+
     Thread.findOneAndUpdate({
       $and: [
         { _id: req.params.id },

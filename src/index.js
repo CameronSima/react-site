@@ -7,7 +7,6 @@ import ReactDOM from 'react-dom';
 import NavBar from './components/Utility/NavBar';
 import FrontPage from './components/Page/FrontPage';
 import Signup from './components/Page/signup';
-import AddFriends from './components/Page/AddFriends';
 import NotFoundRoute from './components/Page/404NotFound'
 
 const config = require('../config');
@@ -16,7 +15,6 @@ ReactDOM.render((
                 <Router history = { browserHistory }>
                     <Route path='/' component={ FrontPage } />
                     <Route path='signup' component={ Signup } />
-                    <Route path='addFriends' component={ AddFriends } />
                     <Route path='*' component={ NotFoundRoute } />
            
                 </Router>

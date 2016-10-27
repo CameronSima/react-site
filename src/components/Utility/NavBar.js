@@ -33,11 +33,7 @@ export default class NavBar extends Component {
           </button>
         </div>
         <div className="navbar-collapse collapse" id="navbar-main">
-          <ul className="nav navbar-nav">
-            <li>
-              <Link to="/addFriends">ADD OR REMOVE</Link>
-            </li>
-          </ul>
+      
           <ul className="nav navbar-nav navbar-right">
             <form className="navbar-form navbar-left" role="search">
               <div className="form-group">

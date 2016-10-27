@@ -7,7 +7,8 @@ var NotificationSchema = new mongoose.Schema({
 	text: String,
 	taggedNum: { type: Number, default: 1 },
 	new: { type: Boolean, default: true },
-	type: String
+	type: String,
+	deleted: { type: Boolean, default: false }
 })
 
 NotificationSchema.methods.getTextandType = function(friendName, authored, commentId) {

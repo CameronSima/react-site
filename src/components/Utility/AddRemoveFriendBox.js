@@ -5,8 +5,6 @@ import { Button } from 'react-bootstrap'
 // and takes an onClick function
 class AddRemoveFriendBox extends Component {
 	render() {
-
-		var buttonText = this.props.facebookName ? 'ADD' : 'REMOVE'
 		return(
 			<div className="friendBoxOuter">
 				<div className="friendBoxInner">
@@ -15,7 +13,7 @@ class AddRemoveFriendBox extends Component {
 						{ this.props.friend.name }
 					</div>
 					<Button className='addRemoveButton'
-									onClick={()=>{this.props.clickedFunc(this.props.friend)}}>{buttonText}</Button>
+									onClick={()=>{this.props.clickedFunc(this.props.clickedFuncParam)}}>{this.props.buttonText}</Button>
 				</div>
 			</div>
 			)
